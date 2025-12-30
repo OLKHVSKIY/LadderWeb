@@ -113,25 +113,25 @@ function setupInputScrollHandlers() {
     
     // Функция для прокрутки к полю ввода
     const scrollToInput = (inputElement) => {
-        const rect = inputElement.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
-        
+                const rect = inputElement.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const viewportHeight = window.innerHeight;
+                
         // Рассчитываем позицию с учетом отступа от верха и высоты навигации снизу
         const bottomNavHeight = 100; // Высота нижней навигации + отступ
         const topOffset = 80; // Отступ от верха (хедер)
         const inputTop = rect.top;
-        const inputBottom = rect.bottom;
-        const availableHeight = viewportHeight - bottomNavHeight - topOffset;
-        
+                const inputBottom = rect.bottom;
+                const availableHeight = viewportHeight - bottomNavHeight - topOffset;
+                
         // Если поле ввода находится слишком низко или перекрывается навигацией/хедером
         if (inputBottom > availableHeight || inputTop < topOffset) {
             const targetPosition = scrollTop + inputTop - topOffset;
-            window.scrollTo({
-                top: Math.max(0, targetPosition),
-                behavior: 'smooth'
-            });
-        }
+                    window.scrollTo({
+                        top: Math.max(0, targetPosition),
+                        behavior: 'smooth'
+                    });
+                }
     };
     
     allInputs.forEach(input => {
@@ -149,7 +149,7 @@ function setupInputScrollHandlers() {
             // Прокручиваем еще раз после небольшой задержки (когда клавиатура откроется)
             setTimeout(() => {
                 scrollToInput(inputElement);
-            }, 300);
+                }, 300);
             
             // Дополнительная проверка после полного открытия клавиатуры
             setTimeout(() => {

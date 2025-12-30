@@ -1417,16 +1417,16 @@ function initChatPage() {
                 return;
             }
             
-            const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
+        const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
             const message = { role, text, timestamp: Date.now() };
             history.push(message);
             
-            // Храним последние 100 сообщений
-            if (history.length > 100) {
-                history.shift();
-            }
+        // Храним последние 100 сообщений
+        if (history.length > 100) {
+            history.shift();
+        }
             
-            localStorage.setItem('chat_history', JSON.stringify(history));
+        localStorage.setItem('chat_history', JSON.stringify(history));
             console.log(`Chat message saved: ${role} (${text.substring(0, 50)}...), total messages: ${history.length}`);
         } catch (error) {
             console.error('Error saving chat message:', error);
