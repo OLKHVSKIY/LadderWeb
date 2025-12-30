@@ -129,12 +129,13 @@ const translations = {
         'gpt.sat': 'Сб',
         'gpt.sun': 'Вс',
         'gpt.generate': 'Сгенерировать',
-        'gpt.generating': 'Генерация плана...',
+        'gpt.generating': 'Генерация плана',
         'gpt.edit': 'Редактировать',
         'gpt.save': 'Сохранить',
         'gpt.regenerate': 'Сгенерировать еще',
         'gpt.enterPlanName': 'Введите название плана',
         'gpt.enterGoalDescription': 'Опишите вашу цель',
+        'gpt.goalDescriptionPlaceholder': 'Опишите вашу цель подробно. Чем больше деталей, тем точнее будет план...',
         'common.continue': 'Продолжить',
         
         // Настройки
@@ -378,7 +379,7 @@ const translations = {
         'workspace.invite': 'Пригласить участника',
         'workspace.inviteText': 'Поделитесь ссылкой с человеком, которого хотите пригласить',
         'workspace.create': 'Создать новое пространство',
-        'workspace.createNew': 'Новое пространство',
+        'workspace.createNew': 'Создать',
         'workspace.edit': 'Редактировать пространство',
         'workspace.name': 'Название пространства',
         'workspace.created': 'Пространство создано!',

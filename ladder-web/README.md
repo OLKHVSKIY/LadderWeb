@@ -2,6 +2,40 @@
 
 Веб-приложение для управления задачами с интеграцией Telegram бота и AI декомпозицией задач.
 
+## ⚡ Быстрый запуск
+
+```bash
+# 1. Установите Poetry
+curl -sSL https://install.python-poetry.org | python3 -
+
+# 2. Клонируйте проект
+git clone https://github.com/OLKHVSKIY/LadderWeb.git
+cd LadderWeb/ladder-web
+
+# 3. Установите зависимости
+cd backend && poetry install && cd ..
+
+# 4. Создайте .env файл
+echo "YANDEX_GPT_API_KEY=ваш_ключ" > .env
+echo "YANDEX_GPT_FOLDER_ID=ваш_folder_id" >> .env
+
+# 5. Запустите все сервисы одной командой:
+poetry run python run.py
+# или
+./run.py
+# или
+./run.sh
+
+# Все сервисы запустятся в одном терминале:
+# - Backend API: http://localhost:8000
+# - Frontend: http://localhost:3000/public/
+# - Yandex GPT Proxy: http://localhost:8001
+#
+# Для остановки нажмите Ctrl+C - все сервисы остановятся автоматически
+```
+
+📖 **Подробная инструкция:** См. [QUICKSTART.md](QUICKSTART.md)
+
 ## 🚀 Возможности
 
 - ✅ Управление задачами (создание, редактирование, удаление)
@@ -28,9 +62,60 @@ ladder-web/
 ### Требования
 
 - Python 3.10+
-- PostgreSQL 15+
+- Poetry (для управления зависимостями)
+- PostgreSQL 15+ (опционально, для полного функционала)
 - Redis (опционально)
-- Node.js (для фронтенда, опционально)
+
+### Быстрый старт с Poetry
+
+```bash
+# 1. Клонировать репозиторий
+git clone https://github.com/OLKHVSKIY/LadderWeb.git
+cd LadderWeb/ladder-web
+
+# 2. Установить Poetry (если еще не установлен)
+# macOS/Linux:
+curl -sSL https://install.python-poetry.org | python3 -
+# Windows:
+# (Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -
+
+# 3. Установить зависимости backend
+cd backend
+poetry install
+
+# 4. Создать файл .env в корне ladder-web
+cd ..
+cp .env.example .env  # или создайте вручную
+# Добавьте в .env:
+# YANDEX_GPT_API_KEY=ваш_ключ
+# YANDEX_GPT_FOLDER_ID=ваш_folder_id
+
+# 5. Запустить все сервисы
+# В первом терминале - Backend API:
+cd backend
+poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Во втором терминале - Yandex GPT Proxy:
+cd ..
+poetry run python yandex-gpt-proxy.py
+
+# В третьем терминале - Frontend сервер:
+poetry run python server.py
+```
+
+**Или используйте готовые команды:**
+
+```bash
+# Backend API
+cd backend
+poetry run start
+
+# Frontend (из корня ladder-web)
+poetry run python server.py
+
+# Yandex GPT Proxy (из корня ladder-web)
+poetry run python yandex-gpt-proxy.py
+```
 
 ### Быстрый старт с Docker
 
@@ -50,7 +135,40 @@ docker-compose up -d
 docker-compose exec backend alembic upgrade head
 ```
 
-### Локальная установка
+### Локальная установка (с Poetry - рекомендуется)
+
+```bash
+# 1. Установить Poetry (если еще не установлен)
+curl -sSL https://install.python-poetry.org | python3 -
+
+# 2. Установить зависимости
+cd backend
+poetry install
+
+# 3. Создать .env файл в корне ladder-web
+cd ..
+cp .env.example .env
+# Отредактировать .env и добавить ключи Yandex GPT
+
+# 4. Запустить сервисы (в разных терминалах):
+
+# Backend API:
+cd backend
+poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+# Yandex GPT Proxy (из корня ladder-web):
+poetry run python yandex-gpt-proxy.py
+
+# Frontend (из корня ladder-web):
+poetry run python server.py
+```
+
+**Или используйте готовый скрипт:**
+```bash
+./start.sh  # Покажет инструкции по запуску
+```
+
+### Локальная установка (без Poetry)
 
 #### Backend
 
@@ -78,12 +196,10 @@ uvicorn app.main:app --reload
 #### Frontend
 
 ```bash
-cd frontend
-
 # Простой HTTP сервер (для разработки)
-python -m http.server 8080 --directory public
-
-# Или использовать любой другой статический сервер
+python server.py
+# Или
+python server.py  # Запускает на порту 3000
 ```
 
 ## 🔧 Конфигурация

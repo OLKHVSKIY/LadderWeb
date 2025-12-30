@@ -10,6 +10,11 @@ help:
 	@echo "  make clean      - Очистить временные файлы"
 
 install:
+	@echo "Установка зависимостей через Poetry..."
+	cd backend && poetry install
+	@echo "✅ Зависимости установлены!"
+
+install-pip:
 	cd backend && pip install -r requirements.txt
 	cd backend && pip install -r requirements-dev.txt
 	cd frontend && npm install
@@ -19,6 +24,12 @@ dev:
 	@echo "Backend: http://localhost:8000"
 	@echo "Frontend: http://localhost:3000"
 	@echo "Nginx: http://localhost"
+
+dev-local:
+	@echo "Запуск локально (требует 3 терминала):"
+	@echo "Терминал 1: cd backend && poetry run uvicorn app.main:app --reload"
+	@echo "Терминал 2: poetry run python yandex-gpt-proxy.py"
+	@echo "Терминал 3: poetry run python server.py"
 
 test:
 	cd backend && pytest

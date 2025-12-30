@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "ladder-web"
+version = "1.0.0"
+description = "Веб-таскер Ladder - Frontend и вспомогательные сервисы"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+[tool.poetry.scripts]
+frontend = "python server.py"
+proxy = "python yandex-gpt-proxy.py"
+start = "python run.py"
+run = "python run.py"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

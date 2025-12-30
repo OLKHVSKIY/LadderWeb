@@ -587,7 +587,6 @@ body.calendar-open .bottom-navigation {
 /* Стили для ссылок навигации */
 a.nav-item {
     text-decoration: none;
-    color: inherit;
     pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
     position: relative;
     z-index: 10;
@@ -602,6 +601,14 @@ a.nav-item img,
 a.nav-item .nav-icon,
 a.nav-item .nav-label {
     pointer-events: none; /* Клики проходят через изображения и текст к ссылке */
+}
+
+/* Явные размеры для изображений в навигации */
+a.nav-item img,
+.nav-item img,
+img.nav-icon {
+    width: 22px !important;
+    height: 22px !important;
 }
 
 /* Специальные классы для позиционирования */
@@ -654,6 +661,7 @@ a.nav-item .nav-label {
 
 .nav-item.active .nav-label {
     color: #000000;
+    font-weight: 500;
 }
 
 .nav-item.active::before {
@@ -677,7 +685,7 @@ a.nav-item .nav-label {
 
 .nav-label {
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 400;
     transition: all 0.3s ease;
     white-space: nowrap;
 }
@@ -1194,18 +1202,7 @@ body.sidebar-open .main-header .burger-menu,
 
 .nav-item.active .nav-label {
     color: #000000;
-}
-
-
-.nav-icon {
-    width: 24px;
-    height: 24px;
-}
-
-.nav-label {
-    font-size: 12px;
     font-weight: 500;
-    color: #878585f8;
 }
 
 .nav-add-btn {

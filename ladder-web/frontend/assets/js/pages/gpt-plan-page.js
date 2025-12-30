@@ -111,6 +111,29 @@ function setupInputScrollHandlers() {
     // Сохраняем исходную позицию прокрутки для каждого поля
     const originalScrollPositions = new Map();
     
+    // Функция для прокрутки к полю ввода
+    const scrollToInput = (inputElement) => {
+        const rect = inputElement.getBoundingClientRect();
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const viewportHeight = window.innerHeight;
+        
+        // Рассчитываем позицию с учетом отступа от верха и высоты навигации снизу
+        const bottomNavHeight = 100; // Высота нижней навигации + отступ
+        const topOffset = 80; // Отступ от верха (хедер)
+        const inputTop = rect.top;
+        const inputBottom = rect.bottom;
+        const availableHeight = viewportHeight - bottomNavHeight - topOffset;
+        
+        // Если поле ввода находится слишком низко или перекрывается навигацией/хедером
+        if (inputBottom > availableHeight || inputTop < topOffset) {
+            const targetPosition = scrollTop + inputTop - topOffset;
+            window.scrollTo({
+                top: Math.max(0, targetPosition),
+                behavior: 'smooth'
+            });
+        }
+    };
+    
     allInputs.forEach(input => {
         // Сохраняем исходную позицию прокрутки при фокусе
         const handleFocus = (e) => {
@@ -120,42 +143,18 @@ function setupInputScrollHandlers() {
             // Сохраняем исходную позицию
             originalScrollPositions.set(inputElement, currentScrollTop);
             
-            // Прокручиваем сразу, затем еще раз после небольшой задержки (когда клавиатура откроется)
+            // Прокручиваем сразу
+            scrollToInput(inputElement);
+            
+            // Прокручиваем еще раз после небольшой задержки (когда клавиатура откроется)
             setTimeout(() => {
-                const rect = inputElement.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const viewportHeight = window.innerHeight;
-                
-                // Рассчитываем позицию с учетом отступа 40px от верха и высоты навигации снизу
-                const bottomNavHeight = 80; // Примерная высота нижней навигации
-                const topOffset = 40;
-                const inputBottom = rect.bottom;
-                const availableHeight = viewportHeight - bottomNavHeight - topOffset;
-                
-                // Если поле ввода находится слишком низко или перекрывается навигацией
-                if (inputBottom > availableHeight || rect.top < topOffset) {
-                    const targetPosition = scrollTop + rect.top - topOffset;
-                    window.scrollTo({
-                        top: Math.max(0, targetPosition),
-                        behavior: 'smooth'
-                    });
-                }
-                
-                // Дополнительная проверка после открытия клавиатуры
-                setTimeout(() => {
-                    const newRect = inputElement.getBoundingClientRect();
-                    const newViewportHeight = window.innerHeight;
-                    const newAvailableHeight = newViewportHeight - bottomNavHeight - topOffset;
-                    
-                    if (newRect.bottom > newAvailableHeight || newRect.top < topOffset) {
-                        const newScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        window.scrollTo({
-                            top: newScrollTop + newRect.top - topOffset,
-                            behavior: 'smooth'
-                        });
-                    }
-                }, 300);
-            }, 100);
+                scrollToInput(inputElement);
+            }, 300);
+            
+            // Дополнительная проверка после полного открытия клавиатуры
+            setTimeout(() => {
+                scrollToInput(inputElement);
+            }, 600);
         };
         
         // Возвращаем исходную позицию при потере фокуса
@@ -179,6 +178,11 @@ function setupInputScrollHandlers() {
         input.addEventListener('focus', handleFocus);
         input.addEventListener('touchstart', handleFocus);
         input.addEventListener('blur', handleBlur);
+        
+        // Для мобильных устройств также обрабатываем событие при клике
+        if ('ontouchstart' in window) {
+            input.addEventListener('click', handleFocus);
+        }
     });
 }
 

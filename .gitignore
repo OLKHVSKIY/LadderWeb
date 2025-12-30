@@ -2,6 +2,8 @@
 .env
 .env.local
 .env.*.local
+ladder-web/.env
+**/.env
 
 # Python
 __pycache__/
@@ -30,6 +32,11 @@ venv/
 ENV/
 env/
 venv.bak/
+.venv/
+
+# Poetry
+poetry.lock
+# pyproject.toml - НЕ игнорируем, он нужен в репозитории
 
 # IDE
 .vscode/
@@ -49,6 +56,7 @@ Thumbs.db
 # Logs
 *.log
 logs/
+ladder-web/logs/
 
 # Backend specific
 backend/instance/

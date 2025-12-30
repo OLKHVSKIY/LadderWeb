@@ -1135,7 +1135,6 @@ body.plan-page .main-header #burger-menu[style*="display:none"] {
 /* Стили для ссылок навигации */
 a.nav-item {
     text-decoration: none;
-    color: inherit;
     pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
     position: relative;
     z-index: 10;
@@ -1202,6 +1201,7 @@ a.nav-item .nav-label {
 
 .nav-item.active .nav-label {
     color: #000000;
+    font-weight: 500;
 }
 
 .nav-item.active::before {
@@ -1225,7 +1225,7 @@ a.nav-item .nav-label {
 
 .nav-label {
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 400;
     transition: all 0.3s ease;
     white-space: nowrap;
 }

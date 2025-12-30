@@ -8,7 +8,7 @@ import os
 from urllib.parse import unquote
 from pathlib import Path
 
-PORT = 8080
+PORT = 3000
 
 # Определяем корневую директорию проекта (где находится server.py)
 BASE_DIR = Path(__file__).parent.absolute()
@@ -97,7 +97,8 @@ if __name__ == "__main__":
         allow_reuse_address = True
     
     with ReusableTCPServer(("", PORT), CustomHandler) as httpd:
-        print(f"Сервер запущен на http://localhost:{PORT}")
-        print(f"Доступ к файлам: http://localhost:{PORT}/public/")
+        print(f"🚀 Frontend сервер запущен на http://localhost:{PORT}")
+        print(f"📁 Доступ к файлам: http://localhost:{PORT}/public/")
+        print(f"🏠 Главная страница: http://localhost:{PORT}/public/index.html")
         httpd.serve_forever()
 

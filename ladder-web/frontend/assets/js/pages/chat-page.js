@@ -1411,13 +1411,26 @@ function initChatPage() {
     
     // Сохранение сообщения в историю
     function saveChatMessage(role, text) {
-        const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
-        history.push({ role, text, timestamp: Date.now() });
-        // Храним последние 100 сообщений
-        if (history.length > 100) {
-            history.shift();
+        try {
+            if (!text || typeof text !== 'string') {
+                console.warn('saveChatMessage: invalid text parameter:', text);
+                return;
+            }
+            
+            const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
+            const message = { role, text, timestamp: Date.now() };
+            history.push(message);
+            
+            // Храним последние 100 сообщений
+            if (history.length > 100) {
+                history.shift();
+            }
+            
+            localStorage.setItem('chat_history', JSON.stringify(history));
+            console.log(`Chat message saved: ${role} (${text.substring(0, 50)}...), total messages: ${history.length}`);
+        } catch (error) {
+            console.error('Error saving chat message:', error);
         }
-        localStorage.setItem('chat_history', JSON.stringify(history));
     }
     
     // Загрузка истории чата
@@ -1433,25 +1446,55 @@ function initChatPage() {
         chatMessages.innerHTML = '';
         
         try {
-            const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
-            console.log('Loading chat history:', history.length, 'messages');
+            const historyStr = localStorage.getItem('chat_history');
+            console.log('Raw history from localStorage:', historyStr ? historyStr.substring(0, 100) + '...' : 'null');
             
-            if (history.length === 0) {
-                console.log('No chat history found');
+            if (!historyStr) {
+                console.log('No chat history found in localStorage');
                 return;
             }
             
+            const history = JSON.parse(historyStr);
+            console.log('Parsed chat history:', history.length, 'messages');
+            console.log('History structure:', history.length > 0 ? Object.keys(history[0]) : 'empty');
+            
+            if (!Array.isArray(history)) {
+                console.error('Chat history is not an array:', typeof history);
+                return;
+            }
+            
+            if (history.length === 0) {
+                console.log('No chat history found (empty array)');
+                return;
+            }
+            
+            let loadedCount = 0;
             history.forEach((msg, index) => {
-                console.log(`Loading message ${index + 1}:`, msg.role, msg.text.substring(0, 50));
+                // Проверяем структуру сообщения
+                if (!msg || typeof msg !== 'object') {
+                    console.warn(`Invalid message at index ${index}:`, msg);
+                    return;
+                }
+                
+                // Поддерживаем оба формата: msg.text и msg.content
+                const messageText = msg.text || msg.content || '';
+                if (!messageText) {
+                    console.warn(`Message at index ${index} has no text/content:`, msg);
+                    return;
+                }
+                
+                const role = msg.role || 'user';
+                console.log(`Loading message ${index + 1}:`, role, messageText.substring(0, 50));
+                
                 // Добавляем сообщение напрямую, без сохранения в историю (чтобы избежать дублирования)
                 const messageDiv = document.createElement('div');
-                messageDiv.className = `chat-message ${msg.role}`;
+                messageDiv.className = `chat-message ${role}`;
                 
                 const avatar = document.createElement('div');
                 avatar.className = 'chat-message-avatar';
                 // Проверяем наличие аватара пользователя
                 const userAvatar = localStorage.getItem('user_avatar');
-                if (msg.role === 'user' && userAvatar) {
+                if (role === 'user' && userAvatar) {
                     avatar.style.background = 'transparent';
                     avatar.style.padding = '0';
                     const avatarImg = document.createElement('img');
@@ -1462,20 +1505,21 @@ function initChatPage() {
                     avatarImg.style.objectFit = 'cover';
                     avatar.appendChild(avatarImg);
                 } else {
-                    avatar.textContent = msg.role === 'user' ? 'Я' : 'AI';
+                    avatar.textContent = role === 'user' ? 'Я' : 'AI';
                 }
                 
                 const content = document.createElement('div');
                 content.className = 'chat-message-content';
-                content.textContent = msg.text;
+                content.textContent = messageText;
                 
                 messageDiv.appendChild(avatar);
                 messageDiv.appendChild(content);
                 
                 chatMessages.appendChild(messageDiv);
+                loadedCount++;
             });
             
-            console.log('Chat history loaded successfully');
+            console.log(`Chat history loaded successfully: ${loadedCount} messages`);
             
             // Прокручиваем вниз после загрузки
             setTimeout(() => {
@@ -1483,6 +1527,15 @@ function initChatPage() {
             }, 100);
         } catch (error) {
             console.error('Error loading chat history:', error);
+            console.error('Error stack:', error.stack);
+            // Пробуем очистить поврежденные данные
+            try {
+                const corrupted = localStorage.getItem('chat_history');
+                console.warn('Attempting to clear corrupted chat history');
+                localStorage.removeItem('chat_history');
+            } catch (clearError) {
+                console.error('Failed to clear corrupted chat history:', clearError);
+            }
         }
     }
     
