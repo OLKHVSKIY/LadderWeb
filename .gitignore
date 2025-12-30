@@ -1,4 +1,69 @@
-*
-!ladder-web/
-!web-ladder/
-!.gitignore
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+venv.bak/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Backend specific
+backend/instance/
+backend/__pycache__/
+
+# Frontend specific
+frontend/node_modules/
+frontend/.sass-cache/
+frontend/.cache/
+frontend/.parcel-cache/
+frontend/dist/
+
+# Docker
+docker-compose.override.yml
+
+# Temp files
+*.tmp
+*.temp
