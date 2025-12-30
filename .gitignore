@@ -5,6 +5,8 @@
 ladder-web/.env
 **/.env
 .env.*
+ladder-web/.env
+**/.env
 
 # Python
 __pycache__/
@@ -65,18 +67,6 @@ Thumbs.db
 *.log
 logs/
 ladder-web/logs/
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-.tox/
-
-# Node
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
 
 # Backend specific
 backend/instance/
