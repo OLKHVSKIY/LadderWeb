@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ladder - Заметки</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/tasks.css">
+    <link rel="stylesheet" href="/assets/css/pages/notes.css">
+    <link rel="stylesheet" href="/assets/css/components/custom-modal.css">
+    <link rel="stylesheet" href="/assets/css/animations/transitions.css">
+    <style>
+        /* Контент показываем сразу, переводы применятся автоматически */
+        /* body:not(.i18n-ready) .main-content {
+            visibility: hidden;
+        } */
+    </style>
+    <script>
+        // Применяем язык ДО загрузки страницы
+        (function() {
+            const lang = localStorage.getItem('language') || 'ru';
+            document.documentElement.lang = lang;
+        })();
+    </script>
+</head>
+<body>
+    <!-- Сайдбар -->
+    <div class="sidebar-overlay" id="sidebar-overlay">
+        <div class="sidebar-marquee">
+            <div class="marquee-content">
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+            </div>
+        </div>
+        <div class="sidebar-content">
+            <a href="/public/chat.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.chat">Чат с AI</span>
+            </a>
+            <a href="/public/tasks.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.tasks">Задачи</span>
+            </a>
+            <button class="sidebar-item" data-action="info">
+                <span class="sidebar-item-text" data-i18n="sidebar.info">Информация</span>
+            </button>
+            <button class="sidebar-item" data-action="support">
+                <span class="sidebar-item-text" data-i18n="sidebar.support">Поддержка</span>
+            </button>
+            <button class="sidebar-item" data-action="suggest">
+                <span class="sidebar-item-text" data-i18n="sidebar.suggest">Предложить идею</span>
+            </button>
+            <button class="sidebar-item" data-action="about">
+                <span class="sidebar-item-text" data-i18n="sidebar.about">О нас</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Верхний хедер -->
+    <header class="main-header">
+        <button class="burger-menu" id="burger-menu" data-i18n="[aria-label]common.menu" aria-label="Меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+            </svg>
+        </button>
+        <h1 class="page-title" data-i18n="notes.title">Заметки</h1>
+        <div style="display: flex; gap: 4px; align-items: center;">
+            <button class="settings-btn" id="change-btn" aria-label="Изменить" style="margin-right: 15px;">
+                <img src="/assets/images/icons/change.png" alt="Изменить" width="24" height="24">
+            </button>
+            <button class="settings-btn" id="collaborate-btn" aria-label="Совместная работа">
+                <img src="/assets/images/icons/add-user.png" alt="Совместная работа" width="24" height="24">
+            </button>
+        </div>
+    </header>
+
+    <!-- Название пространства под хедером -->
+    <div class="workspace-name-bar" id="workspace-name-bar">
+        <span class="workspace-name-text" id="workspace-name-text">Личное пространство</span>
+    </div>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <!-- Контент заметок будет здесь -->
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="bottom-navigation">
+        <!-- Задачи (самая левая) -->
+        <a href="/public/tasks.html" class="nav-item">
+            <img src="/assets/images/icons/checklist.png" alt="Задачи" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.tasks">Задачи</span>
+        </a>
+        
+        <!-- GPT (слева от центра) -->
+        <button class="nav-item" id="gpt-menu-btn" type="button">
+            <img src="/assets/images/icons/ai.png" alt="GPT" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.gpt">GPT</span>
+        </button>
+        
+        <!-- Круг с плюсом (в центре) -->
+        <button class="nav-item nav-add-btn" id="add-task-btn" aria-label="Добавить задачу">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+        
+        <!-- План (справа от центра) -->
+        <a href="/public/plan.html" class="nav-item">
+            <img src="/assets/images/icons/draft.png" alt="План" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.plan">План</span>
+        </a>
+        
+        <!-- Заметки (самая правая) -->
+        <a href="/public/notes.html" class="nav-item active">
+            <img src="/assets/images/icons/notes.png" alt="Заметки" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.notes">Заметки</span>
+        </a>
+    </nav>
+
+    <!-- Шторка управления пространствами -->
+    <div class="workspaces-panel" id="workspaces-panel">
+        <div class="workspaces-panel-content">
+            <div class="workspaces-panel-header">
+                <h2 data-i18n="workspace.title">Пространства</h2>
+                <button class="workspaces-close-btn" id="workspaces-close-btn" aria-label="Закрыть">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="workspaces-panel-body">
+                <button class="workspace-create-btn" id="workspace-create-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    <span data-i18n="workspace.createNew">Новое пространство</span>
+                </button>
+                <div class="workspaces-list" id="workspaces-list">
+                    <!-- Список пространств будет здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно создания пространства -->
+    <div class="workspace-create-modal" id="workspace-create-modal">
+        <div class="workspace-create-content">
+            <h3 data-i18n="workspace.create">Создать новое пространство</h3>
+            <input type="text" id="workspace-name-input" data-i18n-placeholder="workspace.name" placeholder="Название пространства" maxlength="50">
+            <div class="workspace-create-actions">
+                <button class="workspace-cancel-btn" id="workspace-cancel-btn" data-i18n="modal.cancel">Отмена</button>
+                <button class="workspace-confirm-btn" id="workspace-confirm-btn" data-i18n="workspace.createNew">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно редактирования пространства -->
+    <div class="workspace-edit-modal" id="workspace-edit-modal">
+        <div class="workspace-edit-content">
+            <h3 data-i18n="workspace.edit">Редактировать пространство</h3>
+            <input type="text" id="workspace-edit-input" data-i18n-placeholder="workspace.name" placeholder="Название пространства" maxlength="50">
+            <div class="workspace-edit-actions">
+                <button class="workspace-cancel-btn" id="workspace-edit-cancel-btn" data-i18n="modal.cancel">Отмена</button>
+                <button class="workspace-confirm-btn" id="workspace-edit-confirm-btn" data-i18n="common.save">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно приглашения -->
+    <div class="workspace-invite-modal" id="workspace-invite-modal">
+        <div class="workspace-invite-content">
+            <div class="workspace-invite-header">
+                <h3 data-i18n="workspace.invite">Пригласить участника</h3>
+                <button class="workspace-invite-close" id="workspace-invite-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="workspace-invite-body">
+                <p class="workspace-invite-text" data-i18n="workspace.inviteText">Поделитесь ссылкой с человеком, которого хотите пригласить</p>
+                <div class="workspace-invite-link-container">
+                    <input type="text" id="workspace-invite-link-input" readonly class="workspace-invite-link-input">
+                    <button class="workspace-invite-copy-btn" id="workspace-invite-copy-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно участников пространства -->
+    <div class="workspace-members-modal" id="workspace-members-modal">
+        <div class="workspace-members-content">
+            <div class="workspace-members-header">
+                <h3 id="workspace-members-title" data-i18n="workspace.members">Участники</h3>
+                <button class="workspace-members-close" id="workspace-members-close">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="workspace-members-list" id="workspace-members-list">
+                <!-- Список участников будет здесь -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно выбора AI функции -->
+    <div class="ai-menu-overlay" id="ai-menu-overlay">
+        <div class="ai-menu-modal">
+            <div class="ai-menu-header">
+                <img src="/assets/images/icons/ai.png" alt="AI" class="ai-menu-icon">
+                <h2 data-i18n="ai.menu.title">Выберите тип проекта</h2>
+                <p class="ai-menu-subtitle" data-i18n="ai.menu.subtitle">Создайте обычный проект или используйте ИИ для автоматического планирования</p>
+            </div>
+            <div class="ai-menu-options">
+                <button class="ai-menu-option" id="ai-chat-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.chat.title">Чат с AI</h3>
+                        <p data-i18n="ai.menu.chat.description">Общайтесь с AI и получайте помощь</p>
+                    </div>
+                </button>
+                <button class="ai-menu-option" id="ai-plan-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.plan.title">AI создание плана</h3>
+                        <p data-i18n="ai.menu.plan.description">AI создаст план автоматически</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script type="module" src="/assets/js/modules/i18n.js"></script>
+    <script type="module" src="/assets/js/modules/custom-modal.js"></script>
+    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module" src="/assets/js/pages/notes-page.js"></script>
+</body>
+</html>
+

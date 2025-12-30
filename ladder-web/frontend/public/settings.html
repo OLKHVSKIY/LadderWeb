@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ladder - Настройки</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/settings.css">
+    <style>
+        /* Скрываем контент до применения переводов */
+        /* Контент показываем сразу, переводы применятся автоматически */
+        /* body:not(.i18n-ready) .main-content {
+            visibility: hidden;
+        } */
+    </style>
+    <script>
+        // Применяем язык ДО загрузки страницы
+        (function() {
+            const lang = localStorage.getItem('language') || 'ru';
+            document.documentElement.lang = lang;
+        })();
+    </script>
+</head>
+<body>
+    <!-- Верхний хедер -->
+    <header class="main-header">
+        <button class="back-btn" id="back-btn" data-i18n="[aria-label]common.back" aria-label="Назад">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </button>
+        <h1 class="page-title" data-i18n="settings.title">Настройки</h1>
+        <div style="width: 24px;"></div>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <!-- Профиль -->
+        <div class="settings-section">
+            <div class="settings-list">
+                <div class="avatar-section">
+                    <div class="avatar-wrapper">
+                        <img src="/assets/images/icons/christmas-wreath.png" alt="Wreath" class="avatar-wreath-image">
+                        <div class="avatar-container">
+                            <div class="avatar-placeholder">👤</div>
+                        </div>
+                    </div>
+                    <button class="avatar-change-btn" id="avatar-change-btn" data-i18n="settings.changePhoto">Изменить фото</button>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.name">Имя</span>
+                        <span class="label-description" data-i18n="settings.nameDesc">Как к вам <br> обращаться</span>
+                    </div>
+                    <input type="text" class="setting-input" id="user-name" data-i18n-placeholder="settings.enterName" placeholder="Введите имя" style="max-width: 220px;">
+                </div>
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.email">Email</span>
+                        <span class="label-description" data-i18n="settings.emailDesc">Для уведомлений</span>
+                    </div>
+                    <input type="email" class="setting-input" id="user-email" placeholder="email@example.com" style="max-width: 220px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Подписка -->
+        <div class="settings-section">
+            <div class="settings-section-title" data-i18n="settings.subscription">ПОДПИСКА</div>
+            <div class="subscription-container">
+                <div class="current-plan-row">
+                    <span class="current-plan-label" data-i18n="settings.currentPlan">Текущий тариф</span>
+                    <button class="current-plan-badge" data-i18n="settings.free">Бесплатный</button>
+                </div>
+                <div class="subscription-banner">
+                    <div class="sparkles-overlay"></div>
+                    <div class="subscription-banner-content">
+                        <div class="subscription-banner-left">
+                            <div class="subscription-title-row">
+                                <span class="subscription-title">Ladder</span>
+                                <span class="subscription-pro-badge" data-i18n="settings.pro">Pro</span>
+                            </div>
+                            <p class="subscription-subtitle" data-i18n="settings.moreFeatures">Больше возможностей с Pro</p>
+                        </div>
+                        <button class="subscription-upgrade-btn" data-i18n="settings.upgrade">Обновить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Внешний вид -->
+        <div class="settings-section">
+            <div class="settings-section-title" data-i18n="settings.appearance">Внешний вид</div>
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.theme">Тема</span>
+                        <span class="label-description" data-i18n="settings.themeDesc">Светлая или темная</span>
+                    </div>
+                    <select class="setting-select" id="theme-select">
+                        <option value="light" data-i18n="settings.themeLight">Светлая</option>
+                        <option value="dark" data-i18n="settings.themeDark">Темная</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.language">Язык</span>
+                        <span class="label-description" data-i18n="settings.languageDesc">Язык интерфейса</span>
+                    </div>
+                    <select class="setting-select" id="language-select">
+                        <option value="ru">Русский</option>
+                        <option value="en">English</option>
+                        <option value="es">Español</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Уведомления -->
+        <div class="settings-section">
+            <div class="settings-section-title" data-i18n="settings.notifications">Уведомления</div>
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.notifications">Уведомления</span>
+                        <span class="label-description" data-i18n="settings.notificationsDesc">Получать уведомления о задачах</span>
+                    </div>
+                    <div class="setting-toggle" id="notifications-toggle"></div>
+                </div>
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.emailNotifications">Email уведомления</span>
+                        <span class="label-description" data-i18n="settings.emailNotificationsDesc">Получать уведомления на email</span>
+                    </div>
+                    <div class="setting-toggle" id="email-notifications-toggle"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- О приложении -->
+        <div class="settings-section">
+            <div class="settings-section-title" data-i18n="settings.about">О приложении</div>
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-item-label">
+                        <span class="label-text" data-i18n="settings.version">Версия</span>
+                        <span class="label-description">1.0.0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="save-button" id="save-settings-btn" data-i18n="settings.save">Сохранить изменения</button>
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="bottom-navigation">
+        <a href="/public/tasks.html" class="nav-item nav-left active">
+            <img src="/assets/images/icons/checklist.png" alt="Задачи" class="nav-icon" width="24" height="24">
+            <span class="nav-label">Задачи</span>
+        </a>
+        <button class="nav-item nav-right" id="gpt-menu-btn" type="button">
+            <img src="/assets/images/icons/ai.png" alt="GPT" class="nav-icon" width="24" height="24">
+            <span class="nav-label">GPT</span>
+        </button>
+        <button class="nav-item nav-add-btn" id="add-task-btn" aria-label="Добавить задачу">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+        <a href="/public/plan.html" class="nav-item">
+            <img src="/assets/images/icons/draft.png" alt="План" class="nav-icon" width="24" height="24">
+            <span class="nav-label">План</span>
+        </a>
+        <a href="/public/notes.html" class="nav-item">
+            <img src="/assets/images/icons/notes.png" alt="Заметки" class="nav-icon" width="24" height="24">
+            <span class="nav-label">Заметки</span>
+        </a>
+    </nav>
+
+    <!-- Модальное окно выбора AI функции -->
+    <div class="ai-menu-overlay" id="ai-menu-overlay">
+        <div class="ai-menu-modal">
+            <div class="ai-menu-header">
+                <img src="/assets/images/icons/ai.png" alt="AI" class="ai-menu-icon">
+                <h2 data-i18n="ai.menu.title">Выберите тип проекта</h2>
+                <p class="ai-menu-subtitle" data-i18n="ai.menu.subtitle">Создайте обычный проект или используйте ИИ для автоматического планирования</p>
+            </div>
+            <div class="ai-menu-options">
+                <button class="ai-menu-option" id="ai-chat-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.chat.title">Чат с AI</h3>
+                        <p data-i18n="ai.menu.chat.description">Общайтесь с AI и получайте помощь</p>
+                    </div>
+                </button>
+                <button class="ai-menu-option" id="ai-plan-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.plan.title">AI создание плана</h3>
+                        <p data-i18n="ai.menu.plan.description">AI создаст план автоматически</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/vendor/dayjs.min.js"></script>
+    <script type="module" src="/assets/js/modules/i18n.js"></script>
+    <script src="/assets/js/pages/settings-page.js"></script>
+</body>
+</html>
+

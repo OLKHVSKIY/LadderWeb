@@ -1,0 +1,565 @@
+/* GPT Plan Page Styles */
+
+body.gpt-plan-page {
+    background: #FFFFFF;
+}
+
+body.gpt-plan-page .header-divider {
+    display: none !important;
+}
+
+/* Нижняя навигация - ИСПРАВЛЕННАЯ */
+.bottom-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    height: 65px;
+    transform: translateX(-50%);
+    background: #FFFFFF;
+    border: 1px solid #87858539;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 8px 25px;
+    z-index: 2000 !important; /* Выше сайдбара (3000 когда активен, но мы ниже), но достаточно высокий */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 14px;
+    max-width: calc(100vw - 40px);
+    width: auto;
+    pointer-events: auto !important; /* Явно разрешаем клики всегда */
+}
+
+/* Стили для ссылок навигации */
+a.nav-item {
+    text-decoration: none;
+    color: inherit;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Убеждаемся, что изображения и текст внутри ссылок не блокируют клики */
+a.nav-item img,
+a.nav-item .nav-icon,
+a.nav-item .nav-label {
+    pointer-events: none; /* Клики проходят через изображения и текст к ссылке */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px 10px;
+    color: #999999;
+    text-decoration: none;
+    position: relative;
+    z-index: 10;
+    pointer-events: auto !important;
+}
+
+.nav-item.nav-left {
+    align-items: center;
+    order: 1; /* Первая кнопка слева */
+}
+
+.gpt-plan-page .main-content {
+    padding: 20px 10px 100px 10px;
+    margin-top: 60px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gpt-screen {
+    animation: fadeIn 0.4s ease;
+}
+
+.gpt-screen-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Интро с описанием */
+.gpt-intro {
+    text-align: center;
+}
+
+.gpt-ai-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.9;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+}
+
+.gpt-description {
+    font-size: 16px;
+    color: #666666;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+}
+
+/* Индикатор прогресса */
+.gpt-progress-indicator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 90px;
+}
+
+.progress-step {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    background: #F5F5F5;
+    color: #999999;
+    border: 2px solid #E5E5E5;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.progress-step.active {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+    transform: scale(1.1);
+}
+
+.progress-step.completed {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+}
+
+.progress-step.completed::after {
+    display: none;
+}
+
+/* Поля формы */
+.gpt-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.gpt-form-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.gpt-input,
+.gpt-textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Onest', sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.gpt-textarea {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+}
+
+.gpt-input:focus,
+.gpt-textarea:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.gpt-input::placeholder,
+.gpt-textarea::placeholder {
+    color: #999999;
+}
+
+/* Селектор выходных дней */
+.weekend-days-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.weekend-day-btn {
+    flex: 1;
+    padding: 12px 8px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background: #FFFFFF;
+    color: #000000;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Onest', sans-serif;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    min-width: 0;
+}
+
+.weekend-day-btn:hover {
+    border-color: #000000;
+    background: #F9F9F9;
+}
+
+.weekend-day-btn.active {
+    background: #000000;
+    color: #FFFFFF;
+    border-color: #000000;
+}
+
+/* Кнопки */
+.gpt-continue-btn,
+.gpt-generate-btn {
+    width: 100%;
+    padding: 16px 24px;
+    border: none;
+    border-radius: 17px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Onest', sans-serif;
+    background: #000000;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 13px;
+}
+
+.gpt-continue-btn:hover,
+.gpt-generate-btn:hover {
+    background: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.gpt-continue-btn:active,
+.gpt-generate-btn:active {
+    transform: translateY(0);
+}
+
+.gpt-continue-btn:disabled,
+.gpt-generate-btn:disabled {
+    background: #CCCCCC;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Экран генерации */
+.gpt-generating {
+    text-align: center;
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: stretch;
+    min-height: 60vh;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.gpt-ai-icon-generating {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px auto;
+    opacity: 0.9;
+    animation: pulse 2s infinite;
+    align-self: center;
+}
+
+.gpt-generating-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 32px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Анимация многоточия */
+.gpt-generating-title .dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: 4px;
+}
+
+.gpt-generating-title .dot {
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: #000000;
+    border-radius: 50%;
+    opacity: 0;
+    animation: dotFade 1.4s infinite;
+}
+
+.gpt-generating-title .dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.gpt-generating-title .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.gpt-generating-title .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes dotFade {
+    0%, 60%, 100% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+}
+
+.progress-bar-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+    width: 100%;
+}
+
+.progress-bar {
+    width: 100%;
+    max-width: 100%;
+    height: 8px;
+    background: #F5F5F5;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #000000;
+    border-radius: 4px;
+    transition: width 0.3s ease;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.progress-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666666;
+}
+
+/* Экран результата */
+.gpt-result-header {
+    margin-bottom: 24px;
+}
+
+.gpt-result-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+.gpt-result-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.gpt-action-btn {
+    flex: 1;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 17px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Onest', sans-serif;
+    background: #000000;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.gpt-action-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+.gpt-action-btn.secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000000;
+}
+
+.regenerate-btn-full {
+    width: 100%;
+    flex: none;
+}
+
+.gpt-action-btn:hover {
+    background: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.gpt-action-btn.secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.gpt-result-content {
+    background: #F9F9F9;
+    border-radius: 18px;
+    padding: 10px;
+    margin-top: 20px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+.gpt-date-card {
+    background: #FFFFFF;
+    border-radius: 17px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.gpt-date-header {
+    font-size: 18px;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.gpt-tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.gpt-task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #F5F5F5;
+    border-radius: 8px;
+    border-left: 4px solid #999999;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.gpt-task-item.priority-1 {
+    border-left-color: #DC3545;
+}
+
+.gpt-task-item.priority-2 {
+    border-left-color: #FFC107;
+}
+
+.gpt-task-item.priority-3 {
+    border-left-color: #007BFF;
+}
+
+.gpt-task-text {
+    flex: 1;
+    font-size: 15px;
+    color: #000000;
+    font-weight: 500;
+}
+
+.gpt-task-priority {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin-left: 12px;
+}
+
+.gpt-task-priority img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+
+    .gpt-ai-icon {
+        width: 70px;
+        height: 70px;
+    }
+
+    .progress-step {
+        width: 26px;
+        height: 26px;
+        font-size: 14px;
+    }
+
+    .gpt-description {
+        font-size: 14px;
+    }
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

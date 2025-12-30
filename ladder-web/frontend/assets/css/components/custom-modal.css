@@ -1,0 +1,188 @@
+/* Кастомные модальные окна в черно-белом стиле с красными акцентами */
+
+.custom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 20px;
+}
+
+.custom-modal-overlay.active {
+    opacity: 1;
+}
+
+.custom-modal-content {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 28px 24px 24px 24px;
+    max-width: 340px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.92) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.custom-modal-overlay.active .custom-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.custom-modal-icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.custom-modal-icon-alert {
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal-icon-error {
+    color: #FF3B30;
+    background: rgba(255, 59, 48, 0.15);
+}
+
+.custom-modal-icon-success {
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-modal-icon-confirm {
+    color: #FF3B30;
+    background: rgba(255, 59, 48, 0.15);
+}
+
+.custom-modal-icon svg {
+    width: 32px;
+    height: 32px;
+}
+
+.custom-modal-message {
+    font-size: 17px;
+    font-weight: 400;
+    color: #000000;
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.47;
+    letter-spacing: -0.022em;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.custom-modal-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.custom-modal-btn {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 100px;
+    letter-spacing: -0.022em;
+}
+
+.custom-modal-btn-ok {
+    background: #000000;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.custom-modal-btn-ok:hover {
+    background: #333333;
+    transform: scale(0.98);
+}
+
+.custom-modal-btn-ok:active {
+    transform: scale(0.96);
+    background: #000000;
+}
+
+.custom-modal-btn-confirm {
+    background: #000000;
+    color: #FFFFFF;
+    border: 1px solid #000000;
+}
+
+.custom-modal-btn-confirm:hover {
+    background: #333333;
+    transform: scale(0.98);
+}
+
+.custom-modal-btn-confirm:active {
+    transform: scale(0.96);
+    background: #000000;
+}
+
+.custom-modal-btn-cancel {
+    background: #FFFFFF;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.custom-modal-btn-cancel:hover {
+    background: #F5F5F5;
+    transform: scale(0.98);
+}
+
+.custom-modal-btn-cancel:active {
+    transform: scale(0.96);
+    background: #EEEEEE;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .custom-modal-content {
+        max-width: 90%;
+        padding: 24px 20px 20px 20px;
+    }
+    
+    .custom-modal-icon {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 16px;
+    }
+    
+    .custom-modal-icon svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .custom-modal-message {
+        font-size: 16px;
+        margin-bottom: 22px;
+    }
+    
+    .custom-modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .custom-modal-btn {
+        width: 100%;
+        padding: 13px 20px;
+    }
+}
+

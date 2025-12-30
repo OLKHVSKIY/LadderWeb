@@ -1,0 +1,1820 @@
+/* Стили для страницы заметок */
+
+/* Скрываем header-divider на странице заметок */
+.main-header .header-divider {
+    display: none !important;
+}
+
+/* Заголовок - скроллируется со страницей, белый фон */
+.main-header {
+    position: relative;
+    background: #FFFFFF;
+    color: #000000;
+    padding: 12px 20px;
+    z-index: 100;
+}
+
+.main-header .burger-menu,
+.main-header .burger-menu svg {
+    color: #000000;
+    stroke: #000000;
+}
+
+.main-header .settings-btn {
+    filter: none;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.main-header .settings-btn img {
+    pointer-events: none;
+}
+
+.page-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    margin: 0;
+    pointer-events: none;
+    z-index: 1;
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Overlay для редактора заметок */
+.note-editor-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 4000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.note-editor-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Контейнер редактора заметок */
+.note-editor-container {
+    width: 100%;
+    max-width: 100%;
+    height: 90vh;
+    max-height: 90vh;
+    background: #FFFFFF;
+    border-radius: 20px 20px 0 0;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(100%);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    margin-top: auto;
+}
+
+.note-editor-overlay.active .note-editor-container {
+    transform: translateY(0);
+}
+
+/* Панель инструментов */
+.note-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #F8F8F8;
+    border-bottom: 1px solid #E5E5E5;
+    flex-shrink: 0;
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 12px;
+    border-right: 1px solid #E5E5E5;
+}
+
+.toolbar-group:last-of-type {
+    border-right: none;
+}
+
+.toolbar-actions {
+    margin-left: auto;
+}
+
+.toolbar-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666666;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+}
+
+.toolbar-btn:hover {
+    background: #E5E5E5;
+    color: #000000;
+    transform: scale(1.05);
+}
+
+.toolbar-btn:active {
+    transform: scale(0.95);
+}
+
+.toolbar-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+.toolbar-btn-close {
+    color: #DC3545;
+}
+
+.toolbar-btn-close:hover {
+    background: rgba(220, 53, 69, 0.1);
+    color: #DC3545;
+}
+
+/* Область редактирования */
+.note-editor {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #000000;
+    outline: none;
+    word-wrap: break-word;
+    min-height: 0;
+}
+
+.note-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #999999;
+    pointer-events: none;
+}
+
+/* Стили для форматированного текста */
+.note-editor h1 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 16px 0 12px 0;
+    line-height: 1.3;
+    color: #000000;
+}
+
+.note-editor h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 14px 0 10px 0;
+    line-height: 1.3;
+    color: #000000;
+}
+
+.note-editor p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.note-editor ul,
+.note-editor ol {
+    margin: 8px 0;
+    padding-left: 24px;
+}
+
+.note-editor li {
+    margin: 4px 0;
+    line-height: 1.6;
+}
+
+.note-editor strong {
+    font-weight: 600;
+}
+
+.note-editor em {
+    font-style: italic;
+}
+
+.note-editor u {
+    text-decoration: underline;
+}
+
+/* Ресайзер для изменения высоты */
+.note-resizer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    cursor: ns-resize;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.05));
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    transition: background 0.2s ease;
+    z-index: 10;
+}
+
+.note-resizer:hover {
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+}
+
+.note-resizer::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    background: #CCCCCC;
+    border-radius: 2px;
+    transition: background 0.2s ease;
+}
+
+.note-resizer:hover::after {
+    background: #999999;
+}
+
+/* Скроллбар */
+.note-editor::-webkit-scrollbar {
+    width: 6px;
+}
+
+.note-editor::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.note-editor::-webkit-scrollbar-thumb {
+    background: #CCCCCC;
+    border-radius: 3px;
+}
+
+.note-editor::-webkit-scrollbar-thumb:hover {
+    background: #999999;
+}
+
+/* Анимация появления */
+@keyframes noteEditorAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.note-editor-container.active {
+    animation: noteEditorAppear 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Кнопка прикрепить */
+.note-attach-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    margin: 16px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 17px;
+    font-family: 'Onest', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.note-attach-btn:hover {
+    background: #C82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.note-attach-btn:active {
+    transform: translateY(0);
+}
+
+.note-attach-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+}
+
+/* Стикеры заметок */
+body .main-content {
+    position: relative;
+    min-height: calc(100vh - 160px);
+    padding: 10px 10px 100px 10px; /* Одинаковые отступы слева и справа */
+    margin-top: 0; /* Заголовок теперь скроллируется */
+    max-width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.note-sticker {
+    position: absolute;
+    width: 395px;
+    min-height: 150px;
+    background: #FFEB3B;
+    border-radius: 12px;
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    cursor: grab;
+    transition: transform 0.2s ease;
+    z-index: 1; /* Начальный z-index, будет увеличиваться при клике. Под хедером (z-index хедера 3001) */
+    animation: stickerAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center;
+}
+
+@media (min-width: 769px) {
+    .note-sticker {
+        width: 340px;
+    }
+}
+
+@media (max-width: 768px) {
+    .note-sticker.sticker-image {
+        width: 370px;
+        max-width: 370px;
+    }
+}
+
+.note-sticker.bring-to-front {
+    z-index: 50 !important; /* Поверх других стикеров, но под хедером (3001) */
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease;
+}
+
+@keyframes stickerAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.note-sticker:active {
+    cursor: grabbing;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    transform: scale(1.02);
+}
+
+.sticker-header {
+    padding: 8px 12px;
+    background: rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+    cursor: grab;
+}
+
+.sticker-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.sticker-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.7);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.sticker-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
+}
+
+.sticker-btn:active {
+    transform: scale(0.95);
+}
+
+.sticker-btn svg {
+    width: 16px;
+    height: 16px;
+    stroke: #333333;
+}
+
+.sticker-delete-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+}
+
+.sticker-delete-btn:hover svg {
+    stroke: #DC3545;
+}
+
+/* Стили для замочка */
+.lock-icon {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.lock-icon .lock-open-group,
+.lock-icon .lock-closed-group {
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация закрытия замочка */
+.lock-icon.locked .lock-closed-group {
+    animation: lockClose 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация открытия замочка */
+.lock-icon:not(.locked) .lock-open-group {
+    animation: lockOpen 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes lockClose {
+    0% {
+        transform: scale(0.8) rotate(-5deg);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes lockOpen {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1) rotate(-2deg);
+    }
+    100% {
+        transform: scale(0.8) rotate(5deg);
+        opacity: 0;
+    }
+}
+
+.sticker-lock-btn:hover {
+    background: rgba(33, 150, 243, 0.2);
+}
+
+.sticker-lock-btn:hover svg {
+    stroke: #2196F3;
+}
+
+/* Заблокированный стикер */
+.note-sticker.sticker-locked {
+    cursor: default !important;
+    opacity: 0.85;
+}
+
+.note-sticker.sticker-locked .sticker-header {
+    cursor: default !important;
+}
+
+.note-sticker.sticker-locked .sticker-resizer {
+    cursor: default !important;
+    pointer-events: none;
+}
+
+.sticker-content {
+    flex: 1;
+    padding: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    font-family: 'Onest', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #000000;
+    word-wrap: break-word;
+}
+
+.sticker-content h1,
+.sticker-content h2 {
+    margin: 8px 0 4px 0;
+}
+
+.sticker-content p {
+    margin: 4px 0;
+}
+
+.sticker-content ul,
+.sticker-content ol {
+    margin: 4px 0;
+    padding-left: 20px;
+}
+
+.sticker-resizer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 8px;
+    cursor: ns-resize;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.1));
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    transition: background 0.2s ease;
+}
+
+.sticker-resizer:hover {
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.15));
+}
+
+.sticker-resizer::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 3px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 2px;
+}
+
+/* Скроллбар для стикера */
+.sticker-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sticker-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sticker-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.sticker-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .note-editor-container {
+        max-width: 100%;
+        height: 90vh;
+        max-height: 90vh;
+        border-radius: 20px 20px 0 0;
+        margin-top: auto;
+    }
+    
+    .note-editor-overlay {
+        align-items: flex-end;
+        padding: 0;
+    }
+    
+    .note-toolbar {
+        padding: 10px 12px;
+    }
+    
+    .toolbar-btn {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .note-editor {
+        padding: 16px;
+        font-size: 16px;
+    }
+    
+    .note-sticker {
+        width: calc(100% - 40px);
+        max-width: 395px;
+    }
+}
+
+/* Стили для экранов до 810px */
+@media (max-width: 810px) {
+    .note-sticker {
+        width: 370px;
+        max-width: 370px;
+    }
+    
+    .note-sticker.sticker-image {
+        width: 370px;
+        max-width: 370px;
+    }
+}
+
+/* Стили для планшетов (811px - 1023px) */
+@media (min-width: 811px) and (max-width: 1023px) {
+    .note-sticker {
+        width: 380px; /* Увеличенная ширина для планшетов */
+        max-width: 380px;
+    }
+}
+
+/* Пустое состояние */
+.empty-state {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 40px 20px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.empty-state-text {
+    font-family: 'Onest', sans-serif;
+    font-size: 22px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.4);
+    text-align: center;
+    letter-spacing: -0.01em;
+    margin-top: -90px;
+}
+
+@media (max-width: 768px) {
+    .empty-state-text {
+        font-size: 20px;
+    }
+}
+
+/* Палитра цветов */
+.color-picker-popup {
+    background: #FFFFFF;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    animation: colorPickerAppear 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: top left;
+}
+
+@keyframes colorPickerAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.color-picker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.color-picker-item {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+}
+
+.color-picker-item:hover {
+    transform: scale(1.1);
+    border-color: rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Меню выбора: Картинка */
+.add-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 5000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.add-menu-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.add-menu-content {
+    position: fixed;
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 200px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    transform: scale(0.3) translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.add-menu-overlay.active .add-menu-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.add-menu-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 16px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    width: 100%;
+}
+
+.add-menu-option:first-child {
+    border-radius: 12px 12px 0 0;
+}
+
+.add-menu-option:last-child {
+    border-radius: 0 0 12px 12px;
+}
+
+.add-menu-option:only-child {
+    border-radius: 12px;
+}
+
+.add-menu-option:hover {
+    background: rgba(142, 142, 147, 0.1);
+}
+
+.add-menu-option:active {
+    background: rgba(142, 142, 147, 0.15);
+    transform: scale(0.98);
+}
+
+.add-option-icon {
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FFFFFF;
+    border-radius: 10px;
+}
+
+.add-option-text {
+    font-size: 17px;
+    font-weight: 400;
+    color: #000000;
+    letter-spacing: -0.022em;
+}
+
+/* Стили для картинок */
+.note-sticker.sticker-image {
+    width: auto;
+    min-width: 0;
+    min-height: 0;
+    background: transparent;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.sticker-image-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.sticker-image-content {
+    cursor: grab;
+}
+
+.sticker-image-content:active {
+    cursor: grabbing;
+}
+
+.sticker-image-content img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    pointer-events: auto;
+}
+
+/* Адаптивность для картинок */
+@media (max-width: 768px) {
+    .note-sticker.sticker-image {
+        width: 370px;
+        max-width: 370px;
+    }
+}
+
+@media (min-width: 769px) {
+    .note-sticker.sticker-image {
+        max-width: 800px;
+        width: auto;
+    }
+}
+
+/* Убираем ротейт для кнопки совместной работы */
+#change-btn:hover,
+#collaborate-btn:hover,
+.settings-btn#change-btn:hover,
+.settings-btn#collaborate-btn:hover {
+    transform: none;
+}
+
+/* Название пространства под хедером */
+.workspace-name-bar {
+    position: relative;
+    height: 36px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+.workspace-name-text {
+    font-size: 13px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.6);
+    text-align: center;
+    letter-spacing: -0.01em;
+}
+
+/* Шторка управления пространствами */
+.workspaces-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 40vh;
+    background: rgba(0, 0, 0, 0.01);
+    z-index: 4000;
+    transform: translateY(-100%);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    overflow: hidden;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.workspaces-panel.active {
+    transform: translateY(0);
+}
+
+.workspaces-panel-content {
+    background: #FFFFFF;
+    height: 100%;
+    border-radius: 0 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #000000;
+    box-shadow: none;
+    filter: none;
+    margin-top: auto;
+    position: relative;
+    cursor: default;
+    pointer-events: auto;
+}
+
+.workspaces-panel-content .header-divider {
+    height: 1px;
+    background: rgba(0, 0, 0, 0.1);
+    margin: 0;
+    border: none;
+    display: block !important;
+    flex-shrink: 0;
+    margin-top: auto;
+    order: 999;
+    width: 100%;
+}
+
+.workspaces-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px 16px 20px;
+    border-bottom: none;
+    order: 0;
+}
+
+.workspaces-panel-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    letter-spacing: -0.02em;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.workspaces-close-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 32px;
+    height: 32px;
+}
+
+.workspaces-close-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+}
+
+.workspaces-close-btn:active {
+    transform: scale(0.9);
+}
+
+.workspaces-panel-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px 20px 20px 20px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.workspace-create-btn {
+    width: 100%;
+    padding: 14px 20px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 400;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    letter-spacing: -0.022em;
+}
+
+.workspace-create-btn:hover {
+    background: #1a1a1a;
+    transform: scale(0.98);
+}
+
+.workspace-create-btn:active {
+    transform: scale(0.96);
+    background: #000000;
+}
+
+.workspaces-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.workspace-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: #f4f3f69c;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    margin-bottom: 8px;
+}
+
+.workspace-item:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.workspace-item.active {
+    background: #f4f3f69c;
+}
+
+.workspace-item.active .workspace-item-name {
+    color: #000000;
+}
+
+.workspace-item.active .workspace-personal-badge {
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.workspace-item-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+}
+
+.workspace-item-name {
+    font-size: 17px;
+    font-weight: 400;
+    color: #000000;
+    cursor: pointer;
+    letter-spacing: -0.022em;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+}
+
+.workspace-personal-badge {
+    font-size: 13px;
+    color: #000000;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 400;
+    letter-spacing: -0.01em;
+}
+
+.workspace-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.workspace-action-btn {
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    padding: 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 28px;
+    height: 28px;
+}
+
+.workspace-action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+}
+
+.workspace-action-btn:active {
+    transform: scale(0.9);
+}
+
+.workspace-action-btn svg {
+    stroke: #000000;
+}
+
+.workspace-delete-btn {
+    background: rgba(255, 59, 48, 0.1);
+}
+
+.workspace-delete-btn:hover {
+    background: rgba(255, 59, 48, 0.2);
+}
+
+.workspace-delete-btn svg {
+    stroke: #FF3B30;
+}
+
+/* Модальные окна создания и редактирования пространства */
+.workspace-create-modal,
+.workspace-edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workspace-create-modal.active,
+.workspace-edit-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.workspace-create-content,
+.workspace-edit-content {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workspace-create-modal.active .workspace-create-content,
+.workspace-edit-modal.active .workspace-edit-content {
+    transform: scale(1);
+}
+
+.workspace-create-content h3,
+.workspace-edit-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 16px 0;
+}
+
+.workspace-create-content input,
+.workspace-edit-content input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    box-sizing: border-box;
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.workspace-create-content input:focus,
+.workspace-edit-content input:focus {
+    outline: none;
+    border-color: #000000;
+    background: #F5F5F5;
+}
+
+.workspace-create-actions,
+.workspace-edit-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+}
+
+.workspace-cancel-btn,
+.workspace-confirm-btn {
+    padding: 10px 20px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.workspace-cancel-btn {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+.workspace-cancel-btn:hover {
+    background: #F5F5F5;
+    transform: scale(0.98);
+}
+
+.workspace-cancel-btn:active {
+    transform: scale(0.96);
+}
+
+.workspace-confirm-btn {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.workspace-confirm-btn:hover {
+    background: #333333;
+    transform: scale(0.98);
+}
+
+.workspace-confirm-btn:active {
+    transform: scale(0.96);
+}
+
+/* Модальное окно приглашения */
+.workspace-invite-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.workspace-invite-modal.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.workspace-invite-content {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workspace-invite-modal.active .workspace-invite-content {
+    transform: scale(1);
+}
+
+.workspace-invite-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.workspace-invite-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.workspace-invite-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    transition: opacity 0.2s ease;
+}
+
+.workspace-invite-close:hover {
+    opacity: 0.6;
+}
+
+.workspace-invite-body {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.workspace-invite-text {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.7);
+    margin: 0;
+    line-height: 1.5;
+}
+
+.workspace-invite-link-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.workspace-invite-link-input {
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid #000000;
+    border-radius: 12px;
+    font-size: 14px;
+    background: #FFFFFF;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.workspace-invite-link-input:focus {
+    outline: none;
+    border-color: #000000;
+    background: #F5F5F5;
+}
+
+.workspace-invite-copy-btn {
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    min-width: 44px;
+    height: 44px;
+}
+
+.workspace-invite-copy-btn:hover {
+    background: #333333;
+    transform: scale(0.98);
+}
+
+.workspace-invite-copy-btn:active {
+    transform: scale(0.96);
+}
+
+/* Модальное окно участников */
+.workspace-members-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.workspace-members-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.workspace-members-content {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 24px;
+    width: 90%;
+    max-width: 400px;
+    max-height: 70vh;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.9);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+}
+
+.workspace-members-modal.active .workspace-members-content {
+    transform: scale(1);
+}
+
+.workspace-members-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.workspace-members-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.workspace-members-close {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.workspace-members-list {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.workspace-members-empty {
+    text-align: center;
+    color: #999999;
+    padding: 20px;
+}
+
+.workspace-member-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #F8F8F8;
+    border-radius: 12px;
+}
+
+.workspace-member-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.workspace-member-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.workspace-member-avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #2196F3;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.workspace-member-name {
+    font-size: 16px;
+    color: #000000;
+    flex: 1;
+}
+
+/* Нижняя навигация */
+.bottom-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 65px;
+    background: #FFFFFF;
+    border: 1px solid #87858539;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 8px 25px;
+    z-index: 2000 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 400px;
+    max-width: calc(100vw - 40px);
+    width: auto;
+    pointer-events: auto !important;
+}
+
+/* Контейнер для кнопок - равномерное распределение */
+.bottom-navigation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 85px; /* Отступы для круга по центру */
+    pointer-events: none; /* Позволяет кликать через псевдоэлемент */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999999;
+    position: relative;
+    min-width: 60px;
+    z-index: 10; /* Увеличиваем z-index чтобы ссылки были поверх псевдоэлемента */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+    max-width: 70px;
+    text-decoration: none;
+    pointer-events: auto; /* Явно разрешаем клики */
+}
+
+/* Стили для ссылок навигации */
+a.nav-item {
+    text-decoration: none;
+    color: inherit;
+    pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Убеждаемся, что изображения и текст внутри ссылок не блокируют клики */
+a.nav-item img,
+a.nav-item .nav-icon,
+a.nav-item .nav-label {
+    pointer-events: none; /* Клики проходят через изображения и текст к ссылке */
+}
+
+/* Специальные классы для позиционирования */
+.nav-item:nth-child(1) { /* Задачи (самая левая) */
+    order: 1;
+    margin-right: auto;
+}
+
+.nav-item:nth-child(2) { /* GPT (слева от центра) */
+    order: 2;
+    margin-right: 35px; /* Отступ от центра */
+}
+
+.nav-item.nav-add-btn { /* Круг с плюсом в центре */
+    order: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #000000;
+    color: #FFFFFF;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:nth-child(4) { /* План (справа от центра) */
+    order: 4;
+    margin-left: 35px; /* Отступ от центра */
+}
+
+.nav-item:nth-child(5) { /* Заметки (самая правая) */
+    order: 5;
+    margin-left: auto;
+}
+
+.nav-item.active {
+    color: #000000;
+}
+
+.nav-item.active .nav-label {
+    color: #000000;
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 78px;
+    height: 55px;
+    background: #efeef2c4;
+    border-radius: 40px;
+    z-index: -1;
+}
+
+.nav-icon {
+    width: 22px;
+    height: 22px;
+    transition: all 0.3s ease;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-add-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффекты при наведении */
+.nav-item:hover {
+    transform: translateY(-2px);
+}
+
+.nav-add-btn:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* Для мобильных устройств */
+@media (max-width: 480px) {
+    .bottom-navigation {
+        min-width: 360px;
+        max-width: calc(100vw - 20px);
+        padding: 8px 15px;
+    }
+    
+    .nav-item {
+        min-width: 50px;
+        max-width: 60px;
+    }
+    
+    .nav-add-btn {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .nav-label {
+        font-size: 10px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для планшетов (iPad) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .bottom-navigation {
+        min-width: 500px;
+        max-width: 600px;
+        height: 70px;
+        border-radius: 50px;
+        padding: 10px 30px;
+        bottom: 30px;
+    }
+    
+    .nav-item {
+        min-width: 75px;
+        max-width: 85px;
+        gap: 6px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .nav-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-label {
+        font-size: 12px;
+    }
+    
+    .nav-add-btn svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-item.active::before {
+        width: 80px;
+        height: 55px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для десктопов (ПК) */
+@media (min-width: 1025px) {
+    .bottom-navigation {
+        min-width: 650px;
+        max-width: 750px;
+        height: 75px;
+        border-radius: 55px;
+        padding: 12px 45px;
+        bottom: 40px;
+        gap: 5px;
+    }
+    
+    .nav-item {
+        min-width: 85px;
+        max-width: 95px;
+        gap: 8px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-label {
+        font-size: 13px;
+    }
+    
+    .nav-add-btn svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-item.active::before {
+        width: 90px;
+        height: 60px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 55px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 55px;
+    }
+}
+

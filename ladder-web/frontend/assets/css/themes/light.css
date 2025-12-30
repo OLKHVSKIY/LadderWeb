@@ -1,0 +1,15 @@
+/* Light Theme */
+:root[data-theme="light"],
+:root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --text-primary: #212529;
+    --text-secondary: #6c757d;
+    --border-color: #dee2e6;
+}
+
+body {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+

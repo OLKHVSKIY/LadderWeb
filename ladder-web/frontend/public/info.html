@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ladder - Информация</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/info.css">
+    <link rel="stylesheet" href="/assets/css/components/suggest-modal.css">
+    <script>
+        (function() {
+            const lang = localStorage.getItem('language') || 'ru';
+            document.documentElement.lang = lang;
+        })();
+    </script>
+</head>
+<body class="info-page">
+    <!-- Сайдбар -->
+    <div class="sidebar-overlay" id="sidebar-overlay">
+        <div class="sidebar-marquee">
+            <div class="marquee-content">
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+            </div>
+        </div>
+        <div class="sidebar-content">
+            <a href="/public/chat.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.chat">Чат с AI</span>
+            </a>
+            <a href="/public/tasks.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.tasks">Задачи</span>
+            </a>
+            <button class="sidebar-item" data-action="info">
+                <span class="sidebar-item-text" data-i18n="sidebar.info">Информация</span>
+            </button>
+            <button class="sidebar-item" data-action="support">
+                <span class="sidebar-item-text" data-i18n="sidebar.support">Поддержка</span>
+            </button>
+            <button class="sidebar-item" data-action="suggest">
+                <span class="sidebar-item-text" data-i18n="sidebar.suggest">Предложить идею</span>
+            </button>
+            <button class="sidebar-item" data-action="about">
+                <span class="sidebar-item-text" data-i18n="sidebar.about">О нас</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Верхний хедер -->
+    <header class="main-header">
+        <button class="burger-menu" id="burger-menu" data-i18n="[aria-label]common.menu" aria-label="Меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+            </svg>
+        </button>
+        <h1 class="page-title" data-i18n="info.title">Информация</h1>
+        <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
+            <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
+        </button>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <div class="info-container">
+            <!-- О приложении -->
+            <section class="info-section">
+                <h2 class="info-section-title" data-i18n="info.aboutApp.title">О приложении</h2>
+                <p class="info-section-text" data-i18n="info.aboutApp.description">
+                    Ladder — это современное приложение для управления задачами и целями, которое помогает вам организовать свою жизнь и достигать поставленных целей. Мы объединили простоту использования с мощными функциями искусственного интеллекта, чтобы сделать планирование максимально эффективным.
+                </p>
+            </section>
+
+            <!-- Преимущества -->
+            <section class="info-section">
+                <h2 class="info-section-title" data-i18n="info.advantages.title">Почему Ladder?</h2>
+                <div class="advantages-list">
+                    <div class="advantage-item">
+                        <div class="advantage-icon">
+                            <img src="/assets/images/icons/ai.png" alt="AI" width="32" height="32">
+                        </div>
+                        <div class="advantage-content">
+                            <h3 class="advantage-title" data-i18n="info.advantages.ai.title">Искусственный интеллект</h3>
+                            <p class="advantage-text" data-i18n="info.advantages.ai.text">AI помогает создавать планы, отвечает на вопросы о задачах и предлагает решения. В отличие от конкурентов, наш AI понимает контекст и работает на русском, английском и испанском языках.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-icon">
+                            <img src="/assets/images/icons/brain.png" alt="Brain" width="32" height="32">
+                        </div>
+                        <div class="advantage-content">
+                            <h3 class="advantage-title" data-i18n="info.advantages.goals.title">Умное планирование</h3>
+                            <p class="advantage-text" data-i18n="info.advantages.goals.text">Создавайте многоэтапные цели с автоматическим разбиением на задачи. AI анализирует вашу цель и создает детальный план с учетом выходных дней и даты начала.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="advantage-content">
+                            <h3 class="advantage-title" data-i18n="info.advantages.workspaces.title">Рабочие пространства</h3>
+                            <p class="advantage-text" data-i18n="info.advantages.workspaces.text">Создавайте личные и совместные пространства для работы над проектами. Приглашайте друзей и коллег, делитесь заметками и изображениями. Многие приложения не поддерживают совместную работу.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="2" y1="12" x2="22" y2="12"></line>
+                                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                            </svg>
+                        </div>
+                        <div class="advantage-content">
+                            <h3 class="advantage-title" data-i18n="info.advantages.multilang.title">Многоязычность</h3>
+                            <p class="advantage-text" data-i18n="info.advantages.multilang.text">Полная поддержка русского, английского и испанского языков. Интерфейс, AI-ответы и все функции работают на вашем языке. Большинство конкурентов ограничены одним языком.</p>
+                        </div>
+                    </div>
+                    <div class="advantage-item">
+                        <div class="advantage-icon">
+                            <img src="/assets/images/icons/painting.png" alt="Painting" width="32" height="32">
+                        </div>
+                        <div class="advantage-content">
+                            <h3 class="advantage-title" data-i18n="info.advantages.design.title">Элегантный дизайн</h3>
+                            <p class="advantage-text" data-i18n="info.advantages.design.text">Минималистичный интерфейс в черно-белой гамме с красными акцентами. Каждый элемент продуман для максимального удобства. Динамические фоны меняются в зависимости от времени суток.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Страницы приложения -->
+            <section class="info-section">
+                <h2 class="info-section-title" data-i18n="info.pages.title">Страницы приложения</h2>
+                
+                <div class="page-card">
+                    <div class="page-header">
+                        <div class="page-icon">
+                            <img src="/assets/images/icons/checklist.png" alt="Tasks" width="28" height="28">
+                        </div>
+                        <h3 class="page-name" data-i18n="info.pages.tasks.title">Задачи</h3>
+                    </div>
+                    <p class="page-description" data-i18n="info.pages.tasks.description">
+                        Главная страница для управления вашими задачами. Здесь вы видите задачи на выбранный день, можете создавать новые, редактировать существующие и отмечать выполненные.
+                    </p>
+                    <ul class="page-features">
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.tasks.calendar">Календарь недели</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.tasks.create">Создание задач</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.tasks.complete">Отметка выполнения</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="20" x2="18" y2="10"></line>
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="6" y1="20" x2="6" y2="14"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.tasks.stats">Статистика дня</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-card">
+                    <div class="page-header">
+                        <div class="page-icon">
+                            <img src="/assets/images/icons/draft.png" alt="Plan" width="28" height="28">
+                        </div>
+                        <h3 class="page-name" data-i18n="info.pages.plan.title">План</h3>
+                    </div>
+                    <p class="page-description" data-i18n="info.pages.plan.description">
+                        Конструктор целей и планов. Создавайте многоэтапные цели, разбивайте их на задачи с приоритетами и отслеживайте прогресс выполнения.
+                    </p>
+                    <ul class="page-features">
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <line x1="12" y1="2" x2="12" y2="6"></line>
+                                <line x1="12" y1="18" x2="12" y2="22"></line>
+                                <line x1="2" y1="12" x2="6" y2="12"></line>
+                                <line x1="18" y1="12" x2="22" y2="12"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.plan.goals">Создание целей</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                                <polyline points="10 9 9 9 8 9"></polyline>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.plan.tasks">Задачи в плане</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.plan.priority">Приоритеты задач</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.plan.progress">Прогресс выполнения</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-card">
+                    <div class="page-header">
+                        <div class="page-icon">
+                            <img src="/assets/images/icons/ai.png" alt="AI" width="28" height="28">
+                        </div>
+                        <h3 class="page-name" data-i18n="info.pages.gpt.title">GPT План</h3>
+                    </div>
+                    <p class="page-description" data-i18n="info.pages.gpt.description">
+                        Уникальная функция создания планов с помощью искусственного интеллекта. Опишите свою цель, и AI создаст детальный план с задачами, приоритетами и датами.
+                    </p>
+                    <ul class="page-features">
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.gpt.describe">Описание цели</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.gpt.startDate">Выбор даты начала</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.gpt.weekends">Выходные дни</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.gpt.generate">Генерация плана</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-card">
+                    <div class="page-header">
+                        <div class="page-icon">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="page-name" data-i18n="info.pages.chat.title">Чат с AI</h3>
+                    </div>
+                    <p class="page-description" data-i18n="info.pages.chat.description">
+                        Интеллектуальный помощник, который отвечает на вопросы о ваших задачах, помогает создавать новые задачи и заметки, ищет задачи по ключевым словам и датам.
+                    </p>
+                    <ul class="page-features">
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.chat.questions">Вопросы о задачах</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="M21 21l-4.35-4.35"></path>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.chat.search">Поиск задач</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.chat.create">Создание через AI</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.chat.notes">Создание заметок</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-card">
+                    <div class="page-header">
+                        <div class="page-icon">
+                            <img src="/assets/images/icons/notes.png" alt="Notes" width="28" height="28">
+                        </div>
+                        <h3 class="page-name" data-i18n="info.pages.notes.title">Заметки</h3>
+                    </div>
+                    <p class="page-description" data-i18n="info.pages.notes.description">
+                        Доска для заметок и изображений. Создавайте текстовые заметки, загружайте изображения, организуйте их в пространствах и работайте вместе с другими пользователями.
+                    </p>
+                    <ul class="page-features">
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                <polyline points="14 2 14 8 20 8"></polyline>
+                                <line x1="16" y1="13" x2="8" y2="13"></line>
+                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.notes.text">Текстовые заметки</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.notes.images">Изображения</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.notes.workspaces">Рабочие пространства</span>
+                        </li>
+                        <li class="feature-item">
+                            <svg class="feature-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                            <span class="feature-text" data-i18n="info.pages.notes.share">Совместная работа</span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Кнопки навигации -->
+            <section class="info-section">
+                <h2 class="info-section-title" data-i18n="info.navigation.title">Навигация</h2>
+                <p class="info-section-text" data-i18n="info.navigation.description">
+                    Нижняя панель навигации позволяет быстро переключаться между основными разделами приложения.
+                </p>
+                <div class="navigation-buttons">
+                    <div class="nav-button-demo">
+                        <div class="nav-button-icon">
+                            <img src="/assets/images/icons/checklist.png" alt="Tasks" width="24" height="24">
+                        </div>
+                        <div class="nav-button-info">
+                            <h4 class="nav-button-name" data-i18n="info.navigation.tasks">Задачи</h4>
+                            <p class="nav-button-desc" data-i18n="info.navigation.tasksDesc">Переход на главную страницу с задачами</p>
+                        </div>
+                    </div>
+                    <div class="nav-button-demo">
+                        <div class="nav-button-icon">
+                            <img src="/assets/images/icons/ai.png" alt="GPT" width="24" height="24">
+                        </div>
+                        <div class="nav-button-info">
+                            <h4 class="nav-button-name" data-i18n="info.navigation.gpt">GPT</h4>
+                            <p class="nav-button-desc" data-i18n="info.navigation.gptDesc">Открывает меню выбора: Чат с AI или AI создание плана</p>
+                        </div>
+                    </div>
+                    <div class="nav-button-demo">
+                        <div class="nav-button-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </div>
+                        <div class="nav-button-info">
+                            <h4 class="nav-button-name" data-i18n="info.navigation.add">Добавить</h4>
+                            <p class="nav-button-desc" data-i18n="info.navigation.addDesc">Центральная кнопка для быстрого создания задач</p>
+                        </div>
+                    </div>
+                    <div class="nav-button-demo">
+                        <div class="nav-button-icon">
+                            <img src="/assets/images/icons/draft.png" alt="Plan" width="24" height="24">
+                        </div>
+                        <div class="nav-button-info">
+                            <h4 class="nav-button-name" data-i18n="info.navigation.plan">План</h4>
+                            <p class="nav-button-desc" data-i18n="info.navigation.planDesc">Переход к конструктору целей и планов</p>
+                        </div>
+                    </div>
+                    <div class="nav-button-demo">
+                        <div class="nav-button-icon">
+                            <img src="/assets/images/icons/notes.png" alt="Notes" width="24" height="24">
+                        </div>
+                        <div class="nav-button-info">
+                            <h4 class="nav-button-name" data-i18n="info.navigation.notes">Заметки</h4>
+                            <p class="nav-button-desc" data-i18n="info.navigation.notesDesc">Переход к доске заметок и изображений</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Функции -->
+            <section class="info-section">
+                <h2 class="info-section-title" data-i18n="info.features.title">Ключевые функции</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <line x1="12" y1="1" x2="12" y2="3"></line>
+                                <line x1="12" y1="21" x2="12" y2="23"></line>
+                                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                                <line x1="1" y1="12" x2="3" y2="12"></line>
+                                <line x1="21" y1="12" x2="23" y2="12"></line>
+                                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                            </svg>
+                        </div>
+                        <h4 class="feature-card-title" data-i18n="info.features.greeting.title">Приветственная панель</h4>
+                        <p class="feature-card-text" data-i18n="info.features.greeting.text">Динамическая панель с приветствием, статистикой задач и красивыми фонами, меняющимися в зависимости от времени суток.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                            </svg>
+                        </div>
+                        <h4 class="feature-card-title" data-i18n="info.features.priority.title">Система приоритетов</h4>
+                        <p class="feature-card-text" data-i18n="info.features.priority.text">Три уровня приоритета задач с визуальными индикаторами: красная молния (P1), желтая (P2), синяя (P3).</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                        <h4 class="feature-card-title" data-i18n="info.features.calendar.title">Умный календарь</h4>
+                        <p class="feature-card-text" data-i18n="info.features.calendar.text">Календарь с фиксированным размером, поддержкой диапазонов дат и удобной навигацией по месяцам.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-icon">
+                            <img src="/assets/images/icons/settings.png" alt="Settings" width="32" height="32">
+                        </div>
+                        <h4 class="feature-card-title" data-i18n="info.features.customization.title">Настройка</h4>
+                        <p class="feature-card-text" data-i18n="info.features.customization.text">Выбор языка интерфейса, загрузка аватара, настройка приложения под свои потребности.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+     <!-- Модальное окно для предложения идей -->
+     <div class="suggest-modal-overlay" id="suggest-modal-overlay">
+        <div class="suggest-modal-content">
+            <button class="suggest-modal-close" id="suggest-modal-close" aria-label="Закрыть">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="suggest-modal-title" data-i18n="suggest.title">Предложить идею</h2>
+            <p class="suggest-modal-subtitle" data-i18n="suggest.subtitle">Поделитесь своими идеями для улучшения приложения</p>
+            <form class="suggest-form" id="suggest-form">
+                <div class="suggest-form-group">
+                    <label for="suggest-title" class="suggest-form-label" data-i18n="suggest.titleLabel">Название идеи</label>
+                    <input type="text" id="suggest-title" name="title" class="suggest-form-input" required 
+                           data-i18n-placeholder="suggest.titlePlaceholder" placeholder="Краткое описание идеи">
+                </div>
+                <div class="suggest-form-group">
+                    <label for="suggest-description" class="suggest-form-label" data-i18n="suggest.descriptionLabel">Описание</label>
+                    <textarea id="suggest-description" name="description" class="suggest-form-textarea" rows="5" required
+                              data-i18n-placeholder="suggest.descriptionPlaceholder" placeholder="Подробно опишите вашу идею"></textarea>
+                </div>
+                <div class="suggest-form-group">
+                    <label for="suggest-email" class="suggest-form-label" data-i18n="suggest.emailLabel">Email (необязательно)</label>
+                    <input type="email" id="suggest-email" name="email" class="suggest-form-input"
+                           data-i18n-placeholder="suggest.emailPlaceholder" placeholder="your@email.com">
+                </div>
+                <div class="suggest-form-buttons">
+                    <button type="button" class="suggest-form-btn suggest-form-btn-cancel" id="suggest-form-cancel" data-i18n="common.cancel">Отмена</button>
+                    <button type="submit" class="suggest-form-btn suggest-form-btn-submit" data-i18n="suggest.submit">Отправить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Скрипты -->
+    <script type="module" src="/assets/js/modules/i18n.js"></script>
+    <script type="module" src="/assets/js/pages/info-page.js"></script>
+</body>
+</html>
+

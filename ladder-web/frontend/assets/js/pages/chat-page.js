@@ -1,0 +1,1689 @@
+// Импортируем конфигурацию Yandex GPT API
+import { YANDEX_GPT_CONFIG, getYandexGptApiUrl } from '../config/yandex-gpt-config.js';
+import { createTask } from '../modules/tasks.js';
+import { initI18n } from '../modules/i18n.js';
+
+// API ключи не нужны на фронтенде - используется бэкенд прокси
+// Ключи хранятся в .env файле и используются только на сервере
+const YANDEX_MODELS = YANDEX_GPT_CONFIG.MODELS;
+
+// Состояние создания задачи (для клиентской логики)
+let taskCreationState = null;
+
+// Инициализация страницы чата
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOMContentLoaded - initializing chat page');
+    try {
+        initChatPage();
+    } catch (error) {
+        console.error('Error initializing chat page:', error);
+    }
+});
+
+function initChatPage() {
+    console.log('initChatPage called');
+    
+    // Инициализация i18n
+    try {
+        initI18n();
+    } catch (error) {
+        console.error('Error initializing i18n:', error);
+    }
+    
+    const chatInput = document.getElementById('chat-input');
+    const sendBtn = document.getElementById('chat-send-btn');
+    const chatMessages = document.getElementById('chat-messages');
+    
+    // Проверяем наличие элементов
+    if (!chatInput) {
+        console.error('chat-input element not found');
+        // Пробуем еще раз через небольшую задержку
+        setTimeout(() => {
+            const retryInput = document.getElementById('chat-input');
+            if (retryInput) {
+                console.log('chat-input found on retry');
+                initChatPage();
+            }
+        }, 100);
+        return;
+    }
+    if (!sendBtn) {
+        console.error('chat-send-btn element not found');
+        setTimeout(() => {
+            const retryBtn = document.getElementById('chat-send-btn');
+            if (retryBtn) {
+                console.log('chat-send-btn found on retry');
+                initChatPage();
+            }
+        }, 100);
+        return;
+    }
+    if (!chatMessages) {
+        console.error('chat-messages element not found');
+        setTimeout(() => {
+            const retryMessages = document.getElementById('chat-messages');
+            if (retryMessages) {
+                console.log('chat-messages found on retry');
+                initChatPage();
+            }
+        }, 100);
+        return;
+    }
+    
+    console.log('Chat page initialized successfully', {
+        chatInput: !!chatInput,
+        sendBtn: !!sendBtn,
+        chatMessages: !!chatMessages
+    });
+    
+    // API ключи хранятся на сервере в .env файле
+    // Фронтенд использует бэкенд прокси на localhost:8001
+    
+    // Инициализация сайдбара
+    setupSidebar();
+    
+    // Кнопка настроек
+    const settingsBtn = document.getElementById('settings-btn');
+    if (settingsBtn) {
+        settingsBtn.addEventListener('click', () => {
+            window.location.href = '/public/settings.html';
+        });
+    }
+    
+    // Кнопка GPT меню
+    setupAiMenu();
+    
+    // Навигация теперь работает через обычные ссылки в HTML, JavaScript не нужен
+    // setupNavigation();
+    
+    // Загрузка истории чата
+    loadChatHistory();
+    
+    // Автоматическое изменение высоты textarea
+    chatInput.addEventListener('input', () => {
+        chatInput.style.height = 'auto';
+        chatInput.style.height = `${Math.min(chatInput.scrollHeight, 120)}px`;
+    });
+    
+    // Отправка сообщения по Enter (Shift+Enter для новой строки)
+    chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            console.log('Enter key pressed, calling sendMessage');
+            if (typeof sendMessage === 'function') {
+                sendMessage();
+            } else {
+                console.error('sendMessage is not a function!', typeof sendMessage);
+            }
+        }
+    });
+    
+    // Отправка по клику на кнопку
+    sendBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Send button clicked');
+        if (typeof sendMessage === 'function') {
+            sendMessage();
+        } else {
+            console.error('sendMessage is not a function!', typeof sendMessage);
+        }
+    });
+    
+    // Функция отправки сообщения
+    async function sendMessage() {
+        console.log('sendMessage called');
+        const message = chatInput.value.trim();
+        console.log('Message:', message);
+        
+        if (!message) {
+            console.log('Message is empty');
+            return;
+        }
+        
+        if (sendBtn.disabled) {
+            console.log('Send button is disabled');
+            return;
+        }
+        
+        console.log('Processing message...');
+        
+        // Проверяем, является ли это запросом на создание задачи или заметки
+        const lowerMessage = message.toLowerCase();
+        const hasActionWord = lowerMessage.includes('создай') || 
+                             lowerMessage.includes('сделай') || 
+                             lowerMessage.includes('напиши') || 
+                             lowerMessage.includes('добавь');
+        const hasTaskWord = lowerMessage.includes('задач');
+        const hasNoteWord = lowerMessage.includes('заметк') && !lowerMessage.includes('задач');
+        const isTaskCreationRequest = hasActionWord && hasTaskWord;
+        const isNoteCreationRequest = hasActionWord && hasNoteWord;
+        
+        console.log('Checking task creation request:', { 
+            message, 
+            lowerMessage, 
+            hasActionWord, 
+            hasTaskWord, 
+            isTaskCreationRequest 
+        });
+        
+        // Если это запрос на создание задачи, проверяем историю ДО сохранения сообщения
+        let shouldIntercept = false;
+        if (isTaskCreationRequest) {
+            const chatHistoryBefore = JSON.parse(localStorage.getItem('chat_history') || '[]');
+            console.log('Chat history before:', chatHistoryBefore);
+            
+            const hasDescriptionQuestion = chatHistoryBefore.some(msg => 
+                msg.role === 'assistant' && 
+                (msg.text.toLowerCase().includes('будет ли описание') || 
+                 msg.text.toLowerCase().includes('описание у задачи') ||
+                 msg.text.toLowerCase().includes('будет ли описание у'))
+            );
+            const hasPriorityQuestion = chatHistoryBefore.some(msg => 
+                msg.role === 'assistant' && 
+                msg.text.toLowerCase().includes('приоритет')
+            );
+            
+            console.log('Has description question:', hasDescriptionQuestion);
+            console.log('Has priority question:', hasPriorityQuestion);
+            
+            // Если нет ни вопроса про описание, ни вопроса про приоритет - это первое сообщение
+            if (!hasDescriptionQuestion && !hasPriorityQuestion) {
+                shouldIntercept = true;
+                console.log('Should intercept: TRUE - это первое сообщение о создании задачи');
+            } else {
+                console.log('Should intercept: FALSE - уже был диалог');
+            }
+        } else {
+            console.log('Not a task creation request');
+        }
+        
+        // Обрабатываем создание заметки (просто текст, без даты и приоритета)
+        if (isNoteCreationRequest) {
+            // Извлекаем текст заметки из сообщения
+            let noteText = '';
+            const noteMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+заметку\s+(.+)/i);
+            if (noteMatch) {
+                noteText = noteMatch[1].trim();
+            } else {
+                // Если не нашли паттерн, берем все после "заметку"
+                const simpleMatch = message.split(/заметку/i);
+                if (simpleMatch.length > 1) {
+                    noteText = simpleMatch.slice(1).join(' ').trim();
+                }
+            }
+            
+            if (noteText) {
+                // Добавляем сообщение пользователя
+                addMessage('user', message);
+                chatInput.value = '';
+                chatInput.style.height = 'auto';
+                
+                // Создаем заметку
+                await createNoteFromChat(noteText);
+                sendBtn.disabled = false;
+                chatInput.focus();
+                return;
+            }
+        }
+        
+        // Добавляем сообщение пользователя
+        addMessage('user', message);
+        chatInput.value = '';
+        chatInput.style.height = 'auto';
+        
+        // Если нужно перехватить, делаем это сразу и ВЫХОДИМ из функции
+        if (shouldIntercept) {
+            console.log('🚨 ПЕРЕХВАТЫВАЕМ создание задачи - задаем вопрос про описание');
+            
+            // Извлекаем дату и название из сообщения
+            const dateMatch = message.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+            let dateText = null;
+            if (dateMatch) {
+                const day = parseInt(dateMatch[1]);
+                const monthName = dateMatch[2];
+                dateText = `${day} ${monthName}`;
+            }
+            
+            // Извлекаем название задачи
+            let title = '';
+            const titleMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)\s+на\s+[^:\-]+\s*[:\-]\s*(.+)/i);
+            if (titleMatch) {
+                title = titleMatch[1].trim();
+            } else {
+                const simpleMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)[:\s]+(.+)/i);
+                if (simpleMatch) {
+                    title = simpleMatch[1].trim();
+                    // Убираем дату из названия, если она там есть
+                    title = title.replace(/\d{1,2}\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i, '').trim();
+                    title = title.replace(/^на\s+[^:\-]+\s*[:\-]\s*/i, '').trim();
+                }
+            }
+            
+            // Инициализируем состояние создания задачи
+            taskCreationState = {
+                step: 'description', // Следующий шаг - вопрос про описание
+                date: dateText,
+                title: title,
+                description: null,
+                priority: null
+            };
+            
+            console.log('Task creation state initialized:', taskCreationState);
+            
+            addMessage('assistant', 'Будет ли описание у задачи?');
+            sendBtn.disabled = false;
+            chatInput.focus();
+            return; // ВАЖНО: выходим из функции, не отправляя запрос к AI
+        }
+        
+        // Обрабатываем ответы пользователя в процессе создания задачи
+        // ВАЖНО: проверяем taskCreationState ПЕРЕД отправкой к AI
+        // Сохраняем сообщение пользователя, но не отправляем к AI если обрабатываем состояние
+        if (taskCreationState) {
+            const lower = message.toLowerCase().trim();
+            console.log('Processing task creation state, step:', taskCreationState.step, 'message:', message);
+            
+            // Добавляем сообщение пользователя в чат
+            addMessage('user', message);
+            chatInput.value = '';
+            chatInput.style.height = 'auto';
+            
+            // Если ожидаем ответ на вопрос про описание
+            if (taskCreationState.step === 'description') {
+                // Проверяем отрицательные ответы
+                const negativePatterns = [
+                    /^нет\s*$/i,
+                    /^нет\s+не\s+будет/i,
+                    /^не\s+будет/i,
+                    /^без\s+описания/i,
+                    /^описания\s+не\s+будет/i,
+                    /^не\s+нужно/i,
+                    /^не\s+требуется/i
+                ];
+                
+                // Проверяем положительные ответы
+                const positivePatterns = [
+                    /^да\s*$/i,
+                    /^да\s+будет/i,
+                    /^будет/i,
+                    /^нужно/i,
+                    /^требуется/i
+                ];
+                
+                const isNegative = negativePatterns.some(pattern => pattern.test(lower));
+                const isPositive = positivePatterns.some(pattern => pattern.test(lower));
+                
+                if (isNegative) {
+                    // Описание не нужно - переходим к приоритету
+                    taskCreationState.description = '';
+                    taskCreationState.step = 'priority';
+                    console.log('Negative answer - moving to priority step');
+                    addMessage('assistant', 'Какой приоритет у задачи? 1, 2 или 3?');
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                    return;
+                } else if (isPositive) {
+                    // Описание нужно - спрашиваем про описание
+                    taskCreationState.step = 'description_text';
+                    console.log('Positive answer - asking for description text');
+                    addMessage('assistant', 'Что вы хотите добавить в описание?');
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                    return;
+                }
+            }
+            
+            // Если ожидаем текст описания
+            if (taskCreationState.step === 'description_text') {
+                taskCreationState.description = message.trim();
+                taskCreationState.step = 'priority';
+                console.log('Description received - moving to priority step');
+                addMessage('assistant', 'Какой приоритет у задачи? 1, 2 или 3?');
+                sendBtn.disabled = false;
+                chatInput.focus();
+                return;
+            }
+            
+            // Если ожидаем приоритет
+            if (taskCreationState.step === 'priority') {
+                const priorityMatch = message.match(/([123])/);
+                if (priorityMatch) {
+                    taskCreationState.priority = parseInt(priorityMatch[1]);
+                    console.log('Priority received - creating task:', taskCreationState);
+                    
+                    // Создаем задачу
+                    if (taskCreationState.date && taskCreationState.title) {
+                        try {
+                            await createTaskFromChat(
+                                taskCreationState.date,
+                                taskCreationState.title,
+                                taskCreationState.description || '',
+                                taskCreationState.priority
+                            );
+                            taskCreationState = null; // Сбрасываем состояние
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        } catch (error) {
+                            console.error('Error creating task:', error);
+                            addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
+                            taskCreationState = null;
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        }
+                    } else {
+                        console.error('Missing date or title in taskCreationState:', taskCreationState);
+                        addMessage('assistant', 'Ошибка: не удалось создать задачу. Недостаточно данных.', true);
+                        taskCreationState = null;
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return;
+                    }
+                } else {
+                    // Пользователь не ответил на вопрос про приоритет правильно
+                    addMessage('assistant', 'Пожалуйста, укажите приоритет: 1, 2 или 3?', true);
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                    return;
+                }
+            }
+        }
+        
+        // Показываем индикатор загрузки
+        const loadingId = addLoadingMessage();
+        
+        // Отключаем кнопку отправки
+        sendBtn.disabled = true;
+        
+        try {
+            // API ключи хранятся на сервере в .env файле
+            // Фронтенд использует бэкенд прокси на localhost:8001
+            
+            // Получаем контекст (задачи и заметки)
+            const context = await getContext(message);
+            
+            // Получаем историю сообщений из localStorage
+            // Исключаем текущее сообщение, так как оно еще не сохранено
+            const chatHistory = JSON.parse(localStorage.getItem('chat_history') || '[]');
+            
+            // Формируем массив сообщений для API
+            const messages = [
+                {
+                    role: 'system',
+                    content: context
+                }
+            ];
+            
+            // Добавляем историю диалога (последние 10 сообщений для контекста)
+            const recentHistory = chatHistory.slice(-10);
+            recentHistory.forEach(msg => {
+                messages.push({
+                    role: msg.role,
+                    content: msg.text
+                });
+            });
+            
+            // Добавляем текущее сообщение пользователя (оно еще не в истории)
+            messages.push({
+                role: 'user',
+                content: message
+            });
+            
+            console.log('Sending messages to API:', messages.map(m => ({ role: m.role, content: m.content.substring(0, 50) + '...' })));
+            
+            // Отправляем запрос к Yandex GPT (пробуем разные модели)
+            let response;
+            let lastError;
+            let success = false;
+            
+            // Используем прокси через бэкенд для обхода CORS
+            // Пробуем модели по очереди
+            for (const model of YANDEX_MODELS) {
+                try {
+                    // Используем простой прокси-сервер (порт 8001) или бэкенд (порт 8000)
+                    // Простой прокси запускается через: python yandex-gpt-proxy.py
+                    const apiUrl = 'http://localhost:8001/api/ai/yandex-gpt/chat';
+                    
+                    const requestBody = {
+                        model: model,
+                        messages: messages,
+                        temperature: 0.7,
+                        max_tokens: 2000
+                    };
+                    
+                    const headers = {
+                        'Content-Type': 'application/json'
+                    };
+                    
+                    response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: headers,
+                        body: JSON.stringify(requestBody)
+                    });
+                    
+                    if (response.ok) {
+                        success = true;
+                        break; // Успешно, выходим из цикла
+                    } else {
+                        const errorText = await response.text();
+                        let errorData;
+                        try {
+                            errorData = JSON.parse(errorText);
+                        } catch {
+                            errorData = { error: errorText };
+                        }
+                        lastError = { status: response.status, data: errorData, model };
+                        console.log(`Модель ${model} недоступна (${response.status}), пробуем следующую...`);
+                    }
+                } catch (err) {
+                    lastError = { error: err, model };
+                    console.log(`Ошибка с моделью ${model}:`, err);
+                }
+            }
+            
+            if (!success || !response || !response.ok) {
+                const errorMsg = lastError?.data?.error?.message || lastError?.data?.message || lastError?.error?.message || 'Не удалось подключиться к API';
+                console.error('API Error Details:', lastError);
+                throw new Error(`HTTP error! status: ${lastError?.status || 'unknown'}. ${errorMsg}`);
+            }
+            
+            const data = await response.json();
+            let assistantMessage = '';
+            
+            // Парсим ответ от Yandex GPT API
+            // Пробуем OpenAI-совместимый формат (API Gateway)
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                assistantMessage = data.choices[0].message.content;
+            } 
+            // Пробуем формат Yandex GPT API
+            else if (data.result && data.result.alternatives && data.result.alternatives[0]) {
+                assistantMessage = data.result.alternatives[0].message.text;
+            } 
+            // Альтернативный формат ответа
+            else if (data.alternatives && data.alternatives[0] && data.alternatives[0].message) {
+                assistantMessage = data.alternatives[0].message.text;
+            } else {
+                console.error('Unexpected Yandex GPT API response:', data);
+                throw new Error('Неверный формат ответа от Yandex GPT API');
+            }
+            
+            // Удаляем индикатор загрузки
+            removeLoadingMessage(loadingId);
+
+            // Проверяем, пытается ли AI создать задачу без прохождения всех шагов
+            const lowerMessage = message.toLowerCase();
+            const isTaskCreationRequest = (lowerMessage.includes('создай') || lowerMessage.includes('сделай') || lowerMessage.includes('напиши') || lowerMessage.includes('добавь')) && 
+                                         (lowerMessage.includes('задач') || lowerMessage.includes('заметк'));
+            
+            // Если это запрос на создание задачи и AI пытается создать задачу
+            if (isTaskCreationRequest && assistantMessage.includes('CREATE_TASK:')) {
+                // Получаем историю ДО сохранения текущего сообщения (оно еще не сохранено)
+                const chatHistory = JSON.parse(localStorage.getItem('chat_history') || '[]');
+                
+                // Проверяем, был ли задан вопрос про описание в истории
+                const hasDescriptionQuestion = chatHistory.some(msg => 
+                    msg.role === 'assistant' && 
+                    (msg.text.toLowerCase().includes('будет ли описание') || 
+                     msg.text.toLowerCase().includes('описание у задачи') ||
+                     msg.text.toLowerCase().includes('будет ли описание у'))
+                );
+                
+                // Проверяем, был ли задан вопрос про приоритет
+                const hasPriorityQuestion = chatHistory.some(msg => 
+                    msg.role === 'assistant' && 
+                    msg.text.toLowerCase().includes('приоритет')
+                );
+                
+                // Если не было вопроса про описание И не было вопроса про приоритет - значит это первое сообщение
+                if (!hasDescriptionQuestion && !hasPriorityQuestion) {
+                    // AI пытается создать задачу без вопроса про описание - перехватываем
+                    console.log('AI пытается создать задачу без вопроса про описание, перехватываем');
+                    console.log('Chat history:', chatHistory);
+                    addMessage('assistant', 'Будет ли описание у задачи?');
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                    return;
+                }
+            }
+
+            // Проверяем, нужно ли выполнить действие (создать задачу и т.д.)
+            console.log('Checking for actions in message:', assistantMessage);
+            const actionResult = await handleAction(message, assistantMessage);
+            console.log('Action result:', actionResult);
+            
+            // Если задача была создана, не показываем ответ нейросети
+            if (actionResult) {
+                console.log('Action completed, not showing AI message');
+                sendBtn.disabled = false;
+                chatInput.focus();
+                return;
+            }
+            
+            // Убираем технические команды из ответа для пользователя
+            // Если команда CREATE_TASK была обработана, не показываем её
+            if (!assistantMessage.includes('CREATE_TASK:') && !assistantMessage.includes('CREATE_NOTE:')) {
+                // Обычное сообщение без команд
+                addMessage('assistant', assistantMessage, true); // Используем эффект печатания
+            } else {
+                // Если есть команда, но она не была обработана (возможно ошибка парсинга)
+                // Показываем только текст без команды
+                const cleanMessage = assistantMessage
+                    .replace(/CREATE_TASK:[^:\n\r]+:[^:\n\r]+:[^:\n\r]*:[^:\n\r]+/g, '')
+                    .replace(/CREATE_NOTE:[^\n\r]+/g, '')
+                    .trim();
+                if (cleanMessage) {
+                    addMessage('assistant', cleanMessage, true); // Используем эффект печатания
+                } else {
+                    // Если команда была, но текст пустой - значит команда не обработалась
+                    console.error('Command found but not processed:', assistantMessage);
+                    addMessage('assistant', 'Произошла ошибка при обработке команды. Попробуйте еще раз.', true);
+                }
+            }
+            
+        } catch (error) {
+            console.error('Ошибка при отправке сообщения:', error);
+            removeLoadingMessage(loadingId);
+            addMessage('assistant', `Извините, произошла ошибка: ${error.message}. Попробуйте еще раз.`, true); // Используем эффект печатания
+        } finally {
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+    }
+    
+    // Делаем функцию доступной глобально для отладки
+    window.sendMessage = sendMessage;
+    
+    // Добавление сообщения в чат
+    function addMessage(role, text, useTypewriter = false) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${role}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'chat-message-avatar';
+        // Проверяем наличие аватара пользователя
+        const userAvatar = localStorage.getItem('user_avatar');
+        if (role === 'user' && userAvatar) {
+            avatar.style.background = 'transparent';
+            avatar.style.padding = '0';
+            const avatarImg = document.createElement('img');
+            avatarImg.src = userAvatar;
+            avatarImg.style.width = '100%';
+            avatarImg.style.height = '100%';
+            avatarImg.style.borderRadius = '50%';
+            avatarImg.style.objectFit = 'cover';
+            avatar.appendChild(avatarImg);
+        } else {
+            avatar.textContent = role === 'user' ? 'Я' : 'AI';
+        }
+        
+        const content = document.createElement('div');
+        content.className = 'chat-message-content';
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(content);
+        
+        chatMessages.appendChild(messageDiv);
+        
+        // Для сообщений от ассистента используем эффект печатания
+        if (role === 'assistant' && useTypewriter) {
+            typewriterEffect(content, text, () => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                // Сохраняем в историю после завершения печатания
+                saveChatMessage(role, text);
+            });
+        } else {
+            // Для обычных сообщений просто устанавливаем текст
+            content.textContent = text;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            // Сохраняем в историю
+            saveChatMessage(role, text);
+        }
+        
+        return messageDiv;
+    }
+    
+    // Эффект печатающегося текста
+    function typewriterEffect(element, text, onComplete) {
+        element.textContent = '';
+        let index = 0;
+        const speed = 20; // Скорость печатания (миллисекунды между символами)
+        
+        function type() {
+            if (index < text.length) {
+                // Добавляем следующий символ
+                element.textContent += text.charAt(index);
+                index++;
+                
+                // Прокручиваем вниз во время печатания
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Продолжаем печатать
+                setTimeout(type, speed);
+            } else {
+                // Печатание завершено
+                if (onComplete) {
+                    onComplete();
+                }
+            }
+        }
+        
+        // Начинаем печатать
+        type();
+    }
+    
+    // Добавление индикатора загрузки
+    function addLoadingMessage() {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'chat-message assistant';
+        messageDiv.id = 'loading-message';
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'chat-message-avatar';
+        avatar.textContent = 'AI';
+        
+        const content = document.createElement('div');
+        content.className = 'chat-message-content loading';
+        
+        const dots = document.createElement('div');
+        dots.className = 'chat-loading-dots';
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'chat-loading-dot';
+            dots.appendChild(dot);
+        }
+        content.appendChild(dots);
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(content);
+        
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+        
+        return 'loading-message';
+    }
+    
+    // Удаление индикатора загрузки
+    function removeLoadingMessage(id) {
+        const loadingMsg = document.getElementById(id);
+        if (loadingMsg) {
+            loadingMsg.remove();
+        }
+    }
+    
+    // Функция для парсинга относительных дат
+    function parseRelativeDate(dateStr) {
+        const lower = dateStr.toLowerCase().trim();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const dateMap = {
+            'сегодня': 0,
+            'today': 0,
+            'завтра': 1,
+            'tomorrow': 1,
+            'послезавтра': 2,
+            'day after tomorrow': 2,
+            'вчера': -1,
+            'yesterday': -1,
+            'позавчера': -2,
+            'day before yesterday': -2,
+            'через день': 1,
+            'через 2 дня': 2,
+            'через 3 дня': 3,
+            'через неделю': 7,
+            'через месяц': 30
+        };
+        
+        for (const [key, days] of Object.entries(dateMap)) {
+            if (lower.includes(key)) {
+                const result = new Date(today);
+                result.setDate(result.getDate() + days);
+                return result;
+            }
+        }
+        
+        // Парсинг конкретных дат типа "4 января", "15 марта"
+        const monthNames = {
+            'января': 0, 'февраля': 1, 'марта': 2, 'апреля': 3, 'мая': 4, 'июня': 5,
+            'июля': 6, 'августа': 7, 'сентября': 8, 'октября': 9, 'ноября': 10, 'декабря': 11,
+            'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+            'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+        };
+        
+        for (const [monthName, monthIndex] of Object.entries(monthNames)) {
+            const regex = new RegExp(`(\\d{1,2})\\s+${monthName}(?:\\s+(\\d{4}))?`, 'i');
+            const match = lower.match(regex);
+            if (match) {
+                const day = parseInt(match[1]);
+                const year = match[2] ? parseInt(match[2]) : today.getFullYear();
+                const result = new Date(year, monthIndex, day);
+                result.setHours(0, 0, 0, 0);
+                return result;
+            }
+        }
+        
+        return null;
+    }
+    
+    // Функция для поиска задач по ключевым словам
+    function searchTasksByKeywords(tasks, keywords) {
+        const lowerKeywords = keywords.toLowerCase().split(/\s+/);
+        return tasks.filter(task => {
+            const searchText = `${task.title} ${task.description || ''}`.toLowerCase();
+            return lowerKeywords.some(keyword => searchText.includes(keyword));
+        });
+    }
+    
+    // Получение контекста (задачи и заметки)
+    async function getContext(userMessage = '') {
+        const tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        const stickers = JSON.parse(localStorage.getItem('notes_stickers') || '[]');
+        
+        // Получаем текущую дату и неделю
+        const now = new Date();
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay() + 1); // Понедельник
+        weekStart.setHours(0, 0, 0, 0);
+        
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 6);
+        weekEnd.setHours(23, 59, 59, 999);
+        
+        const lastWeekStart = new Date(weekStart);
+        lastWeekStart.setDate(weekStart.getDate() - 7);
+        const lastWeekEnd = new Date(weekStart);
+        lastWeekEnd.setDate(weekStart.getDate() - 1);
+        lastWeekEnd.setHours(23, 59, 59, 999);
+        
+        // Фильтруем задачи текущей недели
+        const thisWeekTasks = tasks.filter(task => {
+            if (!task.due_date) return false;
+            const taskDate = new Date(task.due_date);
+            return taskDate >= weekStart && taskDate <= weekEnd;
+        });
+        
+        const thisWeekCompleted = thisWeekTasks.filter(t => t.completed).length;
+        
+        // Фильтруем задачи прошлой недели
+        const lastWeekTasks = tasks.filter(task => {
+            if (!task.due_date) return false;
+            const taskDate = new Date(task.due_date);
+            return taskDate >= lastWeekStart && taskDate <= lastWeekEnd;
+        });
+        
+        const lastWeekCompleted = lastWeekTasks.filter(t => t.completed).length;
+        
+        // Получаем текущий месяц
+        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+        monthStart.setHours(0, 0, 0, 0);
+        const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+        monthEnd.setHours(23, 59, 59, 999);
+        
+        // Фильтруем задачи текущего месяца
+        const thisMonthTasks = tasks.filter(task => {
+            if (!task.due_date) return false;
+            const taskDate = new Date(task.due_date);
+            return taskDate >= monthStart && taskDate <= monthEnd;
+        });
+        
+        const thisMonthCompleted = thisMonthTasks.filter(t => t.completed).length;
+        
+        // Получаем прошлый месяц
+        const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        lastMonthStart.setHours(0, 0, 0, 0);
+        const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
+        lastMonthEnd.setHours(23, 59, 59, 999);
+        
+        // Фильтруем задачи прошлого месяца
+        const lastMonthTasks = tasks.filter(task => {
+            if (!task.due_date) return false;
+            const taskDate = new Date(task.due_date);
+            return taskDate >= lastMonthStart && taskDate <= lastMonthEnd;
+        });
+        
+        const lastMonthCompleted = lastMonthTasks.filter(t => t.completed).length;
+        
+        // Получаем текущую дату для проверки
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const todayStr = today.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        const todayISO = today.toISOString().split('T')[0];
+        
+        // Фильтруем задачи на сегодня
+        const todayTasks = tasks.filter(task => {
+            if (task.due_date) {
+                const taskDate = new Date(task.due_date).toISOString().split('T')[0];
+                return taskDate === todayISO;
+            }
+            if (task.start_date && task.end_date) {
+                const startDate = new Date(task.start_date).toISOString().split('T')[0];
+                const endDate = new Date(task.end_date).toISOString().split('T')[0];
+                return todayISO >= startDate && todayISO <= endDate;
+            }
+            return false;
+        });
+        
+        const todayCompleted = todayTasks.filter(t => t.completed).length;
+        
+        // Вычисляем задачи на завтра, вчера, послезавтра
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const tomorrowISO = tomorrow.toISOString().split('T')[0];
+        const tomorrowTasks = tasks.filter(task => {
+            if (task.due_date) {
+                const taskDate = new Date(task.due_date).toISOString().split('T')[0];
+                return taskDate === tomorrowISO;
+            }
+            return false;
+        });
+        
+        const yesterday = new Date(today);
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayISO = yesterday.toISOString().split('T')[0];
+        const yesterdayTasks = tasks.filter(task => {
+            if (task.due_date) {
+                const taskDate = new Date(task.due_date).toISOString().split('T')[0];
+                return taskDate === yesterdayISO;
+            }
+            return false;
+        });
+        
+        const dayAfterTomorrow = new Date(today);
+        dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
+        const dayAfterTomorrowISO = dayAfterTomorrow.toISOString().split('T')[0];
+        const dayAfterTomorrowTasks = tasks.filter(task => {
+            if (task.due_date) {
+                const taskDate = new Date(task.due_date).toISOString().split('T')[0];
+                return taskDate === dayAfterTomorrowISO;
+            }
+            return false;
+        });
+        
+        // Парсим дату из сообщения пользователя, если есть
+        let requestedDate = null;
+        let requestedDateTasks = [];
+        if (userMessage) {
+            requestedDate = parseRelativeDate(userMessage);
+            if (requestedDate) {
+                const requestedDateISO = requestedDate.toISOString().split('T')[0];
+                requestedDateTasks = tasks.filter(task => {
+                    if (task.due_date) {
+                        const taskDate = new Date(task.due_date).toISOString().split('T')[0];
+                        return taskDate === requestedDateISO;
+                    }
+                    return false;
+                });
+            }
+        }
+        
+        // Поиск задач по ключевым словам из сообщения
+        let foundTasksByKeywords = [];
+        if (userMessage) {
+            // Извлекаем ключевые слова (исключаем служебные слова)
+            const stopWords = ['сколько', 'у', 'меня', 'задач', 'на', 'когда', 'мне', 'нужно', 'должен', 'должна', 'какие', 'какая', 'какое', 'есть', 'быть', 'сегодня', 'завтра', 'вчера', 'послезавтра', 'позавчера'];
+            const words = userMessage.toLowerCase().split(/\s+/).filter(w => w.length > 2 && !stopWords.includes(w));
+            if (words.length > 0) {
+                foundTasksByKeywords = searchTasksByKeywords(tasks, words.join(' '));
+            }
+        }
+        
+        // Получаем текущий язык интерфейса
+        const currentLang = localStorage.getItem('language') || 'ru';
+        const languageInstructions = {
+            'ru': 'Ты - умный ассистент для управления задачами и заметками. ВСЕГДА отвечай ТОЛЬКО на русском языке.',
+            'en': 'You are a smart assistant for managing tasks and notes. ALWAYS respond ONLY in English.',
+            'es': 'Eres un asistente inteligente para gestionar tareas y notas. SIEMPRE responde SOLO en español.'
+        };
+        const baseInstruction = languageInstructions[currentLang] || languageInstructions['ru'];
+        
+        // Формируем контекст для нейросети
+        let context = `${baseInstruction}
+
+ВАЖНО: "ЗАДАЧА" и "ЗАМЕТКА" - это РАЗНЫЕ вещи!
+
+ЗАДАЧА:
+- Привязана к конкретной дате
+- Имеет название, описание (опционально) и приоритет (1, 2 или 3)
+- Формат создания: CREATE_TASK:дата:название:описание:приоритет
+
+ЗАМЕТКА:
+- Это просто стикер с текстом
+- НЕ имеет даты, описания и приоритета
+- Формат создания: CREATE_NOTE:текст заметки
+- Пример: если пользователь говорит "создай заметку подарить маме подарок", создай заметку с текстом "подарить маме подарок"
+
+СТРОГИЙ АЛГОРИТМ СОЗДАНИЯ ЗАДАЧИ (ВЫПОЛНЯЙ СТРОГО ПО ПОРЯДКУ, НЕ ПРОПУСКАЙ ШАГИ!):
+
+ШАГ 1: Пользователь пишет "создай/сделай/напиши задачу на [дата] - [название]"
+  - Если пользователь просит создать "ЗАМЕТКУ" (без даты) - это заметка, создай её сразу командой CREATE_NOTE:текст
+  - Если пользователь просит создать "ЗАДАЧУ" (с датой) - извлеки дату и название из сообщения
+  - ОБЯЗАТЕЛЬНО задай ТОЛЬКО ОДИН вопрос: "Будет ли описание у задачи?"
+  - ЗАПРЕЩЕНО создавать задачу на этом шаге!
+  - ЗАПРЕЩЕНО задавать другие вопросы!
+  - ЗАПРЕЩЕНО пропускать этот вопрос!
+
+ШАГ 2: Пользователь отвечает про описание
+  - Если ответ отрицательный (нет, не будет, без описания, не нужно, не требуется и т.д.) → СРАЗУ переходи к ШАГУ 3 (спроси про приоритет)
+  - Если ответ положительный (да, будет, нужно, требуется и т.д.) → СРАЗУ спроси "Что вы хотите добавить в описание?" и дождись ответа пользователя с описанием, затем переходи к ШАГУ 3
+  - КРИТИЧЕСКИ ВАЖНО: Если в истории диалога пользователь УЖЕ ответил "да" или "будет" на вопрос про описание, НЕ спрашивай снова "Будет ли описание?"! Сразу спроси "Что вы хотите добавить в описание?"
+
+ШАГ 3: Спроси про приоритет
+  - Задай вопрос: "Какой приоритет у задачи? 1, 2 или 3?"
+  - Дождись ответа пользователя
+  - ЗАПРЕЩЕНО создавать задачу до получения ответа!
+
+ШАГ 4: Создай задачу
+  - После получения приоритета (1, 2 или 3) СРАЗУ создай задачу командой: CREATE_TASK:дата:название:описание:приоритет
+  - Если приоритет не указан, используй 1
+  - Если описание не было (пользователь сказал "нет"), используй формат: CREATE_TASK:дата:название::приоритет (два двоеточия подряд между названием и приоритетом)
+  - ВАЖНО: Формат команды строгий! Если описание пустое, используй два двоеточия подряд (::), например: CREATE_TASK:30 декабря:запустить бота::1
+
+КРИТИЧЕСКИ ВАЖНО:
+- ВСЕГДА начинай с вопроса "Будет ли описание у задачи?" - НИКОГДА не пропускай этот шаг!
+- Задавай ТОЛЬКО ОДИН вопрос за раз и дожидайся ответа
+- НИКОГДА не задавай несколько вопросов сразу!
+- НИКОГДА не создавай задачу сразу после первого сообщения пользователя!
+- НИКОГДА не повторяй один и тот же вопрос!
+- ДАТА: Если год не указан, используй текущий год (${new Date().getFullYear()})
+- ДАТА: НЕЛЬЗЯ создавать задачи в прошлом! Сегодня: ${todayStr}. Если пользователь указал дату в прошлом, скажи: "Нельзя создавать задачи в прошлом. Укажите дату сегодня или в будущем."
+- Приоритет должен быть ЧИСЛОМ: 1, 2 или 3
+- Формат CREATE_TASK: дата:название:описание:приоритет
+- Если описание ЕСТЬ: CREATE_TASK:30 декабря:запустить бота:описание задачи:1
+- Если описание ПУСТОЕ (пользователь сказал "нет"): CREATE_TASK:30 декабря:запустить бота::1 (ОБЯЗАТЕЛЬНО два двоеточия подряд :: между названием и приоритетом!)
+- КРИТИЧЕСКИ ВАЖНО: Если описание пустое, НЕ используй формат с тремя частями! ВСЕГДА используй формат с четырьмя частями и двумя двоеточиями подряд для пустого описания!
+   
+2. Анализировать задачи и статистику. Отвечай подробно и дружелюбно.
+3. Отвечать на вопросы о задачах и заметках.
+
+СТАТИСТИКА ЗАДАЧ:
+- Сегодня (${todayStr}): ${todayTasks.length} задач (выполнено: ${todayCompleted})
+- Текущая неделя: ${thisWeekTasks.length} задач (выполнено: ${thisWeekCompleted})
+- Прошлая неделя: ${lastWeekTasks.length} задач (выполнено: ${lastWeekCompleted})
+- Текущий месяц: ${thisMonthTasks.length} задач (выполнено: ${thisMonthCompleted})
+- Прошлый месяц: ${lastMonthTasks.length} задач (выполнено: ${lastMonthCompleted})
+
+ВАЖНО: Когда пользователь спрашивает про "сегодня" или "на сегодня", используй статистику СЕГОДНЯ (${todayTasks.length} задач на ${todayStr})!
+Когда пользователь спрашивает про "завтра" или "на завтра", используй статистику ЗАВТРА (${tomorrowTasks.length} задач)!
+Когда пользователь спрашивает про "вчера" или "вчера было", используй статистику ВЧЕРА (${yesterdayTasks.length} задач)!
+Когда пользователь спрашивает про "послезавтра" или "после завтра", используй статистику ПОСЛЕЗАВТРА (${dayAfterTomorrowTasks.length} задач)!
+Когда пользователь спрашивает про "месяц" или "в этом месяце", используй статистику ТЕКУЩЕГО МЕСЯЦА (${thisMonthTasks.length} задач), а не недели!
+Когда пользователь спрашивает про "неделю" или "на этой неделе", используй статистику ТЕКУЩЕЙ НЕДЕЛИ (${thisWeekTasks.length} задач).
+
+ПОИСК ЗАДАЧ:
+- Если пользователь спрашивает "когда мне нужно [что-то]" или "когда [что-то]", ИЩИ задачи по ключевым словам из запроса
+- Например: "когда мне нужно в кино" → найди все задачи, содержащие слово "кино" в названии или описании, и укажи их даты
+- Если пользователь спрашивает про конкретную дату (например, "4 января", "15 марта"), используй задачи на эту дату
+- Если пользователь спрашивает про относительную дату ("завтра", "вчера", "послезавтра"), используй соответствующие задачи
+
+Статистика:
+- Всего задач: ${tasks.length}
+- Выполнено задач: ${tasks.filter(t => t.completed).length}
+- Задач на сегодня: ${todayTasks.length}
+- Выполнено на сегодня: ${todayCompleted}
+- Задач на этой неделе: ${thisWeekTasks.length}
+- Выполнено на этой неделе: ${thisWeekCompleted}
+- Выполнено на прошлой неделе: ${lastWeekCompleted}
+- Разница: ${thisWeekCompleted - lastWeekCompleted}
+
+Задачи на сегодня (${todayStr}):\n`;
+        
+        if (todayTasks.length > 0) {
+            todayTasks.forEach((task, index) => {
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        } else {
+            context += 'Нет задач на сегодня\n';
+        }
+        
+        const tomorrowStr = tomorrow.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        context += `\nЗадачи на завтра (${tomorrowStr}):\n`;
+        if (tomorrowTasks.length > 0) {
+            tomorrowTasks.forEach((task, index) => {
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        } else {
+            context += 'Нет задач на завтра\n';
+        }
+        
+        const yesterdayStr = yesterday.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        context += `\nЗадачи на вчера (${yesterdayStr}):\n`;
+        if (yesterdayTasks.length > 0) {
+            yesterdayTasks.forEach((task, index) => {
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        } else {
+            context += 'Нет задач на вчера\n';
+        }
+        
+        const dayAfterTomorrowStr = dayAfterTomorrow.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        context += `\nЗадачи на послезавтра (${dayAfterTomorrowStr}):\n`;
+        if (dayAfterTomorrowTasks.length > 0) {
+            dayAfterTomorrowTasks.forEach((task, index) => {
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        } else {
+            context += 'Нет задач на послезавтра\n';
+        }
+        
+        // Если пользователь спросил про конкретную дату, добавляем задачи на эту дату
+        if (requestedDate && requestedDateTasks.length > 0) {
+            const requestedDateStr = requestedDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            context += `\nЗадачи на ${requestedDateStr}:\n`;
+            requestedDateTasks.forEach((task, index) => {
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        }
+        
+        // Если найдены задачи по ключевым словам, добавляем их
+        if (foundTasksByKeywords.length > 0) {
+            context += `\nНайденные задачи по запросу "${userMessage}":\n`;
+            foundTasksByKeywords.forEach((task, index) => {
+                const dueDate = task.due_date ? new Date(task.due_date).toLocaleDateString('ru-RU') : 'не указана';
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Дата: ${dueDate}, Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        }
+        
+        context += `\nВсе задачи пользователя:\n`;
+        
+        if (tasks.length > 0) {
+            tasks.forEach((task, index) => {
+                const dueDate = task.due_date ? new Date(task.due_date).toLocaleDateString('ru-RU') : 'не указана';
+                context += `${index + 1}. ${task.title}${task.description ? ' - ' + task.description : ''} (Дата: ${dueDate}, Выполнено: ${task.completed ? 'да' : 'нет'})\n`;
+            });
+        } else {
+            context += 'Нет задач\n';
+        }
+        
+        context += '\nТекущие заметки:\n';
+        if (stickers.length > 0) {
+            stickers.forEach((sticker, index) => {
+                // Проверяем, что content существует и является строкой
+                const stickerContent = sticker.content || '';
+                const content = String(stickerContent).replace(/<[^>]*>/g, '').substring(0, 100);
+                const contentLength = String(stickerContent).length;
+                context += `${index + 1}. ${content}${contentLength > 100 ? '...' : ''}\n`;
+            });
+        } else {
+            context += 'Нет заметок\n';
+        }
+        
+        context += `\nВажно: 
+- Если пользователь просит создать ЗАДАЧУ (с датой), веди диалог с уточнениями. После получения всех данных используй формат CREATE_TASK:дата:название:описание:приоритет
+- Если пользователь просит создать ЗАМЕТКУ (без даты), создай её сразу командой CREATE_NOTE:текст заметки (без вопросов про описание и приоритет!)
+- Текущий год: ${new Date().getFullYear()}. Если пользователь указал дату без года (например, "28 декабря"), всегда используй текущий год (${new Date().getFullYear()})
+- Формат даты в CREATE_TASK должен быть понятным (например, "28 декабря" или "28 декабря 2025"), но если год не указан, система автоматически использует текущий год`;
+        
+        return context;
+    }
+    
+    // Обработка действий (создание задачи и т.д.)
+    async function handleAction(userMessage, assistantMessage) {
+        // Проверяем, нужно ли создать заметку
+        if (assistantMessage.includes('CREATE_NOTE:')) {
+            const match = assistantMessage.match(/CREATE_NOTE:(.+)/);
+            if (match) {
+                const noteText = match[1].trim();
+                await createNoteFromChat(noteText);
+                return true; // Действие выполнено
+            }
+        }
+        
+        // Проверяем, нужно ли создать задачу
+        if (assistantMessage.includes('CREATE_TASK:')) {
+            console.log('Found CREATE_TASK command:', assistantMessage);
+            
+            // Гибкий regex для обработки разных форматов:
+            // CREATE_TASK:дата:название:описание:приоритет
+            // CREATE_TASK:дата:название::приоритет (пустое описание - два двоеточия подряд)
+            // CREATE_TASK:дата:название:приоритет (без описания, 3 части вместо 4)
+            
+            // Сначала пробуем формат с пустым описанием (два двоеточия подряд)
+            let match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?)::([123])/);
+            if (match) {
+                // Формат: дата:название::приоритет
+                match = [match[0], match[1], match[2], '', match[3]];
+            } else {
+                // Пробуем стандартный формат с 4 частями (с описанием)
+                match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?):([^:\n\r]+?):([123])/);
+                if (match) {
+                    // Формат: дата:название:описание:приоритет
+                    // match уже правильный
+                } else {
+                    // Пробуем формат без описания (3 части)
+                    match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?):([123])/);
+                    if (match) {
+                        // Добавляем пустое описание
+                        match = [match[0], match[1], match[2], '', match[3]];
+                    }
+                }
+            }
+            
+            if (match) {
+                const date = match[1].trim();
+                const title = match[2].trim();
+                const description = (match[3] || '').trim();
+                let priority = (match[4] || match[3] || '1').trim();
+                
+                console.log('Parsed task:', { date, title, description, priority });
+                
+                // Обрабатываем приоритет
+                if (priority.toLowerCase() === 'null' || priority === '' || priority === 'не требуется') {
+                    priority = 1; // Приоритет по умолчанию
+                } else {
+                    priority = parseInt(priority) || 1;
+                }
+                
+                // Валидация приоритета
+                if (priority < 1 || priority > 3) {
+                    priority = 1;
+                }
+                
+                try {
+                    await createTaskFromChat(date, title, description, priority);
+                    console.log('Task created successfully');
+                    return true; // Действие выполнено
+                } catch (error) {
+                    console.error('Error creating task:', error);
+                    addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
+                    return false;
+                }
+            } else {
+                console.error('Failed to parse CREATE_TASK command:', assistantMessage);
+                // Пытаемся найти команду в тексте для отладки
+                const simpleMatch = assistantMessage.match(/CREATE_TASK:(.+)/);
+                if (simpleMatch) {
+                    console.error('Command found but format is incorrect:', simpleMatch[1]);
+                    // Пытаемся извлечь данные вручную
+                    const parts = simpleMatch[1].split(':');
+                    if (parts.length >= 3) {
+                        const date = parts[0].trim();
+                        const title = parts[1].trim();
+                        const description = parts.length > 3 ? parts.slice(2, -1).join(':').trim() : '';
+                        const priority = parseInt(parts[parts.length - 1].trim()) || 1;
+                        
+                        console.log('Manual parsing:', { date, title, description, priority });
+                        try {
+                            await createTaskFromChat(date, title, description, priority);
+                            return true;
+                        } catch (error) {
+                            console.error('Error creating task (manual parse):', error);
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+        
+        return false;
+    }
+    
+    // Парсинг даты из текста
+    function parseDate(dateText) {
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        
+        // Пытаемся распарсить дату
+        const dateMatch = dateText.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+        if (dateMatch) {
+            const day = parseInt(dateMatch[1]);
+            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            const month = monthNames.findIndex(m => m.toLowerCase() === dateMatch[2].toLowerCase());
+            if (month !== -1) {
+                return new Date(currentYear, month, day);
+            }
+        }
+        
+        return null;
+    }
+    
+    // Создание заметки из чата
+    async function createNoteFromChat(text) {
+        try {
+            // Получаем стикеры из localStorage
+            const stickersJson = localStorage.getItem('notes_stickers');
+            const stickers = stickersJson ? JSON.parse(stickersJson) : [];
+            
+            // Создаем новый стикер
+            const stickerId = Date.now();
+            const sticker = {
+                id: stickerId,
+                content: text,
+                color: '#FFEB3B', // Желтый по умолчанию
+                height: 200,
+                locked: false,
+                position: {
+                    x: Math.random() * 300 + 20,
+                    y: Math.random() * 400 + 100
+                }
+            };
+            
+            // Сохраняем в localStorage
+            stickers.push(sticker);
+            localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+            
+            // Показываем сообщение об успехе
+            addMessage('assistant', `✅ Заметка создана: "${text}"`, true); // Используем эффект печатания
+            
+            console.log('Note created successfully:', sticker);
+        } catch (error) {
+            console.error('Error creating note:', error);
+            addMessage('assistant', '❌ Ошибка при создании заметки. Попробуйте еще раз.', true);
+        }
+    }
+    
+    // Создание задачи из чата
+    async function createTaskFromChat(dateText, title, description, priority) {
+        try {
+            // Очищаем название от лишних частей
+            let cleanTitle = title.trim();
+            // Убираем возможные префиксы типа "на 29 декабря - " или "на 29 декабря: "
+            cleanTitle = cleanTitle.replace(/^на\s+\d{1,2}\s+[а-яё]+\s*[:\-]\s*/i, '').trim();
+            
+            console.log('Creating task:', { dateText, title: cleanTitle, description, priority });
+            
+            // Парсим дату
+            console.log('Parsing date:', dateText);
+            const date = parseDate(dateText);
+            if (!date) {
+                console.error('Failed to parse date:', dateText);
+                addMessage('assistant', '❌ Не удалось распознать дату. Попробуйте еще раз.', true);
+                return;
+            }
+            
+            // Проверяем, что дата правильно распарсена
+            console.log('Parsed date:', date, 'Day:', date.getDate(), 'Month:', date.getMonth() + 1, 'Year:', date.getFullYear());
+            
+            // Извлекаем ожидаемый день и месяц из исходного текста
+            const dateMatch = dateText.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+            if (!dateMatch) {
+                console.error('Failed to extract date from text:', dateText);
+                addMessage('assistant', '❌ Не удалось распознать дату. Попробуйте еще раз.', true);
+                return;
+            }
+            
+            const expectedDay = parseInt(dateMatch[1]);
+            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            const monthIndex = monthNames.findIndex(m => m.toLowerCase() === dateMatch[2].toLowerCase());
+            
+            if (monthIndex === -1) {
+                console.error('Failed to find month:', dateMatch[2]);
+                addMessage('assistant', '❌ Не удалось распознать месяц. Попробуйте еще раз.', true);
+                return;
+            }
+            
+            // Используем ожидаемые значения напрямую, чтобы избежать проблем с часовыми поясами
+            const year = date.getFullYear();
+            const month = monthIndex + 1; // Месяц в формате 1-12
+            const day = expectedDay;
+            
+            // Форматируем дату напрямую, без использования методов Date, которые могут сдвинуть дату
+            const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            
+            // Проверяем, что дата не в прошлом
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const taskDate = new Date(year, monthIndex, expectedDay);
+            taskDate.setHours(0, 0, 0, 0);
+            
+            if (taskDate < today) {
+                addMessage('assistant', '❌ Нельзя создавать задачи в прошлом. Укажите дату сегодня или в будущем.', true);
+                return;
+            }
+            
+            console.log('Task data:', { formattedDate, expectedDay, month, year, cleanTitle, description, priority });
+            
+            // Проверяем, что описание не содержит отрицательных ответов (это был ответ на вопрос, а не описание)
+            let cleanDescription = description;
+            const negativePatterns = [
+                /^нет\s*$/i,
+                /^нет\s+не\s+будет/i,
+                /^не\s+будет/i,
+                /^без\s+описания/i,
+                /^описания\s+не\s+будет/i,
+                /^не\s+нужно/i,
+                /^не\s+требуется/i
+            ];
+            
+            if (cleanDescription) {
+                const trimmedDesc = cleanDescription.trim();
+                const isNegative = negativePatterns.some(pattern => pattern.test(trimmedDesc));
+                if (isNegative) {
+                    cleanDescription = '';
+                    console.log('Cleaned description - removed negative answer');
+                }
+            }
+            
+            // Создаем задачу
+            const taskData = {
+                title: cleanTitle,
+                description: cleanDescription || '',
+                priority: priority || 1,
+                due_date: formattedDate,
+                completed: false
+            };
+            
+            const newTask = await createTask(taskData);
+            console.log('Task created successfully:', newTask);
+            
+            // Проверяем, что задача действительно сохранена
+            const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+            const foundTask = savedTasks.find(t => t.id === newTask.id);
+            console.log('Tasks in localStorage:', savedTasks.length);
+            console.log('Created task found in storage:', foundTask);
+            
+            if (!foundTask) {
+                console.error('ERROR: Task was not saved to localStorage!');
+                addMessage('assistant', '❌ Ошибка: задача не была сохранена. Попробуйте еще раз.', true);
+                return;
+            }
+            
+            // Показываем уведомление с правильной датой (используем очищенное описание)
+            const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const descriptionText = cleanDescription ? `\n📝 Описание: ${cleanDescription}` : '';
+            addMessage('assistant', `✅ Задача создана на ${dateStr}: "${cleanTitle}"${descriptionText}\n🎯 Приоритет: ${priority}`, true);
+            
+            // Обновляем статистику в панели приветствия, если она есть
+            if (window.greetingPanel) {
+                window.greetingPanel.updateStats();
+            }
+            
+            // Если мы на странице задач, обновляем список задач
+            if (window.location.pathname.includes('tasks.html')) {
+                // Перезагружаем страницу задач, чтобы показать новую задачу
+                // Или можно вызвать функцию обновления, если она доступна
+                setTimeout(() => {
+                    if (window.loadTasksForDate) {
+                        const currentDate = new Date(formattedDate);
+                        window.loadTasksForDate(currentDate);
+                    } else {
+                        // Если функция недоступна, просто перезагружаем страницу
+                        window.location.reload();
+                    }
+                }, 500);
+            }
+        } catch (error) {
+            console.error('Ошибка при создании задачи:', error);
+            addMessage('assistant', '❌ Произошла ошибка при создании задачи. Попробуйте еще раз.', true);
+        }
+    }
+    
+    // Сохранение сообщения в историю
+    function saveChatMessage(role, text) {
+        const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
+        history.push({ role, text, timestamp: Date.now() });
+        // Храним последние 100 сообщений
+        if (history.length > 100) {
+            history.shift();
+        }
+        localStorage.setItem('chat_history', JSON.stringify(history));
+    }
+    
+    // Загрузка истории чата
+    function loadChatHistory() {
+        console.log('loadChatHistory called');
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) {
+            console.warn('chat-messages element not found in loadChatHistory');
+            return;
+        }
+        
+        // Очищаем контейнер перед загрузкой истории
+        chatMessages.innerHTML = '';
+        
+        try {
+            const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
+            console.log('Loading chat history:', history.length, 'messages');
+            
+            if (history.length === 0) {
+                console.log('No chat history found');
+                return;
+            }
+            
+            history.forEach((msg, index) => {
+                console.log(`Loading message ${index + 1}:`, msg.role, msg.text.substring(0, 50));
+                // Добавляем сообщение напрямую, без сохранения в историю (чтобы избежать дублирования)
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${msg.role}`;
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'chat-message-avatar';
+                // Проверяем наличие аватара пользователя
+                const userAvatar = localStorage.getItem('user_avatar');
+                if (msg.role === 'user' && userAvatar) {
+                    avatar.style.background = 'transparent';
+                    avatar.style.padding = '0';
+                    const avatarImg = document.createElement('img');
+                    avatarImg.src = userAvatar;
+                    avatarImg.style.width = '100%';
+                    avatarImg.style.height = '100%';
+                    avatarImg.style.borderRadius = '50%';
+                    avatarImg.style.objectFit = 'cover';
+                    avatar.appendChild(avatarImg);
+                } else {
+                    avatar.textContent = msg.role === 'user' ? 'Я' : 'AI';
+                }
+                
+                const content = document.createElement('div');
+                content.className = 'chat-message-content';
+                content.textContent = msg.text;
+                
+                messageDiv.appendChild(avatar);
+                messageDiv.appendChild(content);
+                
+                chatMessages.appendChild(messageDiv);
+            });
+            
+            console.log('Chat history loaded successfully');
+            
+            // Прокручиваем вниз после загрузки
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+        } catch (error) {
+            console.error('Error loading chat history:', error);
+        }
+    }
+    
+    // Очистка истории чата
+    function clearChatHistory() {
+        localStorage.removeItem('chat_history');
+        const chatMessages = document.getElementById('chat-messages');
+        if (chatMessages) {
+            chatMessages.innerHTML = '';
+        }
+        console.log('История чата очищена');
+    }
+}
+
+// Функция для настройки AI меню
+function setupAiMenu() {
+    const gptMenuBtn = document.getElementById('gpt-menu-btn');
+    const aiMenuOverlay = document.getElementById('ai-menu-overlay');
+    const aiChatOption = document.getElementById('ai-chat-option');
+    const aiPlanOption = document.getElementById('ai-plan-option');
+    
+    if (gptMenuBtn && aiMenuOverlay) {
+        // Открытие меню
+        gptMenuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            aiMenuOverlay.classList.add('active');
+        });
+        
+        // Закрытие при клике на overlay
+        aiMenuOverlay.addEventListener('click', (e) => {
+            if (e.target === aiMenuOverlay) {
+                aiMenuOverlay.classList.remove('active');
+            }
+        });
+        
+        // Переход в чат
+        if (aiChatOption) {
+            aiChatOption.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                aiMenuOverlay.classList.remove('active');
+                setTimeout(() => {
+                    window.location.href = '/public/chat.html';
+                }, 150);
+            });
+        }
+        
+        // Переход в создание плана
+        if (aiPlanOption) {
+            aiPlanOption.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                aiMenuOverlay.classList.remove('active');
+                setTimeout(() => {
+                    window.location.href = '/public/gpt-plan.html';
+                }, 150);
+            });
+        }
+    }
+}
+
+function setupSidebar() {
+    const burgerMenu = document.getElementById('burger-menu');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+    
+    console.log('setupSidebar called', {
+        burgerMenu: !!burgerMenu,
+        sidebarOverlay: !!sidebarOverlay
+    });
+    
+    if (burgerMenu && sidebarOverlay) {
+        // Время последнего открытия для предотвращения немедленного закрытия
+        let lastOpenTime = 0;
+        
+        burgerMenu.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Проверяем текущее состояние
+            const wasActive = sidebarOverlay.classList.contains('active');
+            const isActive = !wasActive;
+            
+            console.log('Burger clicked, wasActive:', wasActive, 'isActive:', isActive);
+            
+            if (isActive) {
+                // Открываем сайдбар
+                lastOpenTime = Date.now();
+                sidebarOverlay.classList.add('active');
+                burgerMenu.classList.add('active');
+                document.body.classList.add('sidebar-open');
+                
+                // Явно устанавливаем стили с !important через setProperty
+                sidebarOverlay.style.setProperty('pointer-events', 'auto', 'important');
+                sidebarOverlay.style.setProperty('opacity', '1', 'important');
+                sidebarOverlay.style.setProperty('visibility', 'visible', 'important');
+                sidebarOverlay.style.setProperty('z-index', '3000', 'important');
+                sidebarOverlay.style.setProperty('background', 'rgba(255, 255, 255, 1)', 'important');
+                
+                console.log('Sidebar opened at', lastOpenTime);
+            } else {
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                
+                // Явно устанавливаем стили для скрытия
+                sidebarOverlay.style.setProperty('pointer-events', 'none', 'important');
+                sidebarOverlay.style.setProperty('opacity', '0', 'important');
+                sidebarOverlay.style.setProperty('visibility', 'hidden', 'important');
+                
+                console.log('Sidebar closed');
+            }
+        });
+        
+        // Обработчик закрытия при клике на overlay (но не на элементы внутри)
+        sidebarOverlay.addEventListener('click', (e) => {
+            // Игнорируем клики в течение 300ms после открытия (чтобы избежать немедленного закрытия)
+            if (Date.now() - lastOpenTime < 300) {
+                e.preventDefault();
+                e.stopPropagation();
+                return;
+            }
+            
+            // Закрываем только если кликнули именно на overlay, а не на его дочерние элементы
+            if (e.target === sidebarOverlay || e.target.classList.contains('sidebar-content')) {
+                // Проверяем, что клик не на ссылку или кнопку
+                if (!e.target.closest('.sidebar-item')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    sidebarOverlay.classList.remove('active');
+                    burgerMenu.classList.remove('active');
+                    document.body.classList.remove('sidebar-open');
+                    sidebarOverlay.style.setProperty('pointer-events', 'none', 'important');
+                    sidebarOverlay.style.setProperty('opacity', '0', 'important');
+                    sidebarOverlay.style.setProperty('visibility', 'hidden', 'important');
+                }
+            }
+        });
+        
+        // Обработка действий сайдбара (только для кнопок без ссылок)
+        const sidebarButtons = sidebarOverlay.querySelectorAll('button.sidebar-item[data-action]');
+        sidebarButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const action = button.dataset.action;
+                
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                sidebarOverlay.style.setProperty('pointer-events', 'none', 'important');
+                sidebarOverlay.style.setProperty('opacity', '0', 'important');
+                sidebarOverlay.style.setProperty('visibility', 'hidden', 'important');
+                
+                // Обрабатываем только действия без навигации
+                if (action === 'info' || action === 'support' || action === 'suggest' || action === 'about') {
+                    handleSidebarAction(action);
+                }
+            });
+        });
+        
+        // Для ссылок - просто закрываем сайдбар, но не блокируем переход
+        const sidebarLinks = sidebarOverlay.querySelectorAll('a.sidebar-item');
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                // НЕ вызываем preventDefault - позволяем переходу произойти
+                // Просто закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+            }, { passive: true }); // passive: true означает, что мы не блокируем событие
+        });
+    } else {
+        console.warn('Burger menu or sidebar overlay not found!', {
+            burgerMenu: !!burgerMenu,
+            sidebarOverlay: !!sidebarOverlay
+        });
+    }
+}
+
+function handleSidebarAction(action) {
+    // Обрабатываем только действия без навигации (info, support, suggest, about)
+    switch (action) {
+        case 'info':
+            window.location.href = '/public/info.html';
+            break;
+        case 'support':
+            console.log('Поддержка');
+            // Здесь можно добавить открытие поддержки
+            break;
+        case 'suggest':
+            console.log('Предложить идею');
+            // Здесь можно добавить форму предложения идеи
+            break;
+        case 'about':
+            console.log('О нас');
+            // Здесь можно добавить информацию о нас
+            break;
+    }
+}
+

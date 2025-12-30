@@ -1,0 +1,1386 @@
+/* Стили для страницы План - Конструктор целей */
+
+/* Скрываем header-divider на странице плана */
+body.plan-page .header-divider,
+.header-divider {
+    display: none !important;
+}
+
+/* Скрываем бургер-меню когда показывается кнопка "назад" */
+body.plan-page.plan-opened .main-header #burger-menu,
+body.plan-page .main-header #header-back-btn[style*="display: flex"] ~ #burger-menu,
+body.plan-page .main-header #header-back-btn[style*="display:flex"] ~ #burger-menu,
+body.plan-page .main-header #burger-menu[style*="display: none"],
+body.plan-page .main-header #burger-menu[style*="display:none"] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+/* Кнопка "Назад" в header */
+.back-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-btn svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Основной контент */
+.main-content {
+    padding: 0 10px 100px 10px;
+    min-height: calc(100vh - 60px);
+    margin-top: 60px;
+    overflow-y: auto;
+}
+
+.plan-container {
+    max-width: 900px;
+    margin: 0 auto;
+    animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Форма создания цели */
+.goal-creation {
+    margin-bottom: 24px;
+}
+
+.goal-creation-card {
+    background: #f4f3f69c;
+    border-radius: 20px;
+    padding: 32px 24px;
+    text-align: center;
+    animation: fadeIn 0.4s ease;
+}
+
+.goal-creation-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.goal-creation-subtitle {
+    font-size: 14px;
+    color: #666666;
+    margin: 0 0 24px 0;
+}
+
+.goal-input-wrapper {
+    display: flex;
+    gap: 12px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.goal-input {
+    flex: 1;
+    padding: 14px 18px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    font-size: 16px;
+    font-family: 'Onest', sans-serif;
+    background: #FFFFFF;
+    transition: all 0.3s ease;
+}
+
+.goal-input:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.goal-create-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+}
+
+.goal-create-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.goal-create-btn:active {
+    transform: translateY(0);
+}
+
+.goal-create-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Конструктор цели */
+.goal-constructor {
+    animation: fadeIn 0.4s ease;
+    position: relative;
+}
+
+.goal-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: #f4f3f69c;
+    border-radius: 20px;
+    position: relative;
+    overflow: visible;
+}
+
+.goal-header-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    position: relative;
+    min-height: 40px;
+    width: 100%;
+}
+
+.goal-info {
+    flex: 1;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+    padding-right: 50px;
+    max-width: calc(100% - 50px);
+}
+
+.goal-title-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.goal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    text-align: left;
+    width: 100%;
+}
+
+.goal-title.editing {
+    padding: 0;
+}
+
+.goal-title-input {
+    width: 100%;
+    max-width: 100%;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    background: transparent;
+    border: 2px solid #000000;
+    border-radius: 8px;
+    padding: 4px 8px;
+    font-family: 'Onest', sans-serif;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.goal-title-input:focus {
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Блок действий цели в шапке */
+.goal-actions-top {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    justify-content: flex-end;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.goal-actions-bottom {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.goal-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    margin-top: 8px;
+    padding: 0 20px;
+}
+
+.progress-bar {
+    flex: 1;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #DC3545;
+    border-radius: 4px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666666;
+    min-width: 40px;
+    text-align: right;
+}
+
+.goal-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.goal-action-btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+}
+
+.goal-action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.05);
+}
+
+.goal-action-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.goal-action-btn.save-plan-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    width: auto;
+    height: auto;
+}
+
+.goal-action-btn.save-plan-btn:hover {
+    background: #333333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.goal-status {
+    margin-bottom: 12px;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.editing {
+    background: rgba(255, 193, 7, 0.2);
+    color: #FFC107;
+}
+
+.status-badge.saved {
+    background: rgba(40, 167, 69, 0.2);
+    color: #28A745;
+}
+
+/* Список дат */
+.dates-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+/* Карточка даты */
+.date-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    animation: fadeIn 0.4s ease;
+}
+
+/* Убрана анимация наведения на блоки дня */
+
+.date-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid rgba(0, 0, 0, 0.05);
+}
+
+.date-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.date-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.date-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+}
+
+.date-action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.date-action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Список задач */
+.tasks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Задача */
+.task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #f4f3f69c;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    animation: fadeIn 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.task-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.task-item.completed {
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.task-item.priority-1 {
+    border-left: 4px solid #DC3545;
+}
+
+.task-item.priority-2 {
+    border-left: 4px solid #FFC107;
+}
+
+.task-item.priority-3 {
+    border-left: 4px solid #28A745;
+}
+
+/* Чекбокс задачи */
+.task-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #E5E5E5;
+    border-radius: 8px;
+    background: #FFFFFF;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-shrink: 0;
+}
+
+.task-checkbox:hover {
+    border-color: #DC3545;
+    transform: scale(1.1);
+}
+
+.task-checkbox.checked {
+    background: #DC3545;
+    border-color: #DC3545;
+}
+
+.task-checkbox.checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    animation: checkMark 0.3s ease;
+}
+
+@keyframes checkMark {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+/* Текст задачи */
+.task-text {
+    flex: 1;
+    font-size: 15px;
+    font-weight: 500;
+    color: #000000;
+    margin: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.task-item.completed .task-text {
+    text-decoration: line-through;
+    opacity: 0.5;
+    color: #999999;
+}
+
+/* Приоритет задачи - молния */
+.task-priority {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    background: transparent;
+    border-radius: 4px;
+}
+
+.task-priority img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+}
+
+/* Действия задачи */
+.task-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.task-action-btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+    opacity: 0;
+}
+
+.task-item:hover .task-action-btn {
+    opacity: 1;
+}
+
+.task-action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.task-action-btn svg {
+    width: 14px;
+    height: 14px;
+}
+
+/* Кнопка добавления задачи */
+.add-task-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: rgba(0, 0, 0, 0.05);
+    border: 2px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 8px;
+}
+
+.add-task-btn:hover {
+    background: rgba(0, 0, 0, 0.08);
+    border-color: #000000;
+    color: #000000;
+}
+
+.add-task-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Кнопка добавления даты */
+.add-date-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 16px;
+    background: #f4f3f69c;
+    border: 2px dashed rgba(0, 0, 0, 0.2);
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #666666;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.add-date-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: #000000;
+    color: #000000;
+    transform: translateY(-2px);
+}
+
+.add-date-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Сохраненные планы */
+.saved-plans {
+    animation: fadeIn 0.4s ease;
+}
+
+.saved-plans-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding: 0 4px;
+}
+
+.saved-plans-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+}
+
+.create-new-plan-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 18px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.create-new-plan-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.create-new-plan-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+.saved-plans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.saved-plan-card {
+    background: #f4f3f69c;
+    border-radius: 20px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    animation: fadeIn 0.4s ease;
+}
+
+.saved-plan-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.saved-plan-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.saved-plan-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.saved-plan-meta {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+}
+
+.saved-plan-progress {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.saved-plan-progress .progress-bar {
+    flex: 1;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.saved-plan-progress .progress-fill {
+    height: 100%;
+    background: #DC3545;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+}
+
+.saved-plan-progress .progress-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #666666;
+    min-width: 40px;
+    text-align: right;
+}
+
+.saved-plan-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.saved-plan-card:hover .saved-plan-actions {
+    opacity: 1;
+}
+
+.saved-plan-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.05);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000000;
+}
+
+.saved-plan-action-btn:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(1.1);
+}
+
+.saved-plan-action-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Список целей */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.goal-card {
+    background: #f4f3f69c;
+    border-radius: 20px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.4s ease;
+}
+
+.goal-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.goal-card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.goal-card-progress {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+}
+
+/* Пустое состояние */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+}
+
+.empty-state-text {
+    font-size: 16px;
+    color: #666666;
+    margin: 0;
+}
+
+/* Модальные окна */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.modal-content {
+    background: #FFFFFF;
+    border-radius: 24px 24px 0 0;
+    width: 100%;
+    max-width: 100%;
+    height: 85vh;
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    z-index: 2001;
+    position: relative;
+    pointer-events: auto;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+}
+
+.modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #666666;
+    transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000000;
+}
+
+.modal-body {
+    padding: 24px;
+}
+
+.modal-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Onest', sans-serif;
+    background: #FFFFFF;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.modal-input:focus {
+    outline: none;
+    border-color: #000000;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+.date-input {
+    font-size: 16px;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px 24px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.modal-btn {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 17px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Onest', sans-serif;
+    min-width: 100px;
+    text-align: center;
+}
+
+.modal-btn-save {
+    width: 100%;
+}
+
+.modal-btn-cancel {
+    background: rgba(0, 0, 0, 0.05);
+    color: #000000;
+}
+
+.modal-btn-cancel:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.modal-btn-save {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.modal-btn-save:hover {
+    background: #333333;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Селектор приоритета */
+.task-create-field {
+    margin-bottom: 24px;
+}
+
+.task-create-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    margin-bottom: 18px;
+    margin-top: 18px;
+}
+
+.priority-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    background: #F5F5F5;
+    padding: 5px;
+    border-radius: 12px;
+}
+
+.priority-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+}
+
+.priority-option.active {
+    background: #FFFFFF;
+    color: #000000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.priority-option img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Анимации появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .goal-input-wrapper {
+        flex-direction: column;
+    }
+
+    .goal-create-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .goal-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .goal-actions {
+        align-self: flex-end;
+    }
+
+    .priority-buttons {
+        flex-direction: column;
+    }
+
+    .priority-btn {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .modal-content {
+        max-width: 100%;
+        margin: 0;
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+/* Нижняя навигация */
+.bottom-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 65px;
+    background: #FFFFFF;
+    border: 1px solid #87858539;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 8px 25px;
+    z-index: 2000 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 400px;
+    max-width: calc(100vw - 40px);
+    width: auto;
+    pointer-events: auto !important;
+}
+
+/* Контейнер для кнопок - равномерное распределение */
+.bottom-navigation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 85px; /* Отступы для круга по центру */
+    pointer-events: none; /* Позволяет кликать через псевдоэлемент */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999999;
+    position: relative;
+    min-width: 60px;
+    z-index: 10; /* Увеличиваем z-index чтобы ссылки были поверх псевдоэлемента */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+    max-width: 70px;
+    text-decoration: none;
+    pointer-events: auto; /* Явно разрешаем клики */
+}
+
+/* Стили для ссылок навигации */
+a.nav-item {
+    text-decoration: none;
+    color: inherit;
+    pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Убеждаемся, что изображения и текст внутри ссылок не блокируют клики */
+a.nav-item img,
+a.nav-item .nav-icon,
+a.nav-item .nav-label {
+    pointer-events: none; /* Клики проходят через изображения и текст к ссылке */
+}
+
+/* Специальные классы для позиционирования */
+.nav-item:nth-child(1) { /* Задачи (самая левая) */
+    order: 1;
+    margin-right: auto;
+}
+
+.nav-item:nth-child(2) { /* GPT (слева от центра) */
+    order: 2;
+    margin-right: 35px; /* Отступ от центра */
+}
+
+.nav-item.nav-add-btn { /* Круг с плюсом в центре */
+    order: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #000000;
+    color: #FFFFFF;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:nth-child(4) { /* План (справа от центра) */
+    order: 4;
+    margin-left: 35px; /* Отступ от центра */
+}
+
+.nav-item:nth-child(5) { /* Заметки (самая правая) */
+    order: 5;
+    margin-left: auto;
+}
+
+.nav-item.active {
+    color: #000000;
+}
+
+.nav-item.active .nav-label {
+    color: #000000;
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 78px;
+    height: 55px;
+    background: #efeef2c4;
+    border-radius: 40px;
+    z-index: -1;
+}
+
+.nav-icon {
+    width: 22px;
+    height: 22px;
+    transition: all 0.3s ease;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-add-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффекты при наведении */
+.nav-item:hover {
+    transform: translateY(-2px);
+}
+
+.nav-add-btn:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* Для мобильных устройств */
+@media (max-width: 480px) {
+    .bottom-navigation {
+        min-width: 360px;
+        max-width: calc(100vw - 20px);
+        padding: 8px 15px;
+    }
+    
+    .nav-item {
+        min-width: 50px;
+        max-width: 60px;
+    }
+    
+    .nav-add-btn {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .nav-label {
+        font-size: 10px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для планшетов (iPad) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .bottom-navigation {
+        min-width: 500px;
+        max-width: 600px;
+        height: 70px;
+        border-radius: 50px;
+        padding: 10px 30px;
+        bottom: 30px;
+    }
+    
+    .nav-item {
+        min-width: 75px;
+        max-width: 85px;
+        gap: 6px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .nav-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-label {
+        font-size: 12px;
+    }
+    
+    .nav-add-btn svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-item.active::before {
+        width: 80px;
+        height: 55px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для десктопов (ПК) */
+@media (min-width: 1025px) {
+    .bottom-navigation {
+        min-width: 650px;
+        max-width: 750px;
+        height: 75px;
+        border-radius: 55px;
+        padding: 12px 45px;
+        bottom: 40px;
+        gap: 5px;
+    }
+    
+    .nav-item {
+        min-width: 85px;
+        max-width: 95px;
+        gap: 8px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-label {
+        font-size: 13px;
+    }
+    
+    .nav-add-btn svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-item.active::before {
+        width: 90px;
+        height: 60px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 55px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 55px;
+    }
+}

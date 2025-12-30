@@ -1,0 +1,45 @@
+/* Draggable Header */
+#main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border-color);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem;
+    cursor: move;
+    user-select: none;
+}
+
+#main-header.dragging {
+    cursor: grabbing;
+}
+
+#main-header h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+#main-header nav {
+    display: flex;
+    gap: 1rem;
+}
+
+#main-header nav a {
+    text-decoration: none;
+    color: var(--text-primary);
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.2s;
+}
+
+#main-header nav a:hover {
+    background-color: var(--light-bg);
+}
+

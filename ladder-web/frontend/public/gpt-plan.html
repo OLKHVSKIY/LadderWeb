@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ladder - GPT План</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/tasks.css">
+    <link rel="stylesheet" href="/assets/css/pages/gpt-plan.css">
+    <link rel="stylesheet" href="/assets/css/components/custom-modal.css">
+    <style>
+        /* Контент показываем сразу, переводы применятся автоматически */
+        /* body:not(.i18n-ready) .main-content {
+            visibility: hidden;
+        } */
+    </style>
+    <script>
+        (function() {
+            const lang = localStorage.getItem('language') || 'ru';
+            document.documentElement.lang = lang;
+        })();
+    </script>
+</head>
+<body class="gpt-plan-page">
+    <!-- Верхний хедер -->
+    <header class="main-header">
+        <div class="header-divider"></div>
+        <button class="burger-menu" id="burger-menu" data-i18n="[aria-label]common.menu" aria-label="Меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+            </svg>
+        </button>
+        <h1 class="page-title" data-i18n="gpt.title">GPT План</h1>
+        <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
+            <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
+        </button>
+    </header>
+
+    <!-- Сайдбар -->
+    <div class="sidebar-overlay" id="sidebar-overlay">
+        <div class="sidebar-marquee">
+            <div class="marquee-content">
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+                <span>Ladder</span>
+            </div>
+        </div>
+        <div class="sidebar-content">
+            <a href="/public/chat.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.chat">Чат с AI</span>
+            </a>
+            <a href="/public/tasks.html" class="sidebar-item">
+                <span class="sidebar-item-text" data-i18n="sidebar.tasks">Задачи</span>
+            </a>
+            <button class="sidebar-item" data-action="info">
+                <span class="sidebar-item-text" data-i18n="sidebar.info">Информация</span>
+            </button>
+            <button class="sidebar-item" data-action="support">
+                <span class="sidebar-item-text" data-i18n="sidebar.support">Поддержка</span>
+            </button>
+            <button class="sidebar-item" data-action="suggest">
+                <span class="sidebar-item-text" data-i18n="sidebar.suggest">Предложить идею</span>
+            </button>
+            <button class="sidebar-item" data-action="about">
+                <span class="sidebar-item-text" data-i18n="sidebar.about">О нас</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <main class="main-content">
+        <!-- Экран 1: Ввод названия плана -->
+        <div class="gpt-screen" id="screen-1">
+            <div class="gpt-screen-content">
+                <div class="gpt-progress-indicator">
+                    <div class="progress-step active">1</div>
+                    <div class="progress-step">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+                
+                <div class="gpt-intro">
+                    <img src="/assets/images/icons/ai.png" alt="AI" class="gpt-ai-icon" width="80" height="80">
+                    <p class="gpt-description" data-i18n="gpt.description">Создайте план проекта с помощью нейросети. Опишите вашу цель, и AI разобьет её на шаги и задачи.</p>
+                </div>
+
+                <div class="gpt-form-field">
+                    <label for="plan-name-input" data-i18n="gpt.planName">Название плана</label>
+                    <input type="text" id="plan-name-input" class="gpt-input" data-i18n-placeholder="plan.goalPlaceholder" placeholder="Например: Подготовка к марафону" maxlength="100">
+                </div>
+
+                <button class="gpt-continue-btn" id="continue-btn-1" data-i18n="common.continue">Продолжить</button>
+            </div>
+        </div>
+
+        <!-- Экран 2: Описание цели -->
+        <div class="gpt-screen" id="screen-2" style="display: none;">
+            <div class="gpt-screen-content">
+                <div class="gpt-progress-indicator">
+                    <div class="progress-step completed">1</div>
+                    <div class="progress-step active">2</div>
+                    <div class="progress-step">3</div>
+                </div>
+
+                <div class="gpt-form-field">
+                    <label for="goal-description-input" data-i18n="gpt.goalDescription">Описание цели</label>
+                    <textarea id="goal-description-input" class="gpt-textarea" data-i18n-placeholder="gpt.goalDescriptionPlaceholder" placeholder="Опишите вашу цель подробно. Чем больше деталей, тем точнее будет план..." rows="6" maxlength="1000"></textarea>
+                </div>
+
+                <button class="gpt-continue-btn" id="continue-btn-2" data-i18n="common.continue">Продолжить</button>
+            </div>
+        </div>
+
+        <!-- Экран 3: Выбор дней и выходных -->
+        <div class="gpt-screen" id="screen-3" style="display: none;">
+            <div class="gpt-screen-content">
+                <div class="gpt-progress-indicator">
+                    <div class="progress-step completed">1</div>
+                    <div class="progress-step completed">2</div>
+                    <div class="progress-step active">3</div>
+                </div>
+
+                <div class="gpt-form-field">
+                    <label for="start-date-input" data-i18n="gpt.startDate">С какого дня начинать план?</label>
+                    <input type="text" id="start-date-input" class="gpt-input" data-i18n-placeholder="gpt.datePlaceholder" placeholder="ДД.ММ.ГГГГ" inputmode="numeric" maxlength="10">
+                </div>
+
+                <div class="gpt-form-field">
+                    <label for="days-count-input" data-i18n="gpt.daysCount">На сколько дней разбить план?</label>
+                    <input type="number" id="days-count-input" class="gpt-input" placeholder="30" min="1" max="365" value="30">
+                </div>
+
+                <div class="gpt-form-field">
+                    <label data-i18n="gpt.weekends">Выходные дни</label>
+                    <div class="weekend-days-selector">
+                        <button class="weekend-day-btn" data-day="0" data-i18n="gpt.mon">Пн</button>
+                        <button class="weekend-day-btn" data-day="1" data-i18n="gpt.tue">Вт</button>
+                        <button class="weekend-day-btn" data-day="2" data-i18n="gpt.wed">Ср</button>
+                        <button class="weekend-day-btn" data-day="3" data-i18n="gpt.thu">Чт</button>
+                        <button class="weekend-day-btn" data-day="4" data-i18n="gpt.fri">Пт</button>
+                        <button class="weekend-day-btn active" data-day="5" data-i18n="gpt.sat">Сб</button>
+                        <button class="weekend-day-btn active" data-day="6" data-i18n="gpt.sun">Вс</button>
+                    </div>
+                </div>
+
+                <button class="gpt-generate-btn" id="generate-btn" data-i18n="gpt.generate">Сгенерировать</button>
+            </div>
+        </div>
+
+        <!-- Экран генерации: Прогресс бар -->
+        <div class="gpt-screen" id="screen-generating" style="display: none;">
+            <div class="gpt-screen-content">
+                <div class="gpt-generating">
+                    <img src="/assets/images/icons/ai.png" alt="AI" class="gpt-ai-icon-generating" width="100" height="100">
+                    <h2 class="gpt-generating-title">
+                        <span class="gpt-generating-text" data-i18n="gpt.generating">Генерация плана</span>
+                        <span class="dots">
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                            <span class="dot"></span>
+                        </span>
+                    </h2>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="generation-progress" style="width: 0%"></div>
+                        </div>
+                        <span class="progress-text" id="generation-progress-text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран результата: Сгенерированный план -->
+        <div class="gpt-screen" id="screen-result" style="display: none;">
+            <div class="gpt-screen-content">
+                <div class="gpt-result-header">
+                    <h2 class="gpt-result-title" id="result-plan-name"></h2>
+                    <div class="gpt-result-actions">
+                        <button class="gpt-action-btn" id="edit-plan-btn" data-i18n="[title]gpt.edit" title="Редактировать">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="gpt-action-btn" id="save-plan-btn" data-i18n="gpt.save">Сохранить</button>
+                    </div>
+                    <button class="gpt-action-btn secondary regenerate-btn-full" id="regenerate-btn" data-i18n="gpt.regenerate">Сгенерировать еще</button>
+                </div>
+                <div class="gpt-result-content" id="result-content">
+                    <!-- План будет добавлен сюда динамически -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Нижняя навигация -->
+    <nav class="bottom-navigation">
+        <a href="/public/tasks.html" class="nav-item nav-left">
+            <img src="/assets/images/icons/checklist.png" alt="Задачи" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.tasks">Задачи</span>
+        </a>
+        <button class="nav-item active" id="gpt-menu-btn" type="button">
+            <img src="/assets/images/icons/ai.png" alt="GPT" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.gpt">GPT</span>
+        </button>
+        <button class="nav-item nav-add-btn" id="add-task-btn" aria-label="Добавить задачу">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        </button>
+        <a href="/public/plan.html" class="nav-item">
+            <img src="/assets/images/icons/draft.png" alt="План" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.plan">План</span>
+        </a>
+        <a href="/public/notes.html" class="nav-item">
+            <img src="/assets/images/icons/notes.png" alt="Заметки" class="nav-icon" width="22" height="22">
+            <span class="nav-label" data-i18n="nav.notes">Заметки</span>
+        </a>
+    </nav>
+
+    <!-- Скрипты -->
+    <!-- Модальное окно выбора AI функции -->
+    <div class="ai-menu-overlay" id="ai-menu-overlay">
+        <div class="ai-menu-modal">
+            <div class="ai-menu-header">
+                <img src="/assets/images/icons/ai.png" alt="AI" class="ai-menu-icon">
+                <h2 data-i18n="ai.menu.title">Выберите тип проекта</h2>
+                <p class="ai-menu-subtitle" data-i18n="ai.menu.subtitle">Создайте обычный проект или используйте ИИ для автоматического планирования</p>
+            </div>
+            <div class="ai-menu-options">
+                <button class="ai-menu-option" id="ai-chat-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.chat.title">Чат с AI</h3>
+                        <p data-i18n="ai.menu.chat.description">Общайтесь с AI и получайте помощь</p>
+                    </div>
+                </button>
+                <button class="ai-menu-option" id="ai-plan-option" type="button">
+                    <div class="ai-option-content">
+                        <h3 data-i18n="ai.menu.plan.title">AI создание плана</h3>
+                        <p data-i18n="ai.menu.plan.description">AI создаст план автоматически</p>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/assets/js/modules/i18n.js"></script>
+    <script type="module" src="/assets/js/modules/custom-modal.js"></script>
+    <script type="module" src="/assets/js/app.js"></script>
+    <script type="module" src="/assets/js/pages/gpt-plan-page.js"></script>
+</body>
+</html>
+

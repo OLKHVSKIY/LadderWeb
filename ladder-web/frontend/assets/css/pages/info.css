@@ -1,0 +1,722 @@
+/* Страница информации о приложении */
+
+body.info-page {
+    background: #FFFFFF;
+    color: #000000;
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.info-page .main-content {
+    padding: 80px 20px 100px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: calc(100vh - 80px);
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+}
+
+/* Секции */
+.info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.info-section-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.info-section-text {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333333;
+    margin: 0;
+}
+
+/* Преимущества */
+.advantages-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.advantage-item {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    background: #F5F5F5;
+    border-radius: 16px;
+    border: 1px solid #E0E0E0;
+}
+
+.advantage-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.advantage-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.advantage-icon svg {
+    width: 100%;
+    height: 100%;
+    color: #000000;
+}
+
+.advantage-content {
+    flex: 1;
+}
+
+.advantage-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.advantage-text {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #666666;
+    margin: 0;
+}
+
+/* Карточки страниц */
+.page-card {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.page-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F5F5F5;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.page-icon img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.page-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #000000;
+}
+
+.page-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.page-description {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #666666;
+    margin: 0;
+}
+
+.page-features {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0;
+    font-size: 15px;
+    color: #000000;
+}
+
+.feature-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: #000000;
+}
+
+.feature-text {
+    color: #333333;
+}
+
+/* Навигационные кнопки */
+.navigation-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.nav-button-demo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    background: #F5F5F5;
+    border: 1px solid #E0E0E0;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+}
+
+.nav-button-demo:hover {
+    background: #EEEEEE;
+    border-color: #000000;
+}
+
+.nav-button-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #000000;
+    color: #FFFFFF;
+    border-radius: 12px;
+    flex-shrink: 0;
+}
+
+.nav-button-icon img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
+}
+
+.nav-button-icon svg {
+    width: 24px;
+    height: 24px;
+    color: #FFFFFF;
+}
+
+.nav-button-info {
+    flex: 1;
+}
+
+.nav-button-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 4px 0;
+}
+
+.nav-button-desc {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #666666;
+    margin: 0;
+}
+
+/* Сетка функций */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.feature-card {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.feature-card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+.feature-card-icon svg {
+    width: 100%;
+    height: 100%;
+    color: #000000;
+}
+
+.feature-card-icon img {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+}
+
+.feature-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.feature-card-text {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #666666;
+    margin: 0;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .info-page .main-content {
+        padding: 70px 16px 100px 16px;
+    }
+    
+    .info-container {
+        gap: 36px;
+    }
+    
+    .info-section-title {
+        font-size: 24px;
+    }
+    
+    .page-card {
+        padding: 20px;
+    }
+    
+    .page-features {
+        gap: 10px;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .advantage-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .advantage-icon {
+        margin: 0 auto;
+    }
+}
+
+/* Хедер */
+.info-page .main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    z-index: 1000;
+}
+
+.info-page .page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.info-page .burger-menu {
+    width: 24px;
+    height: 24px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 3002 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.info-page .burger-menu:hover {
+    transform: scale(1.1);
+}
+
+.info-page .burger-menu svg {
+    width: 100%;
+    height: 100%;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    stroke: #000000 !important;
+    color: #000000 !important;
+}
+
+.info-page .settings-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    transition: transform 0.3s ease;
+}
+
+.info-page .settings-btn:hover {
+    transform: rotate(90deg);
+}
+
+.info-page .settings-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* Скрываем заголовок и кнопку настроек при открытом сайдбаре */
+.info-page .sidebar-overlay.active ~ .main-header .page-title,
+.info-page .sidebar-overlay.active ~ .main-header .settings-btn,
+body.sidebar-open .info-page .main-header .page-title,
+body.sidebar-open .info-page .main-header .settings-btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Бургер-меню должно оставаться видимым при открытом сайдбаре */
+body.sidebar-open .info-page .main-header .burger-menu,
+.info-page .burger-menu.active,
+.info-page .sidebar-overlay.active ~ .main-header .burger-menu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    z-index: 3002 !important;
+    position: relative !important;
+}
+
+/* Сайдбар */
+.info-page .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.info-page .sidebar-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: rgba(255, 255, 255, 1) !important;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    pointer-events: auto !important;
+}
+
+.info-page .sidebar-overlay:not(.active) {
+    pointer-events: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.info-page .sidebar-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 340px;
+    padding: 24px;
+}
+
+/* Бегущая строка в сайдбаре */
+.info-page .sidebar-marquee {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+    background: transparent;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.info-page .sidebar-overlay.active .sidebar-marquee {
+    opacity: 1;
+    visibility: visible;
+}
+
+.info-page .marquee-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 15s linear infinite;
+    gap: 40px;
+}
+
+.info-page .marquee-content span {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    padding: 0 20px;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.info-page .sidebar-item {
+    width: 100%;
+    max-width: 300px;
+    padding: 18px 28px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    display: block;
+    color: inherit;
+    pointer-events: auto !important;
+    position: relative;
+    z-index: 10;
+    opacity: 0;
+    transform: translateX(-80px) scale(0.9);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    border: none;
+    background: none;
+    width: 100%;
+    font-size: 16px;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+.info-page .sidebar-overlay.active .sidebar-item::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    animation: glowPulse 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(4) {
+    transition-delay: 0.25s;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(5) {
+    transition-delay: 0.3s;
+}
+
+.info-page .sidebar-overlay.active .sidebar-item:nth-child(6) {
+    transition-delay: 0.35s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item {
+    transition-delay: 0s;
+    transform: translateX(-80px) scale(0.95);
+    opacity: 0;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(6) {
+    transition-delay: 0.05s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(5) {
+    transition-delay: 0.1s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(4) {
+    transition-delay: 0.15s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(2) {
+    transition-delay: 0.25s;
+}
+
+.info-page .sidebar-overlay:not(.active) .sidebar-item:nth-child(1) {
+    transition-delay: 0.3s;
+}
+
+.info-page .sidebar-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 20px;
+}
+
+.info-page .sidebar-item:hover::before {
+    opacity: 1;
+}
+
+.info-page .sidebar-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        transparent 100%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.info-page .sidebar-item-text {
+    font-size: 17px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: center;
+    display: block;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+    margin-left: 0;
+}
+
+.info-page .sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateX(0) scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.info-page .sidebar-item:hover .sidebar-item-text {
+    color: #000000;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+.info-page .sidebar-item:active {
+    transform: translateX(0) scale(1.02) translateY(0);
+    background: rgba(255, 255, 255, 0.35);
+    transition: all 0.15s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+

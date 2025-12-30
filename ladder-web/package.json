@@ -1,0 +1,20 @@
+{
+  "name": "ladder-web",
+  "version": "1.0.0",
+  "description": "Веб таскер для Telegram бота",
+  "scripts": {
+    "dev": "python server.py",
+    "build": "echo 'Build process would go here'",
+    "serve": "python server.py",
+    "proxy": "python yandex-gpt-proxy.py",
+    "dev:all": "concurrently \"npm run dev\" \"npm run proxy\""
+  },
+  "keywords": [
+    "tasker",
+    "telegram",
+    "web"
+  ],
+  "author": "",
+  "license": "MIT"
+}
+

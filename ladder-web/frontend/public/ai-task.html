@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ladder - AI</title>
+    <link rel="icon" type="image/png" href="../assets/images/icons/ai.png">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/themes/light.css">
+    <link rel="stylesheet" href="../assets/css/pages/tasks.css">
+    <link rel="stylesheet" href="../assets/css/components/modal.css">
+</head>
+<body>
+    <div id="time-background"></div>
+    <header id="main-header"></header>
+    <main id="main-content">
+        <div class="container">
+            <h1>AI Декомпозиция задачи</h1>
+            <div class="ai-container">
+                <textarea id="ai-input" placeholder="Опишите вашу задачу, и AI разобьет её на подзадачи..."></textarea>
+                <button id="ai-decompose-btn" class="btn btn-primary">Разложить на подзадачи</button>
+                <div id="ai-suggestions" class="ai-suggestions"></div>
+            </div>
+        </div>
+    </main>
+    <nav id="bottom-nav"></nav>
+    <script src="../assets/js/vendor/dayjs.min.js"></script>
+    <script type="module" src="../assets/js/components/ai-suggestions.js"></script>
+    <script type="module" src="../assets/js/modules/ai.js"></script>
+    <script type="module" src="../assets/js/app.js"></script>
+</body>
+</html>
+

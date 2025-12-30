@@ -1,0 +1,242 @@
+/* Calendar Component - Минималистичный стиль */
+
+:root {
+    --calendar-bg-color: #FFFFFF;
+    --calendar-font-color: #000000;
+    --weekdays-border-bottom-color: #F5F5F5;
+    --calendar-date-hover-color: #E5E5E5;
+    --calendar-current-date-color: #F5F5F5;
+    --calendar-today-color: #000000;
+    --calendar-today-innerborder-color: transparent;
+    --calendar-nextprev-bg-color: transparent;
+    --next-prev-arrow-color: #000000;
+    --calendar-border-radius: 16px;
+    --calendar-prevnext-date-color: #CCCCCC;
+    --calendar-selected-date-color: #000000;
+}
+
+.calendar {
+    font-family: 'Onest', sans-serif;
+    position: relative;
+    max-width: 100%;
+    min-width: 100%;
+    width: 100%;
+    background: var(--calendar-bg-color);
+    color: var(--calendar-font-color);
+    margin: 0 auto;
+    box-sizing: border-box;
+    overflow: hidden;
+    font-weight: normal;
+    border-radius: var(--calendar-border-radius);
+    border: 1px solid #F5F5F5;
+}
+
+.calendar-inner {
+    padding: 16px;
+}
+
+.calendar .calendar-inner .calendar-body {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    text-align: center;
+    gap: 4px;
+    min-height: 252px; /* 6 строк * 42px (36px min-height + 4px gap) */
+    height: 252px;
+}
+
+.calendar .calendar-inner .calendar-body div {
+    padding: 8px 4px;
+    min-height: 36px;
+    line-height: 20px;
+    border: 1px solid transparent;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calendar .calendar-inner .calendar-body div:nth-child(-n+7) {
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--weekdays-border-bottom-color);
+    font-weight: 500;
+    font-size: 12px;
+    color: #999999;
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+}
+
+.calendar .calendar-inner .calendar-body div:nth-child(-n+7):hover {
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--weekdays-border-bottom-color);
+    background: transparent;
+}
+
+.calendar .calendar-inner .calendar-body div>a {
+    color: var(--calendar-font-color);
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.calendar .calendar-inner .calendar-body div:hover:not(.empty-dates):not(:nth-child(-n+7)) {
+    background: var(--calendar-date-hover-color);
+    border-radius: 8px;
+}
+
+.calendar .calendar-inner .calendar-body div.empty-dates:hover {
+    border: 1px solid transparent;
+    background: transparent;
+}
+
+.calendar .calendar-inner .calendar-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.calendar .calendar-inner .calendar-today-date {
+    display: grid;
+    text-align: center;
+    cursor: pointer;
+    margin: 12px 0;
+    background: var(--calendar-current-date-color);
+    padding: 12px 0px;
+    border-radius: 12px;
+    width: 100%;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.calendar .calendar-inner .calendar-today-date:hover {
+    background: #E5E5E5;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-year-month {
+    display: flex;
+    min-width: 100px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next {
+    text-align: right;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-prev {
+    text-align: left;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-year-label,
+.calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-month-label {
+    font-weight: 500;
+    font-size: 18px;
+    color: #000000;
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today {
+    background: var(--calendar-today-color);
+    border-radius: 8px;
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today a {
+    color: #FFFFFF;
+    outline: 2px solid var(--calendar-today-innerborder-color);
+}
+
+.calendar .calendar-inner .calendar-body .calendar-today:hover {
+    background: var(--calendar-today-color);
+}
+
+.calendar .calendar-inner .calendar-body .calendar-selected {
+    background: var(--calendar-selected-date-color);
+    border-radius: 8px;
+}
+
+.calendar .calendar-inner .calendar-body .calendar-selected a {
+    color: #FFFFFF;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next a,
+.calendar .calendar-inner .calendar-controls .calendar-prev a {
+    color: var(--calendar-font-color);
+    font-family: arial, consolas, sans-serif;
+    font-size: 24px;
+    text-decoration: none;
+    padding: 8px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--calendar-nextprev-bg-color);
+    margin: 0;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next a:hover,
+.calendar .calendar-inner .calendar-controls .calendar-prev a:hover {
+    background: #F5F5F5;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next a svg,
+.calendar .calendar-inner .calendar-controls .calendar-prev a svg {
+    height: 20px;
+    width: 20px;
+}
+
+.calendar .calendar-inner .calendar-controls .calendar-next a svg path,
+.calendar .calendar-inner .calendar-controls .calendar-prev a svg path {
+    fill: var(--next-prev-arrow-color);
+}
+
+.calendar .calendar-inner .calendar-body .prev-dates,
+.calendar .calendar-inner .calendar-body .next-dates {
+    color: var(--calendar-prevnext-date-color);
+}
+
+.calendar .calendar-inner .calendar-body .prev-dates:hover,
+.calendar .calendar-inner .calendar-body .next-dates:hover {
+    border: 1px solid transparent;
+    pointer-events: none;
+    background: transparent;
+}
+
+.calendar .calendar-inner .calendar-body .number-item {
+    cursor: pointer;
+}
+
+.calendar .calendar-inner .calendar-body .number-item a {
+    font-size: 14px;
+    font-weight: 400;
+}
+
+/* Дополнительные стили для правильного отображения */
+.calendar * {
+    box-sizing: border-box;
+}
+
+.calendar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.calendar-inner {
+    display: block !important;
+}
+
+.calendar-body {
+    display: grid !important;
+}
+
+.calendar-controls {
+    display: grid !important;
+}

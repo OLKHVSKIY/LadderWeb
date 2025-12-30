@@ -1,0 +1,27 @@
+/* Time of Day Background Animation */
+#time-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    transition: background 1s ease;
+}
+
+#time-background.morning {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+#time-background.day {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+#time-background.evening {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+#time-background.night {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+

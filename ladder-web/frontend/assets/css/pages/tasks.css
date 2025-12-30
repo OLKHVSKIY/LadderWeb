@@ -1,0 +1,2321 @@
+/* Tasks Page - Точный дизайн как на картинке */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Onest', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+    overflow-x: hidden;
+}
+
+/* Шторка с приветствием */
+.greeting-panel {
+    position: fixed;
+    top: -40vh;
+    left: 0;
+    right: 0;
+    height: 40vh;
+    z-index: 2000;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+    overflow: hidden;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+.greeting-panel.active {
+    transform: translateY(40vh);
+    pointer-events: auto;
+}
+
+.greeting-panel-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: background 0.5s ease;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    overflow: hidden;
+}
+
+/* Фоны для разных времен суток */
+/* Градиенты фона больше не нужны, используется изображение */
+
+/* Изображение для фона */
+.greeting-panel-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    transition: opacity 0.5s ease;
+}
+
+.greeting-panel-content {
+    position: relative;
+    z-index: 3002;
+    padding: 20px;
+    padding-top: 25px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    color: #FFFFFF;
+}
+
+.greeting-panel-divider {
+    width: 45px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    margin: 0 auto 20px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.greeting-panel-divider:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.greeting-panel-divider:active {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.greeting-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.greeting-day {
+    font-size: 48px;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    line-height: 1;
+}
+
+.greeting-date {
+    font-size: 16px;
+    font-weight: 500;
+    color: #FFFFFF;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.greeting-text-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.greeting-text {
+    font-size: 28px;
+    font-weight: 600;
+    color: #FFFFFF;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.greeting-icon {
+    font-size: 32px;
+    line-height: 1;
+    display: none; /* Скрываем эмодзи, используем SVG анимации */
+}
+
+.greeting-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.greeting-stats-text {
+    font-size: 18px;
+    color: #FFFFFF;
+    opacity: 0.95;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.greeting-panel-bottom-divider {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 45px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    z-index: 3;
+}
+
+.greeting-panel-bottom-divider:hover {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.greeting-panel-bottom-divider:active {
+    background: rgba(255, 255, 255, 1);
+}
+
+/* Звезды для ночи */
+.stars-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    animation: twinkle 2s infinite;
+}
+
+.star::before {
+    content: '';
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0.5;
+}
+
+@keyframes twinkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+/* Стили для header-divider - делаем его кликабельным и перетаскиваемым */
+.header-divider {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 45px;
+    height: 4px;
+    background: #c2c1c1;
+    border-radius: 5px;
+    animation: slideDownDivider 0.6s ease-out;
+    z-index: 1001;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.header-divider:hover {
+    background: #999999;
+}
+
+.header-divider:active {
+    background: #777777;
+}
+
+/* Позиционирование header-divider под открытой шторкой */
+/* Скрываем header-divider в хедере когда панель открыта */
+body.greeting-panel-open .main-header .header-divider {
+    display: none;
+}
+
+/* Верхний хедер */
+.main-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    transition: all 0.3s ease;
+    z-index: 300;
+}
+
+
+.burger-menu {
+    width: 24px;
+    height: 24px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 3002 !important; /* Выше сайдбара (3000), чтобы всегда быть видимым */
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.burger-menu:hover {
+    transform: scale(1.1);
+}
+
+.burger-menu svg {
+    width: 100%;
+    height: 100%;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* SVG внутри бургер-меню должен быть видимым при открытом сайдбаре */
+body.sidebar-open .burger-menu svg,
+body.sidebar-open #burger-menu svg,
+.burger-menu.active svg,
+.sidebar-overlay.active ~ .main-header .burger-menu svg,
+.sidebar-overlay.active ~ .main-header #burger-menu svg,
+#burger-menu svg,
+.burger-menu svg {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: 100% !important;
+    height: 100% !important;
+    stroke: #000000 !important;
+    color: #000000 !important;
+}
+
+.settings-btn svg {
+    width: 100%;
+    height: 100%;
+}
+
+.page-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+    text-align: center;
+    flex: 1;
+    transition: all 0.3s ease;
+}
+
+.settings-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    transition: transform 0.3s ease;
+}
+
+.settings-btn:hover {
+    transform: rotate(90deg);
+}
+
+.settings-btn svg {
+    width: 100%;
+    height: 100%;
+}
+
+.header-divider {
+    position: absolute;
+    top: 10px;
+    width: 45px;
+    height: 5px;
+    background: #c2c1c1;
+    border-radius: 5px;
+    animation: slideDownDivider 0.6s ease-out;
+    z-index: 1001;
+}
+
+@keyframes slideDownDivider {
+    from {
+        transform: translateX(-50%) translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Основной контент */
+.main-content {
+    padding: 20px 10px 100px 10px;
+    margin-top: 60px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Выбранная дата */
+.selected-date-container {
+    animation: slideDown 0.5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.selected-date {
+    display: flex;
+    align-items: baseline;
+    gap: 13px;
+    justify-content: center;
+}
+
+.date-number {
+    font-size: 43px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-block;
+}
+
+.date-month-year {
+    font-size: 34px;
+    font-weight: 500;
+    color: #D1CBD1;
+    margin-left: -6px;
+    display: inline-block;
+    vertical-align: baseline;
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+}
+
+/* Календарь недели */
+.week-calendar-container {
+    margin-bottom: 30px;
+    animation: slideDown 0.6s ease;
+    border-bottom: 1px dashed #dad7d7;
+    padding-bottom: 10px;
+}
+
+.week-calendar {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 10px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.week-calendar::-webkit-scrollbar {
+    display: none;
+}
+
+.week-day {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px 5px;
+    border-radius: 12px;
+    background: #f4f3f69c;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.week-day:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.week-day.active {
+    background: #DC3545;
+    border-color: #DC3545;
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+}
+
+.week-day-name {
+    font-size: 12px;
+    font-weight: 500;
+    color: #999999;
+    margin-bottom: 4px;
+    transition: color 0.3s ease;
+}
+
+.week-day.active .week-day-name {
+    color: #FFFFFF;
+}
+
+.week-day-number {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    transition: color 0.3s ease;
+}
+
+.week-day.active .week-day-number {
+    color: #FFFFFF;
+}
+
+/* Секция задач */
+.tasks-section {
+    animation: slideUp 0.7s ease;
+}
+
+.priority-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 0 4px;
+}
+
+.priority-icon {
+    width: 20px;
+    height: 20px;
+    animation: pulse 2s infinite;
+}
+
+.priority-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: #000000;
+}
+
+/* Список задач */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+
+
+/* При открытии календаря нижняя навигация должна быть под overlay */
+body.calendar-open .bottom-navigation {
+    z-index: 1999 !important;
+}
+
+.nav-item.nav-left {
+    align-items: center;
+    order: 1; /* Первая кнопка слева */
+}
+
+.nav-item[data-page="notes"] {
+    order: 5; /* Последняя кнопка справа */
+}
+
+/* Нижняя навигация - ИСПРАВЛЕННАЯ */
+.bottom-navigation {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 65px;
+    background: #FFFFFF;
+    border: 1px solid #87858539;
+    border-radius: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+    padding: 8px 25px;
+    z-index: 2000 !important; /* Выше сайдбара (3000 когда активен, но мы ниже), но достаточно высокий */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    max-width: calc(100vw - 40px);
+    width: auto;
+    pointer-events: auto !important; /* Явно разрешаем клики всегда */
+}
+
+/* Контейнер для кнопок - равномерное распределение */
+.bottom-navigation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 0 85px; /* Отступы для круга по центру */
+    pointer-events: none; /* Позволяет кликать через псевдоэлемент */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999999;
+    position: relative;
+    min-width: 60px;
+    z-index: 10; /* Увеличиваем z-index чтобы ссылки были поверх псевдоэлемента */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    flex: 1;
+    max-width: 70px;
+    text-decoration: none;
+    pointer-events: auto; /* Явно разрешаем клики */
+}
+
+/* Стили для ссылок навигации */
+a.nav-item {
+    text-decoration: none;
+    color: inherit;
+    pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Убеждаемся, что изображения и текст внутри ссылок не блокируют клики */
+a.nav-item img,
+a.nav-item .nav-icon,
+a.nav-item .nav-label {
+    pointer-events: none; /* Клики проходят через изображения и текст к ссылке */
+}
+
+/* Специальные классы для позиционирования */
+.nav-item:nth-child(1) { /* Задачи (самая левая) */
+    order: 1;
+    margin-right: auto;
+}
+
+.nav-item:nth-child(2) { /* GPT (слева от центра) */
+    order: 2;
+    margin-right: 35px; /* Отступ от центра */
+}
+
+.nav-item.nav-add-btn { /* Круг с плюсом в центре */
+    order: 3;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #000000;
+    color: #FFFFFF;
+    padding: 0;
+    margin: 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    flex: 0 0 auto;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-item:nth-child(4) { /* План (справа от центра) */
+    order: 4;
+    margin-left: 35px; /* Отступ от центра */
+}
+
+.nav-item:nth-child(5) { /* Заметки (самая правая) */
+    order: 5;
+    margin-left: auto;
+}
+
+.nav-item.active {
+    color: #000000;
+}
+
+.nav-item.active .nav-label {
+    color: #000000;
+}
+
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 78px;
+    height: 55px;
+    background: #efeef2c4;
+    border-radius: 40px;
+    z-index: -1;
+}
+
+.nav-icon {
+    width: 22px;
+    height: 22px;
+    transition: all 0.3s ease;
+}
+
+.nav-label {
+    font-size: 11px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+/* Плюсик в круге */
+.nav-add-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+    stroke-width: 3;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффекты при наведении */
+.nav-item:hover {
+    transform: translateY(-2px);
+}
+
+.nav-add-btn:hover {
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
+}
+
+/* Для мобильных устройств */
+@media (max-width: 480px) {
+    .bottom-navigation {
+        min-width: 360px;
+        max-width: calc(100vw - 20px);
+        padding: 8px 15px;
+    }
+    
+    .nav-item {
+        min-width: 50px;
+        max-width: 60px;
+    }
+    
+    .nav-add-btn {
+        width: 55px;
+        height: 55px;
+    }
+    
+    .nav-icon {
+        width: 20px;
+        height: 20px;
+    }
+    
+    .nav-label {
+        font-size: 10px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для планшетов (iPad) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .bottom-navigation {
+        min-width: 500px;
+        max-width: 600px;
+        height: 70px;
+        border-radius: 50px;
+        padding: 10px 30px;
+        bottom: 30px;
+    }
+    
+    .nav-item {
+        min-width: 75px;
+        max-width: 85px;
+        gap: 6px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .nav-icon {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-label {
+        font-size: 12px;
+    }
+    
+    .nav-add-btn svg {
+        width: 28px;
+        height: 28px;
+    }
+    
+    .nav-item.active::before {
+        width: 80px;
+        height: 55px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 40px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 40px;
+    }
+}
+
+/* Для десктопов (ПК) */
+@media (min-width: 1025px) {
+    .bottom-navigation {
+        min-width: 650px;
+        max-width: 750px;
+        height: 75px;
+        border-radius: 55px;
+        padding: 12px 45px;
+        bottom: 40px;
+        gap: 5px;
+    }
+    
+    .nav-item {
+        min-width: 85px;
+        max-width: 95px;
+        gap: 8px;
+    }
+    
+    .nav-item.nav-add-btn {
+        width: 75px;
+        height: 75px;
+    }
+    
+    .nav-icon {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-label {
+        font-size: 13px;
+    }
+    
+    .nav-add-btn svg {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .nav-item.active::before {
+        width: 90px;
+        height: 60px;
+    }
+    
+    .nav-item:nth-child(2) {
+        margin-right: 55px;
+    }
+    
+    .nav-item:nth-child(4) {
+        margin-left: 55px;
+    }
+}
+
+/* Анимация для активной кнопки */
+@keyframes buttonPulse {
+    0% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+    100% {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+}
+
+
+
+/* Скрытие элементов хедера при открытом сайдбаре */
+.sidebar-overlay.active ~ .main-header .page-title,
+.sidebar-overlay.active ~ .main-header .settings-btn,
+body:has(.sidebar-overlay.active) .main-header .page-title,
+body:has(.sidebar-overlay.active) .main-header .settings-btn {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Альтернативный способ через класс на body */
+body.sidebar-open .main-header .page-title,
+body.sidebar-open .main-header .settings-btn,
+body.sidebar-open .main-header .header-divider {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Бургер-меню должно оставаться видимым при открытом сайдбаре */
+body.sidebar-open .main-header .burger-menu,
+body.sidebar-open .burger-menu,
+.burger-menu.active,
+.sidebar-overlay.active ~ .main-header .burger-menu,
+.sidebar-overlay.active ~ .main-header #burger-menu,
+body.sidebar-open #burger-menu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+    z-index: 3002 !important;
+    position: relative !important;
+}
+
+/* Сайдбар */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none; /* По умолчанию не блокируем клики */
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+/* Убеждаемся, что бургер-меню всегда выше сайдбара */
+.sidebar-overlay.active ~ .main-header .burger-menu,
+body.sidebar-open .main-header .burger-menu,
+#burger-menu {
+    z-index: 3002 !important;
+    position: relative !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    display: flex !important;
+}
+
+.sidebar-overlay.active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: rgba(255, 255, 255, 1) !important;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    pointer-events: auto !important; /* Разрешаем клики только когда сайдбар активен */
+}
+
+/* Когда сайдбар закрыт, он не должен блокировать навигацию */
+.sidebar-overlay:not(.active) {
+    pointer-events: none !important; /* Явно блокируем клики когда закрыт */
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.sidebar-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    pointer-events: none; /* Позволяем кликам проходить к дочерним элементам */
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    max-width: 340px;
+    padding: 24px;
+}
+
+/* Бегущая строка в сайдбаре */
+.sidebar-marquee {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    overflow: hidden;
+    background: transparent;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.sidebar-overlay.active .sidebar-marquee {
+    opacity: 1;
+    visibility: visible;
+}
+
+.marquee-content {
+    display: flex;
+    white-space: nowrap;
+    animation: marquee 15s linear infinite;
+    gap: 40px;
+}
+
+.marquee-content span {
+    display: inline-block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    padding: 0 20px;
+}
+
+@keyframes marquee {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.sidebar-item {
+    width: 100%;
+    max-width: 300px;
+    padding: 18px 28px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    display: block;
+    color: inherit;
+    pointer-events: auto !important; /* Явно разрешаем клики на элементах */
+    position: relative;
+    z-index: 10; /* Выше чем overlay */
+    opacity: 0;
+    transform: translateX(-80px) scale(0.9);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.sidebar-overlay.active .sidebar-item {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+}
+
+/* Эффект свечения при появлении */
+.sidebar-overlay.active .sidebar-item::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+    opacity: 0;
+    animation: glowPulse 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scale(1);
+    }
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(2) {
+    transition-delay: 0.15s;
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(4) {
+    transition-delay: 0.25s;
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(5) {
+    transition-delay: 0.3s;
+}
+
+.sidebar-overlay.active .sidebar-item:nth-child(6) {
+    transition-delay: 0.35s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item {
+    transition-delay: 0s;
+    transform: translateX(-80px) scale(0.95);
+    opacity: 0;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(6) {
+    transition-delay: 0.05s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(5) {
+    transition-delay: 0.1s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(4) {
+    transition-delay: 0.15s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(3) {
+    transition-delay: 0.2s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(2) {
+    transition-delay: 0.25s;
+}
+
+.sidebar-overlay:not(.active) .sidebar-item:nth-child(1) {
+    transition-delay: 0.3s;
+}
+
+/* Glassmorphism эффекты */
+.sidebar-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.05) 50%,
+        rgba(255, 255, 255, 0) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    border-radius: 20px;
+}
+
+.sidebar-item:hover::before {
+    opacity: 1;
+}
+
+/* Дополнительный блик для эффекта стекла */
+.sidebar-item::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.6) 50%, 
+        transparent 100%);
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.sidebar-item-text {
+    font-size: 17px;
+    font-weight: 500;
+    color: #1a1a1a;
+    text-align: center;
+    display: block;
+    transition: all 0.3s ease;
+    letter-spacing: 0.01em;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: translateX(0) scale(1.05) translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+.sidebar-item:hover .sidebar-item-text {
+    color: #000000;
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9);
+}
+
+.sidebar-item:active {
+    transform: translateX(0) scale(1.02) translateY(0);
+    background: rgba(255, 255, 255, 0.35);
+    transition: all 0.15s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.nav-item[data-page="plan"] {
+    order: 4; /* Четвертая кнопка */
+}
+
+.nav-item.nav-right {
+    align-items: center;
+    order: 2; /* Вторая кнопка */
+}
+
+.nav-item.active {
+    color: #000000;
+}
+
+.nav-item.active .nav-label {
+    color: #000000;
+}
+
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.nav-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: #878585f8;
+}
+
+.nav-add-btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    background: #000000;
+    color: #FFFFFF;
+    padding: 0;
+    margin: 0 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.nav-add-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: #FFFFFF;
+}
+
+/* Адаптивность для планшетов */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .main-content {
+        max-width: 700px;
+        padding: 30px;
+    }
+
+    .date-number {
+        font-size: 56px;
+    }
+
+    .week-day {
+        min-width: 60px;
+        padding: 14px 10px;
+    }
+}
+
+/* Выпадающий список даты */
+.date-picker-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow-y: auto;
+    pointer-events: none;
+    background: transparent;
+    isolation: isolate;
+    padding: 17px 0px 40px 0px;
+}
+
+.date-picker-overlay.active {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    z-index: 10000 !important;
+    background: transparent !important;
+}
+
+/* Размытие будет применяться через JavaScript */
+
+.date-picker-modal {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 24px;
+    padding-bottom: 32px;
+    max-width: 95%;
+    width: 450px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 10001;
+    isolation: isolate;
+    margin: auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.date-picker-overlay.active .date-picker-modal {
+    transform: scale(1) !important;
+}
+
+.date-picker-modal .calendar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Убеждаемся, что стили календаря применяются в главном календаре */
+.date-picker-modal .calendar,
+.date-picker-modal #main-date-calendar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    min-height: auto !important;
+}
+
+.date-picker-modal .calendar-inner {
+    overflow: visible !important;
+    padding-bottom: 8px !important;
+}
+
+.date-picker-modal .calendar-body {
+    overflow: visible !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 8px !important;
+    min-height: 252px !important;
+    height: 252px !important;
+    grid-template-rows: repeat(6, 1fr) !important;
+}
+
+.date-picker-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.date-picker-header h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.date-picker-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: none;
+    font-size: 24px;
+    color: #999999;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    line-height: 1;
+}
+
+.date-picker-close:hover {
+    background: #F5F5F5;
+    color: #000000;
+    transform: rotate(90deg);
+}
+
+.date-picker-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.date-picker-months {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.date-picker-month {
+    padding: 12px 16px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #F9F9F9;
+    border: 1px solid transparent;
+}
+
+.date-picker-month:hover {
+    background: #F0F0F0;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.date-picker-month.active {
+    background: #DC3545;
+    color: #FFFFFF;
+    border-color: #DC3545;
+}
+
+.date-picker-years {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 8px;
+    margin-bottom: 20px;
+}
+
+.date-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 20px;
+}
+
+.date-picker-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    transition: all 0.3s ease;
+}
+
+.date-picker-day:hover {
+    background: #F5F5F5;
+}
+
+.date-picker-day.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.date-picker-day.other-month {
+    color: #CCCCCC;
+}
+
+.date-picker-year {
+    padding: 10px 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000000;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #F9F9F9;
+    border: 1px solid transparent;
+}
+
+.date-picker-year:hover {
+    background: #F0F0F0;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.date-picker-year.active {
+    background: #DC3545;
+    color: #FFFFFF;
+    border-color: #DC3545;
+}
+
+/* Адаптивность для ПК */
+@media (min-width: 1025px) {
+    .main-content {
+        max-width: 800px;
+        padding: 40px;
+    }
+
+    .date-number {
+        font-size: 64px;
+    }
+
+    .date-month-year {
+        font-size: 28px;
+    }
+
+    .week-day {
+        min-width: 70px;
+        padding: 16px 12px;
+    }
+
+    .week-day-number {
+        font-size: 18px;
+    }
+
+    .bottom-navigation {
+        max-width: 800px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 20px 20px 0 0;
+    }
+}
+
+/* Состояния загрузки */
+.loading, .empty-state, .error-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999999;
+    font-size: 16px;
+    animation: fadeIn 0.5s ease;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: scale(1.1);
+    }
+}
+
+/* Плавные переходы для всех интерактивных элементов */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button, .week-day, .nav-item, .task-card {
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    will-change: transform;
+}
+
+/* Плавные переходы для всех элементов */
+.week-day, .task-card, .task-checkbox, .burger-menu, .settings-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Модальное окно создания задачи */
+.task-create-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    pointer-events: none;
+}
+
+.task-create-modal.active {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.task-create-modal-content {
+    width: 100%;
+    max-width: 100%;
+    height: 95vh;
+    background: #FFFFFF;
+    border-radius: 24px 24px 0 0;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 2001;
+    position: relative;
+    pointer-events: auto;
+}
+
+.task-create-modal.active .task-create-modal-content {
+    transform: translateY(0);
+}
+
+.task-create-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 16px 20px;
+    border-bottom: 1px solid #F5F5F5;
+}
+
+.task-create-header h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.task-create-close {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.task-create-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.task-create-field {
+    margin-bottom: 24px;
+}
+
+.task-create-field label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    margin-bottom: 8px;
+}
+
+.task-create-field input[type="text"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Onest', sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+    transition: border-color 0.3s ease;
+}
+
+.task-create-field input[type="text"]:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+.task-create-field textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #E5E5E5;
+    border-radius: 12px;
+    font-size: 16px;
+    font-family: 'Onest', sans-serif;
+    background: #FFFFFF;
+    color: #000000;
+    transition: border-color 0.3s ease;
+    resize: vertical;
+    min-height: 60px;
+}
+
+.task-create-field textarea:focus {
+    outline: none;
+    border-color: #000000;
+}
+
+/* Селектор приоритета */
+.priority-selector {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    background: #F5F5F5;
+    padding: 5px;
+    border-radius: 12px;
+}
+
+.priority-option {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+}
+
+.priority-option.active {
+    background: #FFFFFF;
+    color: #000000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.priority-option img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Селектор типа даты */
+.date-type-selector {
+    display: flex;
+    gap: 8px;
+    background: #F5F5F5;
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.date-type-option {
+    flex: 1;
+    padding: 12px;
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+}
+
+.date-type-option.active {
+    background: #FFFFFF;
+    color: #000000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Отображение выбранной даты */
+.selected-date-display {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.selected-date-display:hover {
+    background: #E5E5E5;
+}
+
+.date-number-display {
+    font-size: 32px;
+    font-weight: 700;
+    color: #000000;
+    line-height: 1;
+}
+
+.date-month-year-display {
+    font-size: 18px;
+    font-weight: 500;
+    color: #999999;
+}
+
+/* Календарь в модальном окне */
+.date-picker-overlay-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 3000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.date-picker-overlay-modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.date-picker-modal-content {
+    background: #FFFFFF;
+    border-radius: 20px;
+    padding: 24px;
+    max-width: 90%;
+    width: 450px;
+    max-height: 80vh;
+    overflow-y: auto;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.date-picker-overlay-modal.active .date-picker-modal-content {
+    transform: scale(1);
+}
+
+/* Убеждаемся, что стили календаря применяются */
+.date-picker-modal-content .calendar,
+.date-picker-modal .calendar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.date-picker-modal-content #single-date-calendar,
+.date-picker-modal-content #start-date-calendar,
+.date-picker-modal-content #end-date-calendar,
+.date-picker-modal #main-date-calendar {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Календарь в модальном окне */
+#single-date-calendar,
+#start-date-calendar,
+#end-date-calendar,
+#main-date-calendar {
+    margin: 0;
+}
+
+#single-date-calendar .calendar,
+#start-date-calendar .calendar,
+#end-date-calendar .calendar,
+#main-date-calendar .calendar {
+    margin: 0 auto;
+    max-width: 100%;
+    min-width: 100%;
+    border: 1px solid #F5F5F5;
+    box-shadow: none;
+    background: #FFFFFF;
+    border-radius: 16px;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.date-picker-header-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.date-picker-header-modal h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.date-picker-close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999999;
+    cursor: pointer;
+    padding: 4px;
+}
+
+.date-picker-months-modal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.date-picker-month-modal {
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    transition: all 0.3s ease;
+}
+
+.date-picker-month-modal:hover {
+    background: #F5F5F5;
+}
+
+.date-picker-month-modal.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.date-picker-years-modal {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+.date-picker-days-modal {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-top: 20px;
+}
+
+.date-picker-day-modal {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    transition: all 0.3s ease;
+}
+
+.date-picker-day-modal:hover {
+    background: #F5F5F5;
+}
+
+.date-picker-day-modal.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.date-picker-day-modal.other-month {
+    color: #CCCCCC;
+}
+
+.date-picker-year-modal {
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    transition: all 0.3s ease;
+}
+
+.date-picker-year-modal:hover {
+    background: #F5F5F5;
+}
+
+.date-picker-year-modal.active {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+/* Период дат */
+.date-range-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.date-range-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.date-range-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #666666;
+    min-width: 30px;
+}
+
+/* Кнопки действий */
+.task-create-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: auto;
+}
+
+.task-create-cancel,
+.task-create-submit {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    border-radius: 19px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Onest', sans-serif;
+}
+
+.task-create-cancel {
+    border: 1px solid #6d6d6d;
+
+    background: #F5F5F5;
+    color: #666666;
+}
+
+.task-create-cancel:hover {
+    background: #E5E5E5;
+}
+
+.task-create-submit {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.task-create-submit:hover {
+    background: #333333;
+}
+
+/* Улучшенная производительность анимаций */
+.main-content, .selected-date-container, .week-calendar-container, .tasks-section {
+    will-change: transform, opacity;
+}
+
+/* Плавная прокрутка */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Исправление проблем с календарем */
+.date-picker-overlay.active {
+    z-index: 3000 !important;
+}
+
+body.calendar-open {
+    overflow: hidden !important;
+    position: relative;
+}
+
+/* Затемнение всех элементов кроме календаря */
+body.calendar-open::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Убираем блюр с календаря - он должен быть четким */
+.date-picker-overlay,
+.date-picker-overlay.active,
+.date-picker-modal,
+.date-picker-overlay.active .date-picker-modal,
+.date-picker-overlay *,
+.date-picker-overlay.active *,
+.date-picker-modal *,
+.date-picker-overlay.active .date-picker-modal * {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Календарь должен быть поверх блюра */
+.date-picker-overlay,
+.date-picker-overlay.active {
+    isolation: isolate;
+    will-change: transform;
+}
+
+/* Размытие и затемнение хедера при открытии календаря через класс body */
+body.calendar-open .main-header {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    background: rgba(255, 255, 255, 0) !important;
+    opacity: 0.8 !important;
+    position: fixed !important;
+    z-index: 2999 !important;
+}
+
+/* Размытие main-content при открытии календаря */
+body.calendar-open .main-content {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+    position: relative !important;
+}
+
+/* Скрытие нижней навигации при открытии календаря */
+body.calendar-open .bottom-navigation {
+    display: none !important;
+}
+
+/* Блокировка взаимодействия с контентом при открытии календаря */
+body.calendar-open .main-content,
+body.calendar-open .tasks-section,
+body.calendar-open .task-list,
+body.calendar-open .selected-date-container,
+body.calendar-open .week-calendar-container {
+    pointer-events: none !important;
+    z-index: 1 !important;
+}
+
+/* Критически важно: overlay должен быть поверх затемнения, но календарь не затемнен */
+.date-picker-overlay.active {
+    z-index: 10000 !important;
+    background: transparent !important;
+}
+
+.date-picker-overlay.active .date-picker-modal {
+    z-index: 10001 !important;
+}
+
+/* Модальное окно выбора AI функции */
+.ai-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    pointer-events: none;
+}
+
+.ai-menu-overlay.active {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.ai-menu-modal {
+    background: #FFFFFF;
+    border-radius: 24px;
+    padding: 32px 24px;
+    max-width: 90%;
+    width: 400px;
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    z-index: 10001;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ai-menu-overlay.active .ai-menu-modal {
+    transform: scale(1) translateY(0) !important;
+}
+
+.ai-menu-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.ai-menu-icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    display: block;
+}
+
+.ai-menu-header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 8px 0;
+}
+
+.ai-menu-subtitle {
+    font-size: 14px;
+    color: #666666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.ai-menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.ai-menu-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: #FFFFFF;
+    border: 2px solid #E5E5E5;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: left;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+}
+
+.ai-menu-option:hover {
+    border-color: #000000;
+    background: #F9F9F9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.ai-menu-option:active {
+    transform: translateY(0);
+}
+
+.ai-menu-option:first-child {
+    background: #000000;
+    border-color: #000000;
+    color: #FFFFFF;
+}
+
+.ai-menu-option:first-child:hover {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+}
+
+.ai-option-content {
+    flex: 1;
+    text-align: center;
+    pointer-events: none; /* Клики проходят через контент к кнопке */
+}
+
+.ai-option-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0 0 4px 0;
+}
+
+.ai-menu-option:first-child .ai-option-content h3 {
+    color: #FFFFFF;
+}
+
+.ai-option-content p {
+    font-size: 13px;
+    color: #666666;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.ai-menu-option:first-child .ai-option-content p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .ai-menu-modal {
+        width: 95%;
+        padding: 24px 20px;
+    }
+    
+    .ai-menu-header h2 {
+        font-size: 20px;
+    }
+    
+    .ai-menu-option {
+        padding: 16px;
+    }
+    
+    .ai-option-icon {
+        font-size: 28px;
+    }
+    
+    .ai-option-content h3 {
+        font-size: 16px;
+    }
+    
+    .ai-option-content p {
+        font-size: 12px;
+    }
+}
+
