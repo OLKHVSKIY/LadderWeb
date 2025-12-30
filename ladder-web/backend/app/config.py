@@ -8,7 +8,7 @@ from typing import List
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://user:password@localhost/ladder_db"
+    DATABASE_URL: str = "postgresql://ladder_user:ladder_password@localhost:5432/ladder_db"
     
     # Security
     SECRET_KEY: str = "your-secret-key-change-in-production"

@@ -7,7 +7,7 @@ ladder-web/.env
 .env.*
 ladder-web/.env
 **/.env
-
+*.md
 # Python
 __pycache__/
 *.py[cod]
