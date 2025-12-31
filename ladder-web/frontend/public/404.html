@@ -2,21 +2,66 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Страница не найдена</title>
-    <link rel="icon" type="image/png" href="../assets/images/icons/ai.png">
-    <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/themes/light.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>404 - Страница не найдена | Ladder</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/404.css">
 </head>
-<body>
-    <div id="time-background"></div>
+<body class="error-page">
+    <!-- Плавающие частицы -->
+    <div class="error-particles" id="error-particles"></div>
+    
     <main class="error-container">
         <div class="error-content">
-            <h1>404</h1>
-            <p>Страница не найдена</p>
-            <a href="index.html" class="btn btn-primary">Вернуться на главную</a>
+            <h1 class="error-number">404</h1>
+            <h2 class="error-title">Страница не найдена</h2>
+            <p class="error-description">
+                К сожалению, страница, которую вы ищете, не существует.<br>
+                Возможно, она была перемещена или удалена.
+            </p>
+            <a href="/public/tasks.html" class="error-button">
+                <span class="error-button-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                </span>
+                Вернуться на главную
+            </a>
         </div>
     </main>
+    
+    <script>
+        // Создание плавающих частиц
+        (function() {
+            const particlesContainer = document.getElementById('error-particles');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'error-particle';
+                
+                // Случайная позиция
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Случайная задержка анимации
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                
+                // Случайный размер
+                const size = 2 + Math.random() * 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                particlesContainer.appendChild(particle);
+            }
+        })();
+    </script>
 </body>
 </html>
-
