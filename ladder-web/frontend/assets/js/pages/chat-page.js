@@ -1602,6 +1602,24 @@ function setupSidebar() {
     const burgerMenu = document.getElementById('burger-menu');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     
+    // Дублируем элементы бегущей строки для бесшовной анимации
+    const marqueeContent = document.querySelector('.marquee-content');
+    if (marqueeContent) {
+        const spans = marqueeContent.querySelectorAll('span');
+        if (spans.length > 0) {
+            // Клонируем все элементы и добавляем их в конец
+            spans.forEach(span => {
+                const clone = span.cloneNode(true);
+                marqueeContent.appendChild(clone);
+            });
+        }
+        // Принудительно устанавливаем скорость анимации 60 секунд
+        marqueeContent.style.animation = 'marquee 60s linear infinite';
+        marqueeContent.style.animationDuration = '60s';
+        marqueeContent.style.webkitAnimation = 'marquee 60s linear infinite';
+        marqueeContent.style.webkitAnimationDuration = '60s';
+    }
+    
     console.log('setupSidebar called', {
         burgerMenu: !!burgerMenu,
         sidebarOverlay: !!sidebarOverlay
@@ -1634,6 +1652,33 @@ function setupSidebar() {
                 sidebarOverlay.style.setProperty('visibility', 'visible', 'important');
                 sidebarOverlay.style.setProperty('z-index', '3000', 'important');
                 sidebarOverlay.style.setProperty('background', 'rgba(255, 255, 255, 1)', 'important');
+                
+                // Принудительно устанавливаем скорость анимации бегущей строки на 60 секунд
+                setTimeout(() => {
+                    const marqueeContent = sidebarOverlay.querySelector('.marquee-content');
+                    if (marqueeContent) {
+                        // Сбрасываем анимацию
+                        marqueeContent.style.animation = 'none';
+                        marqueeContent.offsetHeight; // Принудительный reflow
+                        // Устанавливаем новую анимацию marquee-chat с нужной скоростью
+                        marqueeContent.style.setProperty('animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('animation-name', 'marquee-chat', 'important');
+                        marqueeContent.style.setProperty('animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('animation-timing-function', 'linear', 'important');
+                        marqueeContent.style.setProperty('animation-iteration-count', 'infinite', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation-name', 'marquee-chat', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation-timing-function', 'linear', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation-iteration-count', 'infinite', 'important');
+                        marqueeContent.style.setProperty('-moz-animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('-moz-animation-name', 'marquee-chat', 'important');
+                        marqueeContent.style.setProperty('-moz-animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('-moz-animation-timing-function', 'linear', 'important');
+                        marqueeContent.style.setProperty('-moz-animation-iteration-count', 'infinite', 'important');
+                        console.log('Marquee animation set to marquee-chat 90s', marqueeContent.style.animation);
+                    }
+                }, 50);
                 
                 console.log('Sidebar opened at', lastOpenTime);
             } else {

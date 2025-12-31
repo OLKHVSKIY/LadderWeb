@@ -169,6 +169,19 @@ function setupSidebar() {
     const burgerMenu = document.getElementById('burger-menu');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     
+    // Дублируем элементы бегущей строки для бесшовной анимации
+    const marqueeContent = document.querySelector('.marquee-content');
+    if (marqueeContent) {
+        const spans = marqueeContent.querySelectorAll('span');
+        if (spans.length > 0) {
+            // Клонируем все элементы и добавляем их в конец
+            spans.forEach(span => {
+                const clone = span.cloneNode(true);
+                marqueeContent.appendChild(clone);
+            });
+        }
+    }
+    
     if (burgerMenu && sidebarOverlay) {
         burgerMenu.addEventListener('click', () => {
             sidebarOverlay.classList.toggle('active');

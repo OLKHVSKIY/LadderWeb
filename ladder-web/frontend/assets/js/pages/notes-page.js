@@ -464,6 +464,19 @@ function setupSidebar() {
     const burgerMenu = document.getElementById('burger-menu');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
     
+    // Дублируем элементы бегущей строки для бесшовной анимации
+    const marqueeContent = document.querySelector('.marquee-content');
+    if (marqueeContent) {
+        const spans = marqueeContent.querySelectorAll('span');
+        if (spans.length > 0) {
+            // Клонируем все элементы и добавляем их в конец
+            spans.forEach(span => {
+                const clone = span.cloneNode(true);
+                marqueeContent.appendChild(clone);
+            });
+        }
+    }
+    
     if (burgerMenu && sidebarOverlay) {
         burgerMenu.addEventListener('click', () => {
             const isActive = sidebarOverlay.classList.toggle('active');
@@ -1983,9 +1996,21 @@ async function setupWorkspaces() {
 }
 
 // Открытие шторки пространств
-function openWorkspacesPanel() {
+async function openWorkspacesPanel() {
     const panel = document.getElementById('workspaces-panel');
     if (panel) {
+        // Получаем количество пространств для определения высоты
+        const module = await initWorkspacesModule();
+        const workspaces = module.getWorkspaces();
+        const workspacesCount = workspaces.length;
+        
+        // Устанавливаем высоту в зависимости от количества пространств
+        if (workspacesCount <= 2) {
+            panel.style.height = '40vh';
+        } else {
+            panel.style.height = '55vh';
+        }
+        
         panel.classList.add('active');
         renderWorkspacesList();
     }
@@ -2005,8 +2030,19 @@ async function renderWorkspacesList() {
     const workspaces = module.getWorkspaces();
     const currentWorkspace = module.getCurrentWorkspace();
     const list = document.getElementById('workspaces-list');
+    const panel = document.getElementById('workspaces-panel');
     
     if (!list) return;
+    
+    // Обновляем высоту шторки в зависимости от количества пространств
+    if (panel) {
+        const workspacesCount = workspaces.length;
+        if (workspacesCount <= 2) {
+            panel.style.height = '40vh';
+        } else {
+            panel.style.height = '55vh';
+        }
+    }
     
     list.innerHTML = '';
     
@@ -2073,6 +2109,16 @@ async function renderWorkspacesList() {
                 if (confirmed) {
                     try {
                         module.deleteWorkspace(workspace.id);
+                        // Обновляем высоту шторки после удаления
+                        const panel = document.getElementById('workspaces-panel');
+                        if (panel) {
+                            const remainingWorkspaces = module.getWorkspaces();
+                            if (remainingWorkspaces.length <= 2) {
+                                panel.style.height = '40vh';
+                            } else {
+                                panel.style.height = '55vh';
+                            }
+                        }
                         renderWorkspacesList();
                         updateWorkspaceName();
                         // Перезагружаем стикеры

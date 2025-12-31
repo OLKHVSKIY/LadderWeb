@@ -833,8 +833,8 @@ img.nav-icon {
     }
     
     .nav-item.active::before {
-        width: 90px;
-        height: 60px;
+        width: 120px;
+        height: 70px;
     }
     
     .nav-item:nth-child(2) {
@@ -983,8 +983,9 @@ body.sidebar-open .main-header .burger-menu,
 .marquee-content {
     display: flex;
     white-space: nowrap;
-    animation: marquee 15s linear infinite;
+    animation: marquee 60s linear infinite;
     gap: 40px;
+    width: fit-content;
 }
 
 .marquee-content span {
@@ -993,6 +994,7 @@ body.sidebar-open .main-header .burger-menu,
     font-weight: 700;
     color: #000000;
     padding: 0 20px;
+    flex-shrink: 0;
 }
 
 @keyframes marquee {
@@ -1478,38 +1480,6 @@ body.sidebar-open .main-header .burger-menu,
     background: #DC3545;
     color: #FFFFFF;
     border-color: #DC3545;
-}
-
-/* Адаптивность для ПК */
-@media (min-width: 1025px) {
-    .main-content {
-        max-width: 800px;
-        padding: 40px;
-    }
-
-    .date-number {
-        font-size: 64px;
-    }
-
-    .date-month-year {
-        font-size: 28px;
-    }
-
-    .week-day {
-        min-width: 70px;
-        padding: 16px 12px;
-    }
-
-    .week-day-number {
-        font-size: 18px;
-    }
-
-    .bottom-navigation {
-        max-width: 800px;
-        left: 50%;
-        transform: translateX(-50%);
-        border-radius: 20px 20px 0 0;
-    }
 }
 
 /* Состояния загрузки */
@@ -2316,3 +2286,31 @@ body.calendar-open .week-calendar-container {
     }
 }
 
+/* Адаптивность для ПК */
+@media (min-width: 1025px) {
+    .main-content {
+        max-width: 800px;
+        padding: 40px;
+    }
+
+    .task-create-form {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        padding: 20px 70px;
+        overflow-y: auto;
+    }
+
+    .date-number {
+        font-size: 64px;
+    }
+
+    .week-day {
+        max-width: 80px;
+    }
+
+    .week-day-number {
+        font-size: 18px;
+    }
+
+}

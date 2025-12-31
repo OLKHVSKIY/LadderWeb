@@ -1,5 +1,18 @@
 /* Стили для страницы чата */
 
+/* Бегущая строка в сайдбаре на странице чата - должно быть в начале для переопределения */
+body .sidebar-marquee .marquee-content,
+body .sidebar-overlay .marquee-content,
+body .sidebar-overlay.active .sidebar-marquee .marquee-content,
+.sidebar-marquee .marquee-content,
+.sidebar-overlay .marquee-content,
+.marquee-content {
+    animation: marquee 60s linear infinite !important;
+    -webkit-animation: marquee 60s linear infinite !important;
+    -moz-animation: marquee 60s linear infinite !important;
+    -o-animation: marquee 60s linear infinite !important;
+}
+
 /* Скрываем нижнее меню навигации на странице чата */
 body .bottom-navigation {
     display: none !important;
@@ -239,5 +252,44 @@ body .bottom-navigation {
         bottom: 0;
         padding: 10px 16px;
     }
+}
+
+/* КРИТИЧЕСКОЕ ПРАВИЛО: Бегущая строка в сайдбаре - должно быть в конце файла */
+/* Создаем отдельную анимацию для страницы чата */
+@keyframes marquee-chat {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+html body .sidebar-overlay .sidebar-marquee .marquee-content,
+html body .sidebar-overlay.active .sidebar-marquee .marquee-content,
+body .sidebar-overlay .sidebar-marquee .marquee-content,
+body .sidebar-overlay.active .sidebar-marquee .marquee-content,
+.sidebar-overlay .sidebar-marquee .marquee-content,
+.sidebar-overlay.active .sidebar-marquee .marquee-content {
+    animation: marquee-chat 90s linear infinite !important;
+    animation-name: marquee-chat !important;
+    animation-duration: 90s !important;
+    animation-timing-function: linear !important;
+    animation-iteration-count: infinite !important;
+    -webkit-animation: marquee-chat 90s linear infinite !important;
+    -webkit-animation-name: marquee-chat !important;
+    -webkit-animation-duration: 90s !important;
+    -webkit-animation-timing-function: linear !important;
+    -webkit-animation-iteration-count: infinite !important;
+    -moz-animation: marquee-chat 90s linear infinite !important;
+    -moz-animation-name: marquee-chat !important;
+    -moz-animation-duration: 90s !important;
+    -moz-animation-timing-function: linear !important;
+    -moz-animation-iteration-count: infinite !important;
+    -o-animation: marquee-chat 90s linear infinite !important;
+    -o-animation-name: marquee-chat !important;
+    -o-animation-duration: 90s !important;
+    -o-animation-timing-function: linear !important;
+    -o-animation-iteration-count: infinite !important;
 }
 

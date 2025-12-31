@@ -215,10 +215,6 @@
 
 /* Адаптивность */
 @media (min-width: 768px) {
-    .task-card {
-        padding: 20px;
-        border-radius: 16px;
-    }
 
     .task-text {
         font-size: 18px;

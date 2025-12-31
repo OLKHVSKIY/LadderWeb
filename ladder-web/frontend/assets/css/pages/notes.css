@@ -904,11 +904,11 @@ body .main-content {
     top: 0;
     left: 0;
     right: 0;
-    height: 40vh;
+    height: 40vh; /* По умолчанию 40%, будет изменяться через JavaScript */
     background: rgba(0, 0, 0, 0.01);
     z-index: 4000;
     transform: translateY(-100%);
-    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), height 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     overflow: hidden;
     box-shadow: none;
     cursor: pointer;

@@ -513,8 +513,9 @@ body.sidebar-open .info-page .main-header .burger-menu,
 .info-page .marquee-content {
     display: flex;
     white-space: nowrap;
-    animation: marquee 15s linear infinite;
+    animation: marquee 60s linear infinite;
     gap: 40px;
+    width: fit-content;
 }
 
 .info-page .marquee-content span {
@@ -523,6 +524,7 @@ body.sidebar-open .info-page .main-header .burger-menu,
     font-weight: 700;
     color: #000000;
     padding: 0 20px;
+    flex-shrink: 0;
 }
 
 @keyframes marquee {
