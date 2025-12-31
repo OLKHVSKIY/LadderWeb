@@ -41,6 +41,14 @@ function initSettingsPage() {
     
     // Кнопка GPT меню
     setupAiMenu();
+    
+    // Кнопка "Обновить" для перехода на страницу подписок
+    const upgradeBtn = document.querySelector('.subscription-upgrade-btn');
+    if (upgradeBtn) {
+        upgradeBtn.addEventListener('click', () => {
+            window.location.href = '/public/subscription.html';
+        });
+    }
 }
 
 // Функция для настройки AI меню

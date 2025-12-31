@@ -1,0 +1,384 @@
+/* Стили для страницы подписки - в стиле Apple */
+
+.subscription-page {
+    background: linear-gradient(180deg, #2037E7 0%, #58ABF5 38%, rgba(255, 255, 255, 0.3) 48%, rgba(255, 255, 255, 0.8) 52%, #FFFFFF 52%);
+    min-height: 100vh;
+    background-attachment: fixed;
+}
+
+/* Хедер - только стрелка и заголовок */
+.subscription-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: auto;
+    background: transparent;
+    display: grid;
+    grid-template-columns: 32px 1fr 32px;
+    align-items: center;
+    padding: 20px 20px 0 20px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.subscription-header > * {
+    pointer-events: auto;
+}
+
+.subscription-back-btn {
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease;
+    grid-column: 1;
+}
+
+.subscription-back-btn:hover {
+    opacity: 0.7;
+}
+
+.subscription-back-btn svg {
+    width: 100%;
+    height: 100%;
+    stroke: #FFFFFF;
+}
+
+.subscription-page-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+    text-align: center;
+    grid-column: 2;
+    letter-spacing: -0.5px;
+    justify-self: center;
+}
+
+.subscription-main-content {
+    padding: 24px 20px;
+    padding-top: 80px;
+    padding-bottom: 40px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Верхний блок с контентом */
+.subscription-hero {
+    position: relative;
+    width: 100%;
+    padding: 40px 0 60px 0;
+    background: transparent;
+    overflow: visible;
+    margin-bottom: 32px;
+}
+
+.subscription-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.subscription-hero-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.ai-icon {
+    width: 96px;
+    height: 96px;
+    opacity: 1;
+    filter: brightness(0) invert(1) drop-shadow(0 4px 12px rgba(255, 255, 255, 0.3));
+    animation: floatAnimation 3s ease-in-out infinite;
+}
+
+@keyframes floatAnimation {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.subscription-hero-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0 0 12px 0;
+    letter-spacing: -0.5px;
+    line-height: 1.3;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.hero-title-line {
+    font-weight: 400;
+    font-size: 24px;
+    opacity: 0.95;
+}
+
+.hero-title-bold {
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: -0.8px;
+}
+
+.subscription-hero-subtitle {
+    font-size: 16px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.5;
+    max-width: 320px;
+}
+
+/* Варианты подписки - минималистичный дизайн Apple */
+.subscription-plans {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+}
+
+.subscription-plan {
+    background: rgba(255, 255, 255, 0.98);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    padding: 20px 24px;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.subscription-plan:hover {
+    border-color: rgba(88, 171, 245, 0.3);
+    background: rgba(255, 255, 255, 1);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.subscription-plan.active {
+    background: linear-gradient(135deg, #58ABF5 0%, #2037E7 100%);
+    border: none;
+    box-shadow: 0 8px 24px rgba(32, 55, 231, 0.25);
+    transform: translateY(-2px);
+}
+
+.subscription-plan.active .plan-duration {
+    color: #FFFFFF;
+}
+
+.subscription-plan.active .plan-price {
+    -webkit-text-fill-color: #FFFFFF;
+    background: none;
+}
+
+.plan-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.plan-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.plan-duration {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    letter-spacing: -0.3px;
+}
+
+.plan-label {
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+    text-align: left;
+}
+
+.subscription-plan.active .plan-label {
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.plan-price {
+    font-size: 25px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #2037E7 0%, #58ABF5 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-align: right;
+    flex: 0 0 auto;
+    min-width: 120px;
+    letter-spacing: -0.3px;
+    transform: translateY(-4px);
+}
+
+/* Кнопка подписки - в стиле Apple */
+.subscription-subscribe-btn {
+    width: 100%;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #58ABF5 0%, #2037E7 100%);
+    border: none;
+    border-radius: 20px;
+    font-size: 17px;
+    font-weight: 600;
+    color: #FFFFFF;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: 0 4px 16px rgba(32, 55, 231, 0.25);
+    letter-spacing: -0.2px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.subscription-subscribe-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(32, 55, 231, 0.35);
+}
+
+.subscription-subscribe-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 12px rgba(32, 55, 231, 0.2);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .subscription-header {
+        padding: 16px 16px 0 16px;
+    }
+
+    .subscription-page-title {
+        font-size: 24px;
+    }
+
+    .subscription-main-content {
+        padding: 20px 16px;
+        padding-top: 70px;
+    }
+
+    .subscription-hero {
+        padding: 32px 0;
+    }
+
+    .ai-icon {
+        width: 80px;
+        height: 80px;
+    }
+
+    .subscription-hero-title {
+        font-size: 24px;
+    }
+
+    .hero-title-line {
+        font-size: 20px;
+    }
+
+    .hero-title-bold {
+        font-size: 28px;
+    }
+
+    .subscription-hero-subtitle {
+        font-size: 15px;
+        max-width: 280px;
+    }
+
+    .subscription-plan {
+        padding: 18px 20px;
+    }
+
+    .plan-content {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .plan-left {
+        flex: 1 1 100%;
+    }
+
+    .plan-duration {
+        font-size: 17px;
+    }
+
+    .plan-label {
+        font-size: 13px;
+    }
+
+    .plan-price {
+        min-width: auto;
+        flex: 0 0 auto;
+        font-size: 23px;
+        transform: translateY(-17px);
+    }
+}
+
+@media (min-width: 1025px) {
+    .subscription-header {
+        padding: 24px 40px 0 40px;
+    }
+
+    .subscription-page-title {
+        font-size: 32px;
+    }
+
+    .subscription-main-content {
+        padding: 40px;
+        padding-top: 100px;
+    }
+
+    .subscription-hero {
+        padding: 60px 0;
+    }
+
+    .ai-icon {
+        width: 112px;
+        height: 112px;
+    }
+
+    .subscription-hero-title {
+        font-size: 32px;
+    }
+
+    .hero-title-line {
+        font-size: 28px;
+    }
+
+    .hero-title-bold {
+        font-size: 36px;
+    }
+
+    .subscription-hero-subtitle {
+        font-size: 17px;
+        max-width: 400px;
+    }
+
+    .subscription-plans {
+        gap: 16px;
+    }
+
+    .subscription-plan {
+        padding: 24px 28px;
+    }
+}

@@ -1230,6 +1230,10 @@ a.nav-item .nav-label {
     white-space: nowrap;
 }
 
+.nav-item img[src*="gpt.png"] {
+    transform: translateY(-4px);
+}
+
 .nav-add-btn svg {
     width: 24px;
     height: 24px;

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ladder - Подписка</title>
+    <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/pages/subscription.css">
+    <script>
+        (function() {
+            const lang = localStorage.getItem('language') || 'ru';
+            document.documentElement.lang = lang;
+        })();
+    </script>
+</head>
+<body class="subscription-page">
+    <!-- Верхний хедер -->
+    <header class="subscription-header">
+        <button class="subscription-back-btn" id="back-btn" aria-label="Назад">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+        </button>
+        <h1 class="subscription-page-title">Подписка</h1>
+    </header>
+
+    <!-- Основной контент -->
+    <main class="subscription-main-content">
+        <!-- Верхний блок с градиентом и анимацией -->
+        <div class="subscription-hero">
+            <div class="subscription-hero-content">
+                <div class="subscription-hero-icons">
+                    <img src="/assets/images/icons/ai.png" alt="AI" class="ai-icon">
+                </div>
+                <h2 class="subscription-hero-title">
+                    <span class="hero-title-line">Неограниченные возможности с</span>
+                    <span class="hero-title-bold">Ladder Pro</span>
+                </h2>
+                <p class="subscription-hero-subtitle">Разблокируйте неограниченное количество GPT планов, диалогов с Ai, обсуждение и помощь по каждой задаче и многое другое</p>
+            </div>
+        </div>
+
+        <!-- Варианты подписки -->
+        <div class="subscription-plans">
+            <div class="subscription-plan" data-plan="week">
+                <div class="plan-content">
+                    <div class="plan-left">
+                        <div class="plan-duration">1 неделя</div>
+                        <div class="plan-label">Подписка на Ladder Pro</div>
+                    </div>
+                    <div class="plan-price">149.00 RUB</div>
+                </div>
+            </div>
+
+            <div class="subscription-plan active" data-plan="month">
+                <div class="plan-content">
+                    <div class="plan-left">
+                        <div class="plan-duration">Месяц</div>
+                        <div class="plan-label">Подписка на Ladder Pro</div>
+                    </div>
+                    <div class="plan-price">490.00 RUB</div>
+                </div>
+            </div>
+
+            <div class="subscription-plan" data-plan="3months">
+                <div class="plan-content">
+                    <div class="plan-left">
+                        <div class="plan-duration">3 месяца</div>
+                        <div class="plan-label">Подписка на Ladder Pro</div>
+                    </div>
+                    <div class="plan-price">1190.00 RUB</div>
+                </div>
+            </div>
+
+            <div class="subscription-plan" data-plan="year">
+                <div class="plan-content">
+                    <div class="plan-left">
+                        <div class="plan-duration">Год</div>
+                        <div class="plan-label">Подписка на Ladder Pro</div>
+                    </div>
+                    <div class="plan-price">4980.00 RUB</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Кнопка подписки -->
+        <button class="subscription-subscribe-btn" id="subscribe-btn">Подписаться</button>
+    </main>
+
+    <script src="/assets/js/vendor/dayjs.min.js"></script>
+    <script type="module" src="/assets/js/modules/i18n.js"></script>
+    <script src="/assets/js/pages/subscription-page.js"></script>
+</body>
+</html>
+

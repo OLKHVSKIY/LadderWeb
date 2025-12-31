@@ -23,6 +23,10 @@ body .bottom-navigation {
     display: none !important;
 }
 
+.nav-item img[src*="gpt.png"] {
+    transform: translateY(-4px);
+}
+
 .chat-container {
     display: flex;
     flex-direction: column;

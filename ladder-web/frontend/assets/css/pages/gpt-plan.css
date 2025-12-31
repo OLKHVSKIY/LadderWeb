@@ -94,6 +94,10 @@ img.nav-icon {
     white-space: nowrap;
 }
 
+.nav-item img[src*="gpt.png"] {
+    transform: translateY(-4px);
+}
+
 .nav-item.active .nav-label {
     font-weight: 500;
 }

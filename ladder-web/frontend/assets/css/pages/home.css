@@ -28,6 +28,10 @@
     font-weight: 600;
 }
 
+.nav-item img[src*="gpt.png"] {
+    margin-bottom: 4px !important;
+}
+
 .settings-list {
     display: flex;
     flex-direction: column;

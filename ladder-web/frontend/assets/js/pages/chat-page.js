@@ -105,6 +105,40 @@ function initChatPage() {
         chatInput.style.height = `${Math.min(chatInput.scrollHeight, 120)}px`;
     });
     
+    // Прокрутка чата вниз при фокусе на поле ввода (когда появляется клавиатура)
+    function setupChatScrollOnFocus() {
+        const chatContainer = chatMessages;
+        if (!chatContainer) return;
+        
+        const handleFocus = () => {
+            // Прокручиваем контейнер чата вниз (к последним сообщениям) плавно
+            setTimeout(() => {
+                chatContainer.scrollTo({
+                    top: chatContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 100);
+            
+            // Дополнительная прокрутка после открытия клавиатуры
+            setTimeout(() => {
+                chatContainer.scrollTo({
+                    top: chatContainer.scrollHeight,
+                    behavior: 'smooth'
+                });
+            }, 300);
+        };
+        
+        chatInput.addEventListener('focus', handleFocus);
+        chatInput.addEventListener('touchstart', handleFocus);
+        
+        // Для мобильных устройств также обрабатываем событие при клике
+        if ('ontouchstart' in window) {
+            chatInput.addEventListener('click', handleFocus);
+        }
+    }
+    
+    setupChatScrollOnFocus();
+    
     // Отправка сообщения по Enter (Shift+Enter для новой строки)
     chatInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
