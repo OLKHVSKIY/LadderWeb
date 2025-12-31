@@ -268,7 +268,7 @@ function setupSidebar() {
 }
 
 function handleSidebarAction(action) {
-    // Обрабатываем только действия без навигации (info, support, suggest, about)
+    // Обрабатываем только действия без навигации (info, support, suggest)
     switch (action) {
         case 'info':
             window.location.href = '/public/info.html';
@@ -278,9 +278,6 @@ function handleSidebarAction(action) {
             break;
         case 'suggest':
             console.log('Предложить идею');
-            break;
-        case 'about':
-            console.log('О нас');
             break;
     }
 }

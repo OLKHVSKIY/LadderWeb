@@ -216,11 +216,28 @@ function setupSidebar() {
                 document.body.classList.remove('sidebar-open');
                 
                 // Обрабатываем только действия без навигации
-                if (action === 'info' || action === 'support' || action === 'suggest' || action === 'about') {
+                if (action === 'info' || action === 'support' || action === 'suggest') {
                     handleSidebarAction(action);
                 }
             });
         });
+        
+        // Обработка плашки подписки
+        const subscriptionBanner = sidebarOverlay.querySelector('.sidebar-subscription-banner');
+        if (subscriptionBanner) {
+            subscriptionBanner.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                
+                // Переходим на страницу подписок
+                window.location.href = '/public/subscription.html';
+            });
+        }
         
         // Для ссылок - просто закрываем сайдбар, но не блокируем переход
         const sidebarLinks = sidebarOverlay.querySelectorAll('a.sidebar-item');
@@ -236,7 +253,7 @@ function setupSidebar() {
     }
     
     function handleSidebarAction(action) {
-        // Обрабатываем только действия без навигации (info, support, suggest, about)
+        // Обрабатываем только действия без навигации (info, support, suggest)
         switch(action) {
             case 'info':
                 window.location.href = '/public/info.html';
@@ -246,9 +263,6 @@ function setupSidebar() {
                 break;
             case 'suggest':
                 console.log('Предложить идею');
-                break;
-            case 'about':
-                console.log('О нас');
                 break;
         }
     }

@@ -852,11 +852,29 @@ function setupEventHandlers() {
                 sidebarOverlay.style.pointerEvents = 'none';
                 
                 // Обрабатываем только действия без навигации
-                if (action === 'info' || action === 'support' || action === 'suggest' || action === 'about') {
+                if (action === 'info' || action === 'support' || action === 'suggest') {
                     handleSidebarAction(action);
                 }
             });
         });
+        
+        // Обработка плашки подписки
+        const subscriptionBanner = sidebarOverlay.querySelector('.sidebar-subscription-banner');
+        if (subscriptionBanner) {
+            subscriptionBanner.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                sidebarOverlay.style.pointerEvents = 'none';
+                
+                // Переходим на страницу подписок
+                window.location.href = '/public/subscription.html';
+            });
+        }
         
         // Для ссылок - просто закрываем сайдбар, но не блокируем переход
         const sidebarLinks = sidebarOverlay.querySelectorAll('a.sidebar-item');
@@ -872,7 +890,7 @@ function setupEventHandlers() {
     }
     
     function handleSidebarAction(action) {
-        // Обрабатываем только действия без навигации (info, support, suggest, about)
+        // Обрабатываем только действия без навигации (info, support, suggest)
         switch(action) {
             case 'info':
                 window.location.href = '/public/info.html';
@@ -883,10 +901,6 @@ function setupEventHandlers() {
                 break;
             case 'suggest':
                 openSuggestModal();
-                break;
-            case 'about':
-                console.log('О нас');
-                // Здесь можно добавить информацию о нас
                 break;
         }
     }

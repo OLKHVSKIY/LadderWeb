@@ -1,7 +1,7 @@
 /* Стили для страницы подписки - в стиле Apple */
 
 .subscription-page {
-    background: linear-gradient(180deg, #2037E7 0%, #58ABF5 38%, rgba(255, 255, 255, 0.3) 48%, rgba(255, 255, 255, 0.8) 52%, #FFFFFF 52%);
+    background: linear-gradient(180deg, #2037E7 0%, #58ABF5 42%, rgba(255, 255, 255, 0.3) 52%, rgba(255, 255, 255, 0.8) 56%, #FFFFFF 56%);
     min-height: 100vh;
     background-attachment: fixed;
 }
@@ -193,7 +193,7 @@
 .plan-content {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 16px;
 }
 
@@ -233,7 +233,6 @@
     flex: 0 0 auto;
     min-width: 120px;
     letter-spacing: -0.3px;
-    transform: translateY(-4px);
 }
 
 /* Кнопка подписки - в стиле Apple */
@@ -310,12 +309,11 @@
     }
 
     .plan-content {
-        flex-wrap: wrap;
         gap: 10px;
     }
 
     .plan-left {
-        flex: 1 1 100%;
+        flex: 1;
     }
 
     .plan-duration {
@@ -327,10 +325,13 @@
     }
 
     .plan-price {
+        flex: 0 0 auto;
+    }
+
+    .plan-price {
         min-width: auto;
         flex: 0 0 auto;
         font-size: 23px;
-        transform: translateY(-17px);
     }
 }
 

@@ -953,7 +953,7 @@ a.nav-item .nav-label {
 .subscription-banner {
     position: relative;
     width: 100%;
-    padding: 16px 20px;
+    padding: 13px 20px;
     background: linear-gradient(135deg, #58ABF5 0%, #2037E7 100%);
     border-radius: 20px;
     overflow: hidden;

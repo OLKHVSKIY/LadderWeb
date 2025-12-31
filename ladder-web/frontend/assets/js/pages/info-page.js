@@ -80,11 +80,26 @@ function setupSidebar() {
                 console.log('Поддержка');
             } else if (action === 'suggest') {
                 openSuggestModal();
-            } else if (action === 'about') {
-                // Можно добавить страницу "О нас"
-                console.log('О нас');
             }
         });
+        
+        // Обработка плашки подписки
+        const subscriptionBanner = sidebarOverlay.querySelector('.sidebar-subscription-banner');
+        if (subscriptionBanner) {
+            subscriptionBanner.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                sidebarOverlay.style.pointerEvents = 'none';
+                
+                // Переходим на страницу подписок
+                window.location.href = '/public/subscription.html';
+            });
+        }
     });
 }
 

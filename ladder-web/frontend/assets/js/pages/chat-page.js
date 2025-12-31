@@ -1695,22 +1695,22 @@ function setupSidebar() {
                         marqueeContent.style.animation = 'none';
                         marqueeContent.offsetHeight; // Принудительный reflow
                         // Устанавливаем новую анимацию marquee-chat с нужной скоростью
-                        marqueeContent.style.setProperty('animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('animation', 'marquee-chat 180s linear infinite', 'important');
                         marqueeContent.style.setProperty('animation-name', 'marquee-chat', 'important');
-                        marqueeContent.style.setProperty('animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('animation-duration', '180s', 'important');
                         marqueeContent.style.setProperty('animation-timing-function', 'linear', 'important');
                         marqueeContent.style.setProperty('animation-iteration-count', 'infinite', 'important');
-                        marqueeContent.style.setProperty('-webkit-animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation', 'marquee-chat 180s linear infinite', 'important');
                         marqueeContent.style.setProperty('-webkit-animation-name', 'marquee-chat', 'important');
-                        marqueeContent.style.setProperty('-webkit-animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('-webkit-animation-duration', '180s', 'important');
                         marqueeContent.style.setProperty('-webkit-animation-timing-function', 'linear', 'important');
                         marqueeContent.style.setProperty('-webkit-animation-iteration-count', 'infinite', 'important');
-                        marqueeContent.style.setProperty('-moz-animation', 'marquee-chat 90s linear infinite', 'important');
+                        marqueeContent.style.setProperty('-moz-animation', 'marquee-chat 180s linear infinite', 'important');
                         marqueeContent.style.setProperty('-moz-animation-name', 'marquee-chat', 'important');
-                        marqueeContent.style.setProperty('-moz-animation-duration', '90s', 'important');
+                        marqueeContent.style.setProperty('-moz-animation-duration', '180s', 'important');
                         marqueeContent.style.setProperty('-moz-animation-timing-function', 'linear', 'important');
                         marqueeContent.style.setProperty('-moz-animation-iteration-count', 'infinite', 'important');
-                        console.log('Marquee animation set to marquee-chat 90s', marqueeContent.style.animation);
+                        console.log('Marquee animation set to marquee-chat 180s', marqueeContent.style.animation);
                     }
                 }, 50);
                 
@@ -1773,11 +1773,31 @@ function setupSidebar() {
                 sidebarOverlay.style.setProperty('visibility', 'hidden', 'important');
                 
                 // Обрабатываем только действия без навигации
-                if (action === 'info' || action === 'support' || action === 'suggest' || action === 'about') {
+                if (action === 'info' || action === 'support' || action === 'suggest') {
                     handleSidebarAction(action);
                 }
             });
         });
+        
+        // Обработка плашки подписки
+        const subscriptionBanner = sidebarOverlay.querySelector('.sidebar-subscription-banner');
+        if (subscriptionBanner) {
+            subscriptionBanner.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Закрываем сайдбар
+                sidebarOverlay.classList.remove('active');
+                burgerMenu.classList.remove('active');
+                document.body.classList.remove('sidebar-open');
+                sidebarOverlay.style.setProperty('pointer-events', 'none', 'important');
+                sidebarOverlay.style.setProperty('opacity', '0', 'important');
+                sidebarOverlay.style.setProperty('visibility', 'hidden', 'important');
+                
+                // Переходим на страницу подписок
+                window.location.href = '/public/subscription.html';
+            });
+        }
         
         // Для ссылок - просто закрываем сайдбар, но не блокируем переход
         const sidebarLinks = sidebarOverlay.querySelectorAll('a.sidebar-item');
@@ -1799,7 +1819,7 @@ function setupSidebar() {
 }
 
 function handleSidebarAction(action) {
-    // Обрабатываем только действия без навигации (info, support, suggest, about)
+    // Обрабатываем только действия без навигации (info, support, suggest)
     switch (action) {
         case 'info':
             window.location.href = '/public/info.html';
@@ -1811,10 +1831,6 @@ function handleSidebarAction(action) {
         case 'suggest':
             console.log('Предложить идею');
             // Здесь можно добавить форму предложения идеи
-            break;
-        case 'about':
-            console.log('О нас');
-            // Здесь можно добавить информацию о нас
             break;
     }
 }
