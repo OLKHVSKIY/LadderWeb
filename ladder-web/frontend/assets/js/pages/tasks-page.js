@@ -460,6 +460,9 @@ async function loadTasksForDate(date) {
     }
 }
 
+// Экспортируем функцию глобально для доступа из других страниц (например, из chat-page)
+window.loadTasksForDate = loadTasksForDate;
+
 function createTaskCard(task) {
     const card = document.createElement('div');
     card.className = 'task-card';

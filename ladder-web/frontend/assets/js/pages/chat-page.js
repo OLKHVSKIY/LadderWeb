@@ -270,29 +270,51 @@ function initChatPage() {
         if (shouldIntercept) {
             console.log('🚨 ПЕРЕХВАТЫВАЕМ создание задачи - задаем вопрос про описание');
             
-            // Извлекаем дату и название из сообщения
-            const dateMatch = message.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+            // Извлекаем дату из сообщения (поддерживаем и конкретные даты, и относительные)
             let dateText = null;
-            if (dateMatch) {
-                const day = parseInt(dateMatch[1]);
-                const monthName = dateMatch[2];
-                dateText = `${day} ${monthName}`;
+            
+            // Сначала пробуем найти относительные даты (завтра, сегодня и т.д.)
+            const relativeDateMatch = message.match(/\b(завтра|сегодня|послезавтра|вчера|позавчера|tomorrow|today)\b/i);
+            if (relativeDateMatch) {
+                dateText = relativeDateMatch[1].toLowerCase();
+            } else {
+                // Ищем конкретную дату с числом и месяцем
+                const dateMatch = message.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+                if (dateMatch) {
+                    const day = parseInt(dateMatch[1]);
+                    const monthName = dateMatch[2];
+                    dateText = `${day} ${monthName}`;
+                }
             }
             
             // Извлекаем название задачи
             let title = '';
-            const titleMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)\s+на\s+[^:\-]+\s*[:\-]\s*(.+)/i);
-            if (titleMatch) {
+            
+            // Паттерн для "создай задачу на завтра Сделать уведомление"
+            // Сначала убираем дату, потом извлекаем название
+            let messageWithoutDate = message;
+            
+            // Убираем относительные даты
+            messageWithoutDate = messageWithoutDate.replace(/\b(на\s+)?(завтра|сегодня|послезавтра|вчера|позавчера)\b/gi, '').trim();
+            
+            // Убираем конкретные даты
+            messageWithoutDate = messageWithoutDate.replace(/\bна\s+\d{1,2}\s+(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)\b/gi, '').trim();
+            
+            // Теперь извлекаем название после "создай задачу" или "сделай задачу" и т.д.
+            const titleMatch = messageWithoutDate.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)\s*[:\-]?\s*(.+)/i);
+            if (titleMatch && titleMatch[1]) {
                 title = titleMatch[1].trim();
+                // Убираем возможные остатки "на" в начале
+                title = title.replace(/^на\s+/i, '').trim();
             } else {
-                const simpleMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)[:\s]+(.+)/i);
-                if (simpleMatch) {
-                    title = simpleMatch[1].trim();
-                    // Убираем дату из названия, если она там есть
-                    title = title.replace(/\d{1,2}\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i, '').trim();
-                    title = title.replace(/^на\s+[^:\-]+\s*[:\-]\s*/i, '').trim();
+                // Если не нашли через паттерн, берем всё после команды
+                const fallbackMatch = message.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу|заметку)\s+(?:на\s+)?[^:]+?\s+(.+)/i);
+                if (fallbackMatch && fallbackMatch[1]) {
+                    title = fallbackMatch[1].trim();
                 }
             }
+            
+            console.log('Extracted title:', title);
             
             // Инициализируем состояние создания задачи
             taskCreationState = {
@@ -325,69 +347,173 @@ function initChatPage() {
             
             // Если ожидаем ответ на вопрос про описание
             if (taskCreationState.step === 'description') {
-                // Проверяем отрицательные ответы
+                // Нормализуем сообщение: убираем лишние пробелы и приводим к нижнему регистру
+                const normalizedMessage = lower.trim().replace(/\s+/g, ' ');
+                
+                // Проверяем отрицательные ответы (учитываем разные варианты с запятыми и без)
                 const negativePatterns = [
                     /^нет\s*$/i,
-                    /^нет\s+не\s+будет/i,
-                    /^не\s+будет/i,
+                    /^нет\s*[,.]?\s*(не\s+)?(будет|нужно|требуется)/i,
+                    /^не\s+(будет|нужно|требуется)/i,
+                    /^не\s*нужно/i,  // "не нужно" - основной паттерн
+                    /^не\s*требуется/i,
                     /^без\s+описания/i,
                     /^описания\s+не\s+будет/i,
-                    /^не\s+нужно/i,
-                    /^не\s+требуется/i
+                    /нет[,\s]+не\s+нужно/i,
+                    /нет[,\s]+не\s+требуется/i,
+                    /\b(не\s+нужно|не\s+требуется)\b/i  // ищем "не нужно" в любом месте
                 ];
                 
                 // Проверяем положительные ответы
                 const positivePatterns = [
                     /^да\s*$/i,
                     /^да\s+будет/i,
-                    /^будет/i,
-                    /^нужно/i,
-                    /^требуется/i
+                    /^будет\s*$/i,
+                    /^нужно\s*$/i,
+                    /^требуется\s*$/i,
+                    /^да[,\s]+(будет|нужно|требуется)/i
                 ];
                 
-                const isNegative = negativePatterns.some(pattern => pattern.test(lower));
-                const isPositive = positivePatterns.some(pattern => pattern.test(lower));
+                const isNegative = negativePatterns.some(pattern => pattern.test(normalizedMessage));
+                const isPositive = positivePatterns.some(pattern => pattern.test(normalizedMessage));
+                
+                console.log('Checking answer for description question:', {
+                    originalMessage: message,
+                    normalizedMessage: normalizedMessage,
+                    isNegative,
+                    isPositive,
+                    matchedNegative: negativePatterns.find(p => p.test(normalizedMessage))?.toString(),
+                    matchedPositive: positivePatterns.find(p => p.test(normalizedMessage))?.toString()
+                });
                 
                 if (isNegative) {
-                    // Описание не нужно - переходим к приоритету
+                    // Описание не нужно - создаем задачу сразу с приоритетом 1 (по умолчанию)
                     taskCreationState.description = '';
-                    taskCreationState.step = 'priority';
-                    console.log('Negative answer - moving to priority step');
-                    addMessage('assistant', 'Какой приоритет у задачи? 1, 2 или 3?');
-                    sendBtn.disabled = false;
-                    chatInput.focus();
-                    return;
+                    taskCreationState.priority = 1; // Используем приоритет по умолчанию
+                    console.log('Negative answer - creating task immediately without description');
+                    
+                    // Создаем задачу сразу
+                    if (taskCreationState.date && taskCreationState.title) {
+                        try {
+                            await createTaskFromChat(
+                                taskCreationState.date,
+                                taskCreationState.title,
+                                '', // Без описания
+                                1   // Приоритет по умолчанию
+                            );
+                            taskCreationState = null; // Сбрасываем состояние
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        } catch (error) {
+                            console.error('Error creating task:', error);
+                            addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
+                            taskCreationState = null;
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        }
+                    } else {
+                        console.error('Missing date or title in taskCreationState:', taskCreationState);
+                        addMessage('assistant', 'Ошибка: не удалось создать задачу. Недостаточно данных.', true);
+                        taskCreationState = null;
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return;
+                    }
                 } else if (isPositive) {
-                    // Описание нужно - спрашиваем про описание
+                    // Описание нужно - переходим к шагу получения текста описания
                     taskCreationState.step = 'description_text';
                     console.log('Positive answer - asking for description text');
                     addMessage('assistant', 'Что вы хотите добавить в описание?');
                     sendBtn.disabled = false;
                     chatInput.focus();
                     return;
+                } else {
+                    // Не распознан как явный да/нет - считаем, что пользователь сразу указал описание
+                    // Создаем задачу сразу с этим описанием
+                    console.log('Answer not recognized as yes/no, treating as description:', message);
+                    
+                    if (taskCreationState.date && taskCreationState.title) {
+                        try {
+                            await createTaskFromChat(
+                                taskCreationState.date,
+                                taskCreationState.title,
+                                message.trim(), // Используем сообщение как описание
+                                1   // Приоритет по умолчанию
+                            );
+                            taskCreationState = null;
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        } catch (error) {
+                            console.error('Error creating task:', error);
+                            addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
+                            taskCreationState = null;
+                            sendBtn.disabled = false;
+                            chatInput.focus();
+                            return;
+                        }
+                    }
                 }
             }
             
             // Если ожидаем текст описания
             if (taskCreationState.step === 'description_text') {
                 taskCreationState.description = message.trim();
-                taskCreationState.step = 'priority';
-                console.log('Description received - moving to priority step');
-                addMessage('assistant', 'Какой приоритет у задачи? 1, 2 или 3?');
-                sendBtn.disabled = false;
-                chatInput.focus();
-                return;
+                console.log('Description received:', taskCreationState.description);
+                console.log('Task state after description:', taskCreationState);
+                
+                // После получения описания сразу создаем задачу с приоритетом 1 (по умолчанию)
+                console.log('Creating task with description and default priority');
+                
+                if (taskCreationState.date && taskCreationState.title) {
+                    try {
+                        await createTaskFromChat(
+                            taskCreationState.date,
+                            taskCreationState.title,
+                            taskCreationState.description,
+                            1   // Приоритет по умолчанию
+                        );
+                        taskCreationState = null; // Сбрасываем состояние
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return;
+                    } catch (error) {
+                        console.error('Error creating task:', error);
+                        addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
+                        taskCreationState = null;
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return;
+                    }
+                } else {
+                    console.error('Missing date or title in taskCreationState:', taskCreationState);
+                    addMessage('assistant', 'Ошибка: не удалось создать задачу. Недостаточно данных.', true);
+                    taskCreationState = null;
+                    sendBtn.disabled = false;
+                    chatInput.focus();
+                    return;
+                }
             }
             
-            // Если ожидаем приоритет
+            // Шаг приоритета больше не используется - задачи создаются сразу с приоритетом 1
+            // Этот блок оставлен на случай, если код все еще пытается обработать этот шаг
             if (taskCreationState.step === 'priority') {
                 const priorityMatch = message.match(/([123])/);
                 if (priorityMatch) {
                     taskCreationState.priority = parseInt(priorityMatch[1]);
-                    console.log('Priority received - creating task:', taskCreationState);
+                    console.log('Priority received:', taskCreationState.priority);
+                    console.log('Full task state before creation:', JSON.stringify(taskCreationState, null, 2));
                     
                     // Создаем задачу
                     if (taskCreationState.date && taskCreationState.title) {
+                        console.log('Creating task with data:', {
+                            date: taskCreationState.date,
+                            title: taskCreationState.title,
+                            description: taskCreationState.description || '',
+                            priority: taskCreationState.priority
+                        });
                         try {
                             await createTaskFromChat(
                                 taskCreationState.date,
@@ -395,6 +521,7 @@ function initChatPage() {
                                 taskCreationState.description || '',
                                 taskCreationState.priority
                             );
+                            console.log('Task created successfully, resetting state');
                             taskCreationState = null; // Сбрасываем состояние
                             sendBtn.disabled = false;
                             chatInput.focus();
@@ -417,12 +544,24 @@ function initChatPage() {
                     }
                 } else {
                     // Пользователь не ответил на вопрос про приоритет правильно
+                    console.log('Invalid priority response:', message);
                     addMessage('assistant', 'Пожалуйста, укажите приоритет: 1, 2 или 3?', true);
                     sendBtn.disabled = false;
                     chatInput.focus();
                     return;
                 }
             }
+            
+            // Если мы дошли сюда, значит шаг не был обработан - это ошибка
+            // НО мы всё равно не должны отправлять сообщение к AI
+            console.error('Unexpected task creation step or unhandled state:', taskCreationState);
+            console.error('Current step:', taskCreationState?.step);
+            console.error('Message:', message);
+            addMessage('assistant', 'Ошибка: не удалось обработать ответ. Пожалуйста, начните создание задачи заново.', true);
+            taskCreationState = null; // Сбрасываем состояние
+            sendBtn.disabled = false;
+            chatInput.focus();
+            return; // ВАЖНО: не отправляем сообщение к AI
         }
         
         // Показываем индикатор загрузки
@@ -583,16 +722,84 @@ function initChatPage() {
             }
 
             // Проверяем, нужно ли выполнить действие (создать задачу и т.д.)
-            console.log('Checking for actions in message:', assistantMessage);
+            console.log('=== Checking for actions in message ===');
+            console.log('Assistant message:', assistantMessage.substring(0, 500));
             const actionResult = await handleAction(message, assistantMessage);
             console.log('Action result:', actionResult);
             
-            // Если задача была создана, не показываем ответ нейросети
+            // Если задача была создана через команду, не показываем ответ нейросети
             if (actionResult) {
-                console.log('Action completed, not showing AI message');
+                console.log('✅ Action completed successfully, not showing AI message');
                 sendBtn.disabled = false;
                 chatInput.focus();
                 return;
+            }
+            
+            // ВАЖНО: Если AI НЕ отправил команду CREATE_TASK или CREATE_NOTE, но ответил сообщением о создании,
+            // пытаемся извлечь информацию из ответа и создать задачу/заметку вручную
+            
+            // Проверка для задач
+            const isTaskCreationResponse = assistantMessage.includes('✅ Задача создана') || 
+                                          assistantMessage.includes('Задача создана') ||
+                                          assistantMessage.includes('задача создана');
+            
+            if (isTaskCreationResponse && !assistantMessage.includes('CREATE_TASK:')) {
+                console.log('⚠️ AI responded with task creation message but NO CREATE_TASK command!');
+                console.log('Attempting to extract task info from message...');
+                
+                // Пытаемся извлечь информацию из сообщения пользователя
+                const userMessageLower = message.toLowerCase();
+                const taskMatch = userMessageLower.match(/(?:создай|сделай|напиши|добавь)\s+(?:задачу)\s+(?:на\s+)?(.+?)\s*[-–]\s*(.+)/i);
+                
+                if (taskMatch) {
+                    const datePart = taskMatch[1].trim();
+                    const titlePart = taskMatch[2].trim();
+                    
+                    console.log('Extracted from user message:', { datePart, titlePart });
+                    
+                    try {
+                        // Пытаемся создать задачу из сообщения пользователя
+                        await createTaskFromChat(datePart, titlePart, '', 1);
+                        console.log('✅ Task created from user message extraction');
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return; // Не показываем сообщение AI, так как мы уже создали задачу
+                    } catch (error) {
+                        console.error('Failed to create task from extracted info:', error);
+                        // Продолжаем - покажем сообщение AI
+                    }
+                }
+            }
+            
+            // Проверка для заметок
+            const isNoteCreationResponse = assistantMessage.includes('✅ Заметка создана') || 
+                                          assistantMessage.includes('Заметка создана') ||
+                                          assistantMessage.includes('заметка создана');
+            
+            if (isNoteCreationResponse && !assistantMessage.includes('CREATE_NOTE:')) {
+                console.log('⚠️ AI responded with note creation message but NO CREATE_NOTE command!');
+                console.log('Attempting to extract note info from message...');
+                
+                // Пытаемся извлечь информацию из сообщения пользователя
+                const userMessageLower = message.toLowerCase();
+                const noteMatch = userMessageLower.match(/(?:создай|сделай|напиши|добавь)\s+заметку\s+(.+)/i);
+                
+                if (noteMatch) {
+                    const noteText = noteMatch[1].trim();
+                    console.log('Extracted note text from user message:', noteText);
+                    
+                    try {
+                        // Пытаемся создать заметку из сообщения пользователя
+                        await createNoteFromChat(noteText);
+                        console.log('✅ Note created from user message extraction');
+                        sendBtn.disabled = false;
+                        chatInput.focus();
+                        return; // Не показываем сообщение AI, так как мы уже создали заметку
+                    } catch (error) {
+                        console.error('Failed to create note from extracted info:', error);
+                        // Продолжаем - покажем сообщение AI
+                    }
+                }
             }
             
             // Убираем технические команды из ответа для пользователя
@@ -755,28 +962,46 @@ function initChatPage() {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         
-        const dateMap = {
-            'сегодня': 0,
-            'today': 0,
-            'завтра': 1,
-            'tomorrow': 1,
-            'послезавтра': 2,
-            'day after tomorrow': 2,
-            'вчера': -1,
-            'yesterday': -1,
-            'позавчера': -2,
-            'day before yesterday': -2,
-            'через день': 1,
-            'через 2 дня': 2,
-            'через 3 дня': 3,
-            'через неделю': 7,
-            'через месяц': 30
-        };
+        console.log('parseRelativeDate called with:', dateStr, 'lower:', lower);
         
-        for (const [key, days] of Object.entries(dateMap)) {
-            if (lower.includes(key)) {
+        // Используем более точное совпадение - проверяем как точное совпадение, так и слово целиком
+        // ВАЖНО: более длинные ключи должны идти первыми, чтобы избежать ложных срабатываний
+        const dateMap = [
+            ['послезавтра', 2],
+            ['day after tomorrow', 2],
+            ['позавчера', -2],
+            ['day before yesterday', -2],
+            ['через месяц', 30],
+            ['через неделю', 7],
+            ['через 3 дня', 3],
+            ['через 2 дня', 2],
+            ['через день', 1],
+            ['сегодня', 0],
+            ['today', 0],
+            ['завтра', 1],
+            ['tomorrow', 1],
+            ['вчера', -1],
+            ['yesterday', -1]
+        ];
+        
+        // Сначала проверяем точное совпадение
+        for (const [key, days] of dateMap) {
+            if (lower === key) {
                 const result = new Date(today);
                 result.setDate(result.getDate() + days);
+                console.log('parseRelativeDate: exact match found for', key, 'result:', result, 'day:', result.getDate(), 'month:', result.getMonth() + 1);
+                return result;
+            }
+        }
+        
+        // Затем проверяем как слово (с границами слов), более длинные ключи первыми
+        for (const [key, days] of dateMap) {
+            // Проверяем как точное совпадение или как отдельное слово
+            const regex = new RegExp(`\\b${key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+            if (regex.test(lower)) {
+                const result = new Date(today);
+                result.setDate(result.getDate() + days);
+                console.log('parseRelativeDate: word match found for', key, 'result:', result, 'day:', result.getDate(), 'month:', result.getMonth() + 1);
                 return result;
             }
         }
@@ -1201,8 +1426,10 @@ CUANDO EL USUARIO HACE UNA PREGUNTA GENERAL - respóndela completamente y de man
             'ru': `\nВАЖНО - СОЗДАНИЕ ЗАДАЧ И ЗАМЕТОК (используй ТОЛЬКО когда пользователь явно просит создать задачу или заметку):
 - Если пользователь просит создать ЗАДАЧУ (с датой), веди диалог с уточнениями. После получения всех данных используй формат CREATE_TASK:дата:название:описание:приоритет
 - Если пользователь просит создать ЗАМЕТКУ (без даты), создай её сразу командой CREATE_NOTE:текст заметки (без вопросов про описание и приоритет!)
+- КРИТИЧЕСКИ ВАЖНО для дат: Если пользователь говорит "завтра", "сегодня", "послезавтра", "вчера" - используй ЭТИ СЛОВА БУКВАЛЬНО в CREATE_TASK, НЕ преобразуй их в конкретные даты! Система сама правильно распарсит относительные даты.
+- Если пользователь указал конкретную дату типа "2 января", используй её как есть: "2 января" (без года, система сама подставит текущий год)
 - Текущий год: ${new Date().getFullYear()}. Если пользователь указал дату без года (например, "28 декабря"), всегда используй текущий год (${new Date().getFullYear()})
-- Формат даты в CREATE_TASK должен быть понятным (например, "28 декабря" или "28 декабря 2025"), но если год не указан, система автоматически использует текущий год
+- Формат даты в CREATE_TASK: для относительных дат используй "завтра", "сегодня", "послезавтра". Для конкретных дат используй "28 декабря" или "28 декабря 2025" если указан год
 
 ПОМНИ: Если пользователь задает общий вопрос (не про создание задачи/заметки), просто отвечай на него полно и полезно!`,
             'en': `\nIMPORTANT - CREATING TASKS AND NOTES (use ONLY when user explicitly asks to create a task or note):
@@ -1228,98 +1455,109 @@ RECUERDA: ¡Si el usuario hace una pregunta general (no sobre crear tarea/nota),
     
     // Обработка действий (создание задачи и т.д.)
     async function handleAction(userMessage, assistantMessage) {
+        console.log('handleAction called with assistantMessage:', assistantMessage.substring(0, 200));
+        
         // Проверяем, нужно ли создать заметку
         if (assistantMessage.includes('CREATE_NOTE:')) {
-            const match = assistantMessage.match(/CREATE_NOTE:(.+)/);
+            const match = assistantMessage.match(/CREATE_NOTE:(.+?)(?:\n|$)/);
             if (match) {
                 const noteText = match[1].trim();
+                console.log('Creating note:', noteText);
                 await createNoteFromChat(noteText);
-                return true; // Действие выполнено
+                return true;
             }
         }
         
         // Проверяем, нужно ли создать задачу
         if (assistantMessage.includes('CREATE_TASK:')) {
-            console.log('Found CREATE_TASK command:', assistantMessage);
+            console.log('=== CREATE_TASK COMMAND FOUND ===');
+            console.log('Full message:', assistantMessage);
             
-            // Гибкий regex для обработки разных форматов:
-            // CREATE_TASK:дата:название:описание:приоритет
-            // CREATE_TASK:дата:название::приоритет (пустое описание - два двоеточия подряд)
-            // CREATE_TASK:дата:название:приоритет (без описания, 3 части вместо 4)
-            
-            // Сначала пробуем формат с пустым описанием (два двоеточия подряд)
-            let match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?)::([123])/);
-            if (match) {
-                // Формат: дата:название::приоритет
-                match = [match[0], match[1], match[2], '', match[3]];
-            } else {
-                // Пробуем стандартный формат с 4 частями (с описанием)
-                match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?):([^:\n\r]+?):([123])/);
-                if (match) {
-                    // Формат: дата:название:описание:приоритет
-                    // match уже правильный
-                } else {
-                    // Пробуем формат без описания (3 части)
-                    match = assistantMessage.match(/CREATE_TASK:([^:\n\r]+?):([^:\n\r]+?):([123])/);
-                    if (match) {
-                        // Добавляем пустое описание
-                        match = [match[0], match[1], match[2], '', match[3]];
-                    }
-                }
+            // Ищем команду CREATE_TASK в тексте
+            const commandMatch = assistantMessage.match(/CREATE_TASK:([^\n\r]+)/);
+            if (!commandMatch) {
+                console.error('CREATE_TASK command found but cannot extract data');
+                return false;
             }
             
-            if (match) {
-                const date = match[1].trim();
-                const title = match[2].trim();
-                const description = (match[3] || '').trim();
-                let priority = (match[4] || match[3] || '1').trim();
-                
-                console.log('Parsed task:', { date, title, description, priority });
-                
-                // Обрабатываем приоритет
-                if (priority.toLowerCase() === 'null' || priority === '' || priority === 'не требуется') {
-                    priority = 1; // Приоритет по умолчанию
+            const commandData = commandMatch[1];
+            console.log('Command data:', commandData);
+            
+            // Парсим команду - разделяем по двоеточиям
+            // Формат: дата:название:описание:приоритет
+            // Или: дата:название::приоритет (пустое описание)
+            const parts = [];
+            let currentPart = '';
+            let emptyDescription = false;
+            
+            for (let i = 0; i < commandData.length; i++) {
+                if (commandData[i] === ':' && commandData[i + 1] === ':') {
+                    // Два двоеточия подряд = пустое описание
+                    parts.push(currentPart.trim());
+                    parts.push(''); // Пустое описание
+                    currentPart = '';
+                    i++; // Пропускаем второе двоеточие
+                    emptyDescription = true;
+                } else if (commandData[i] === ':' && !emptyDescription) {
+                    parts.push(currentPart.trim());
+                    currentPart = '';
                 } else {
-                    priority = parseInt(priority) || 1;
+                    currentPart += commandData[i];
                 }
-                
-                // Валидация приоритета
-                if (priority < 1 || priority > 3) {
-                    priority = 1;
-                }
-                
-                try {
-                    await createTaskFromChat(date, title, description, priority);
-                    console.log('Task created successfully');
-                    return true; // Действие выполнено
-                } catch (error) {
-                    console.error('Error creating task:', error);
-                    addMessage('assistant', `Ошибка при создании задачи: ${error.message}`, true);
-                    return false;
-                }
+            }
+            if (currentPart) {
+                parts.push(currentPart.trim());
+            }
+            
+            console.log('Parsed parts:', parts, 'Length:', parts.length);
+            
+            if (parts.length < 3) {
+                console.error('Not enough parts in CREATE_TASK command. Expected at least 3, got:', parts.length);
+                addMessage('assistant', '❌ Ошибка: неправильный формат команды CREATE_TASK', true);
+                return false;
+            }
+            
+            // Извлекаем данные
+            const date = parts[0] || '';
+            const title = parts[1] || '';
+            let description = '';
+            let priority = 1;
+            
+            if (parts.length === 3) {
+                // Формат: дата:название:приоритет (без описания)
+                priority = parseInt(parts[2]) || 1;
+            } else if (parts.length === 4) {
+                // Формат: дата:название:описание:приоритет
+                description = parts[2] || '';
+                priority = parseInt(parts[3]) || 1;
             } else {
-                console.error('Failed to parse CREATE_TASK command:', assistantMessage);
-                // Пытаемся найти команду в тексте для отладки
-                const simpleMatch = assistantMessage.match(/CREATE_TASK:(.+)/);
-                if (simpleMatch) {
-                    console.error('Command found but format is incorrect:', simpleMatch[1]);
-                    // Пытаемся извлечь данные вручную
-                    const parts = simpleMatch[1].split(':');
-                    if (parts.length >= 3) {
-                        const date = parts[0].trim();
-                        const title = parts[1].trim();
-                        const description = parts.length > 3 ? parts.slice(2, -1).join(':').trim() : '';
-                        const priority = parseInt(parts[parts.length - 1].trim()) || 1;
-                        
-                        console.log('Manual parsing:', { date, title, description, priority });
-                        try {
-                            await createTaskFromChat(date, title, description, priority);
-                            return true;
-                        } catch (error) {
-                            console.error('Error creating task (manual parse):', error);
-                        }
-                    }
-                }
+                // Если частей больше 4, объединяем средние части как описание
+                description = parts.slice(2, -1).join(':').trim();
+                priority = parseInt(parts[parts.length - 1]) || 1;
+            }
+            
+            // Валидация
+            if (!date || !title) {
+                console.error('Missing required fields:', { date, title });
+                addMessage('assistant', '❌ Ошибка: не указаны дата или название задачи', true);
+                return false;
+            }
+            
+            if (priority < 1 || priority > 3) {
+                priority = 1;
+            }
+            
+            console.log('Final parsed data:', { date, title, description, priority });
+            
+            try {
+                console.log('Calling createTaskFromChat...');
+                await createTaskFromChat(date, title, description, priority);
+                console.log('✅ Task created successfully via CREATE_TASK command');
+                return true;
+            } catch (error) {
+                console.error('❌ ERROR creating task:', error);
+                console.error('Error stack:', error.stack);
+                addMessage('assistant', `❌ Ошибка при создании задачи: ${error.message}`, true);
                 return false;
             }
         }
@@ -1331,33 +1569,79 @@ RECUERDA: ¡Si el usuario hace una pregunta general (no sobre crear tarea/nota),
     function parseDate(dateText) {
         const now = new Date();
         const currentYear = now.getFullYear();
+        const currentMonth = now.getMonth(); // 0-11
         
         // Пытаемся распарсить дату
-        const dateMatch = dateText.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
+        const dateMatch = dateText.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)(?:\s+(\d{4}))?/i);
         if (dateMatch) {
             const day = parseInt(dateMatch[1]);
             const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
             const month = monthNames.findIndex(m => m.toLowerCase() === dateMatch[2].toLowerCase());
             if (month !== -1) {
-                return new Date(currentYear, month, day);
+                // Если указан год, используем его
+                let year = currentYear;
+                if (dateMatch[3]) {
+                    year = parseInt(dateMatch[3]);
+                } else {
+                    // Если год не указан, определяем его умно:
+                    // Если месяц уже прошел в этом году, значит имеется в виду следующий год
+                    // Если месяц еще не наступил, значит имеется в виду этот год
+                    const parsedDate = new Date(currentYear, month, day);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    // Если дата в прошлом (уже прошла в этом году), значит имеется в виду следующий год
+                    if (parsedDate < today) {
+                        year = currentYear + 1;
+                    }
+                }
+                return new Date(year, month, day);
             }
         }
         
         return null;
     }
     
-    // Создание заметки из чата
+    // Создание заметки из чата - УПРОЩЕННАЯ И НАДЕЖНАЯ ВЕРСИЯ
     async function createNoteFromChat(text) {
+        console.log('=== createNoteFromChat START ===');
+        console.log('Note text:', text);
+        
+        if (!text || !text.trim()) {
+            console.error('Note text is empty');
+            addMessage('assistant', '❌ Ошибка: текст заметки не может быть пустым', true);
+            return;
+        }
+        
+        const noteText = text.trim();
+        
         try {
-            // Получаем стикеры из localStorage
-            const stickersJson = localStorage.getItem('notes_stickers');
-            const stickers = stickersJson ? JSON.parse(stickersJson) : [];
+            // 1. Получаем существующие стикеры
+            console.log('Getting existing stickers...');
+            let stickersJson = localStorage.getItem('notes_stickers');
+            let stickers = [];
             
-            // Создаем новый стикер
+            if (stickersJson) {
+                try {
+                    stickers = JSON.parse(stickersJson);
+                    if (!Array.isArray(stickers)) {
+                        console.warn('notes_stickers is not an array, resetting...');
+                        stickers = [];
+                    }
+                } catch (parseError) {
+                    console.error('Error parsing notes_stickers:', parseError);
+                    stickers = [];
+                }
+            }
+            
+            console.log('Current stickers count:', stickers.length);
+            
+            // 2. Создаем новый стикер
             const stickerId = Date.now();
             const sticker = {
                 id: stickerId,
-                content: text,
+                type: 'note', // Добавляем тип для совместимости с notes-page
+                content: noteText,
                 color: '#FFEB3B', // Желтый по умолчанию
                 height: 200,
                 locked: false,
@@ -1367,83 +1651,208 @@ RECUERDA: ¡Si el usuario hace una pregunta general (no sobre crear tarea/nota),
                 }
             };
             
-            // Сохраняем в localStorage
+            console.log('Created sticker object:', sticker);
+            
+            // 3. Добавляем стикер в массив
             stickers.push(sticker);
-            localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+            console.log('Stickers array after push:', stickers.length);
             
-            // Показываем сообщение об успехе
-            addMessage('assistant', `✅ Заметка создана: "${text}"`, true); // Используем эффект печатания
+            // 4. Сохраняем в localStorage И в текущий workspace
+            console.log('Saving to localStorage and workspace...');
+            try {
+                // Сохраняем в localStorage для обратной совместимости
+                localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+                console.log('Saved to localStorage');
+                
+                // Также сохраняем в текущий workspace (важно для отображения на странице notes)
+                try {
+                    const workspacesJson = localStorage.getItem('workspaces');
+                    if (workspacesJson) {
+                        const workspaces = JSON.parse(workspacesJson);
+                        const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
+                        const workspace = currentWorkspaceId 
+                            ? workspaces.find(w => w.id === currentWorkspaceId)
+                            : workspaces.find(w => w.isPersonal) || workspaces[0];
+                        
+                        if (workspace) {
+                            workspace.stickers = stickers;
+                            localStorage.setItem('workspaces', JSON.stringify(workspaces));
+                            console.log('✅ Saved to workspace:', workspace.name || workspace.id);
+                        } else {
+                            console.warn('Workspace not found, but continuing...');
+                        }
+                    } else {
+                        console.warn('No workspaces found, but continuing...');
+                    }
+                } catch (workspaceError) {
+                    console.error('Error saving to workspace (non-critical):', workspaceError);
+                    // Не прерываем выполнение, так как основное сохранение в localStorage уже выполнено
+                }
+            } catch (saveError) {
+                console.error('Error saving to localStorage:', saveError);
+                throw new Error('Не удалось сохранить заметку в localStorage');
+            }
             
-            console.log('Note created successfully:', sticker);
+            // 5. ПРОВЕРКА СОХРАНЕНИЯ - ДВОЙНАЯ ПРОВЕРКА
+            console.log('Verifying note was saved...');
+            let verifyJson = localStorage.getItem('notes_stickers');
+            if (!verifyJson) {
+                console.error('localStorage notes_stickers is empty after save!');
+                // Попытка сохранить еще раз
+                try {
+                    localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+                    verifyJson = localStorage.getItem('notes_stickers');
+                } catch (retryError) {
+                    console.error('Retry save also failed:', retryError);
+                }
+            }
+            
+            if (!verifyJson) {
+                throw new Error('Критическая ошибка: невозможно сохранить в localStorage');
+            }
+            
+            let verifyStickers = [];
+            try {
+                verifyStickers = JSON.parse(verifyJson);
+            } catch (parseError) {
+                console.error('Error parsing verifyJson:', parseError);
+                throw new Error('Ошибка при проверке сохранения заметки');
+            }
+            
+            console.log('Verification: total stickers in storage:', verifyStickers.length);
+            
+            const verifySticker = verifyStickers.find(s => s.id === stickerId);
+            if (!verifySticker) {
+                console.error('Note not found in storage! Trying to save one more time...');
+                // Последняя попытка
+                verifyStickers.push(sticker);
+                localStorage.setItem('notes_stickers', JSON.stringify(verifyStickers));
+                
+                // Также обновляем workspace при повторной попытке
+                try {
+                    const workspacesJson = localStorage.getItem('workspaces');
+                    if (workspacesJson) {
+                        const workspaces = JSON.parse(workspacesJson);
+                        const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
+                        const workspace = currentWorkspaceId 
+                            ? workspaces.find(w => w.id === currentWorkspaceId)
+                            : workspaces.find(w => w.isPersonal) || workspaces[0];
+                        if (workspace) {
+                            workspace.stickers = verifyStickers;
+                            localStorage.setItem('workspaces', JSON.stringify(workspaces));
+                            console.log('✅ Updated workspace on retry');
+                        }
+                    }
+                } catch (wsError) {
+                    console.error('Error updating workspace on retry:', wsError);
+                }
+                
+                // Финальная проверка
+                const finalCheck = JSON.parse(localStorage.getItem('notes_stickers') || '[]');
+                const finalFound = finalCheck.find(s => s.id === stickerId);
+                if (!finalFound) {
+                    console.error('CRITICAL: Note still not saved after second attempt!');
+                    console.error('Created sticker:', sticker);
+                    console.error('All stickers:', finalCheck);
+                    throw new Error('Критическая ошибка: заметка не может быть сохранена в localStorage');
+                }
+                console.log('✅ Note saved on second attempt:', finalFound);
+            } else {
+                console.log('✅ Note verified in storage:', verifySticker);
+            }
+            
+            // 6. ОТОБРАЖЕНИЕ СООБЩЕНИЯ
+            addMessage('assistant', `✅ Заметка создана: "${noteText}"`, true);
+            
+            // 7. ОБНОВЛЕНИЕ UI (если мы на странице заметок)
+            if (window.location.pathname.includes('notes.html')) {
+                setTimeout(() => {
+                    window.location.reload();
+                }, 300);
+            }
+            
+            console.log('=== createNoteFromChat SUCCESS ===');
+            
         } catch (error) {
-            console.error('Error creating note:', error);
-            addMessage('assistant', '❌ Ошибка при создании заметки. Попробуйте еще раз.', true);
+            console.error('=== createNoteFromChat ERROR ===');
+            console.error('Error:', error);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            console.error('Note text was:', noteText);
+            
+            addMessage('assistant', `❌ Ошибка при создании заметки: ${error.message}`, true);
         }
     }
     
-    // Создание задачи из чата
+    // Создание задачи из чата - УПРОЩЕННАЯ И НАДЕЖНАЯ ВЕРСИЯ
     async function createTaskFromChat(dateText, title, description, priority) {
+        console.log('=== createTaskFromChat START ===');
+        console.log('Input:', { dateText, title, description, priority });
+        
         try {
-            // Очищаем название от лишних частей
-            let cleanTitle = title.trim();
-            // Убираем возможные префиксы типа "на 29 декабря - " или "на 29 декабря: "
+            // 1. Очистка названия
+            let cleanTitle = (title || '').trim();
+            if (!cleanTitle) {
+                throw new Error('Название задачи не может быть пустым');
+            }
+            
+            // Убираем даты из названия
             cleanTitle = cleanTitle.replace(/^на\s+\d{1,2}\s+[а-яё]+\s*[:\-]\s*/i, '').trim();
+            cleanTitle = cleanTitle.replace(/\b(на\s+)?(завтра|сегодня|послезавтра|вчера|позавчера)\b/gi, '').trim();
+            cleanTitle = cleanTitle.replace(/\bна\s+\d{1,2}\s+(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)\b/gi, '').trim();
             
-            console.log('Creating task:', { dateText, title: cleanTitle, description, priority });
-            
-            // Парсим дату
-            console.log('Parsing date:', dateText);
-            const date = parseDate(dateText);
-            if (!date) {
-                console.error('Failed to parse date:', dateText);
-                addMessage('assistant', '❌ Не удалось распознать дату. Попробуйте еще раз.', true);
-                return;
+            // Убираем двоеточие и текст после него
+            const colonIndex = cleanTitle.indexOf(':');
+            if (colonIndex > 0) {
+                cleanTitle = cleanTitle.substring(0, colonIndex).trim();
             }
             
-            // Проверяем, что дата правильно распарсена
-            console.log('Parsed date:', date, 'Day:', date.getDate(), 'Month:', date.getMonth() + 1, 'Year:', date.getFullYear());
+            console.log('Cleaned title:', cleanTitle);
             
-            // Извлекаем ожидаемый день и месяц из исходного текста
-            const dateMatch = dateText.match(/(\d{1,2})\s*(декабря|января|февраля|марта|апреля|мая|июня|июля|августа|сентября|октября|ноября)/i);
-            if (!dateMatch) {
-                console.error('Failed to extract date from text:', dateText);
-                addMessage('assistant', '❌ Не удалось распознать дату. Попробуйте еще раз.', true);
-                return;
+            // 2. Парсинг даты
+            if (!dateText || !dateText.trim()) {
+                throw new Error('Дата не указана');
             }
             
-            const expectedDay = parseInt(dateMatch[1]);
-            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-            const monthIndex = monthNames.findIndex(m => m.toLowerCase() === dateMatch[2].toLowerCase());
+            let date = null;
             
-            if (monthIndex === -1) {
-                console.error('Failed to find month:', dateMatch[2]);
-                addMessage('assistant', '❌ Не удалось распознать месяц. Попробуйте еще раз.', true);
-                return;
+            // Сначала пробуем относительную дату
+            const relativeDate = parseRelativeDate(dateText.trim());
+            if (relativeDate) {
+                date = relativeDate;
+                console.log('Parsed as relative date:', date);
+            } else {
+                // Пробуем конкретную дату
+                date = parseDate(dateText.trim());
+                if (date) {
+                    console.log('Parsed as specific date:', date);
+                }
             }
             
-            // Используем ожидаемые значения напрямую, чтобы избежать проблем с часовыми поясами
+            if (!date || isNaN(date.getTime())) {
+                throw new Error(`Не удалось распознать дату: "${dateText}"`);
+            }
+            
+            // 3. Форматирование даты
             const year = date.getFullYear();
-            const month = monthIndex + 1; // Месяц в формате 1-12
-            const day = expectedDay;
-            
-            // Форматируем дату напрямую, без использования методов Date, которые могут сдвинуть дату
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
             const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
-            // Проверяем, что дата не в прошлом
+            console.log('Formatted date:', formattedDate);
+            
+            // 4. Проверка даты (не в прошлом)
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            const taskDate = new Date(year, monthIndex, expectedDay);
+            const taskDate = new Date(year, month - 1, day);
             taskDate.setHours(0, 0, 0, 0);
             
             if (taskDate < today) {
-                addMessage('assistant', '❌ Нельзя создавать задачи в прошлом. Укажите дату сегодня или в будущем.', true);
-                return;
+                throw new Error(`Нельзя создавать задачи в прошлом. Указанная дата: ${taskDate.toLocaleDateString('ru-RU')}, сегодня: ${today.toLocaleDateString('ru-RU')}`);
             }
             
-            console.log('Task data:', { formattedDate, expectedDay, month, year, cleanTitle, description, priority });
-            
-            // Проверяем, что описание не содержит отрицательных ответов (это был ответ на вопрос, а не описание)
-            let cleanDescription = description;
+            // 5. Очистка описания
+            let cleanDescription = (description || '').trim();
             const negativePatterns = [
                 /^нет\s*$/i,
                 /^нет\s+не\s+будет/i,
@@ -1454,66 +1863,125 @@ RECUERDA: ¡Si el usuario hace una pregunta general (no sobre crear tarea/nota),
                 /^не\s+требуется/i
             ];
             
-            if (cleanDescription) {
-                const trimmedDesc = cleanDescription.trim();
-                const isNegative = negativePatterns.some(pattern => pattern.test(trimmedDesc));
-                if (isNegative) {
-                    cleanDescription = '';
-                    console.log('Cleaned description - removed negative answer');
-                }
+            if (cleanDescription && negativePatterns.some(p => p.test(cleanDescription))) {
+                cleanDescription = '';
             }
             
-            // Создаем задачу
+            // 6. Валидация приоритета
+            const finalPriority = Math.max(1, Math.min(3, parseInt(priority) || 1));
+            
+            // 7. Подготовка данных задачи
             const taskData = {
                 title: cleanTitle,
-                description: cleanDescription || '',
-                priority: priority || 1,
+                description: cleanDescription,
+                priority: finalPriority,
                 due_date: formattedDate,
                 completed: false
             };
             
-            const newTask = await createTask(taskData);
-            console.log('Task created successfully:', newTask);
+            console.log('Task data to save:', taskData);
             
-            // Проверяем, что задача действительно сохранена
-            const savedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
-            const foundTask = savedTasks.find(t => t.id === newTask.id);
-            console.log('Tasks in localStorage:', savedTasks.length);
-            console.log('Created task found in storage:', foundTask);
-            
-            if (!foundTask) {
-                console.error('ERROR: Task was not saved to localStorage!');
-                addMessage('assistant', '❌ Ошибка: задача не была сохранена. Попробуйте еще раз.', true);
-                return;
+            // 8. СОЗДАНИЕ ЗАДАЧИ - КРИТИЧЕСКИЙ МОМЕНТ
+            console.log('Calling createTask module function...');
+            let newTask;
+            try {
+                newTask = await createTask(taskData);
+                console.log('createTask returned:', newTask);
+            } catch (error) {
+                console.error('createTask module failed, trying direct localStorage save:', error);
+                // Если модуль не работает, сохраняем напрямую
+                const tasksJson = localStorage.getItem('tasks');
+                const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+                const taskId = Date.now();
+                newTask = {
+                    id: taskId,
+                    ...taskData,
+                    created_at: new Date().toISOString(),
+                };
+                tasks.push(newTask);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                console.log('Task saved directly to localStorage:', newTask);
             }
             
-            // Показываем уведомление с правильной датой (используем очищенное описание)
-            const dateStr = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-            const descriptionText = cleanDescription ? `\n📝 Описание: ${cleanDescription}` : '';
-            addMessage('assistant', `✅ Задача создана на ${dateStr}: "${cleanTitle}"${descriptionText}\n🎯 Приоритет: ${priority}`, true);
+            if (!newTask || !newTask.id) {
+                throw new Error('Не удалось создать задачу с ID');
+            }
             
-            // Обновляем статистику в панели приветствия, если она есть
-            if (window.greetingPanel) {
+            // 9. ПРОВЕРКА СОХРАНЕНИЯ - ДВОЙНАЯ ПРОВЕРКА
+            console.log('Verifying task was saved...');
+            let savedTasksJson = localStorage.getItem('tasks');
+            if (!savedTasksJson) {
+                // Пытаемся сохранить еще раз
+                console.warn('localStorage tasks is empty, trying to save again...');
+                const tasks = [newTask];
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                savedTasksJson = localStorage.getItem('tasks');
+            }
+            
+            if (!savedTasksJson) {
+                throw new Error('НЕВОЗМОЖНО сохранить в localStorage! Проверьте настройки браузера.');
+            }
+            
+            const savedTasks = JSON.parse(savedTasksJson);
+            console.log('Total tasks in storage:', savedTasks.length);
+            console.log('All tasks:', savedTasks);
+            
+            const foundTask = savedTasks.find(t => t.id === newTask.id);
+            if (!foundTask) {
+                console.error('Task not found in storage! Trying to save one more time...');
+                // Последняя попытка - добавляем задачу вручную
+                savedTasks.push(newTask);
+                localStorage.setItem('tasks', JSON.stringify(savedTasks));
+                
+                // Проверяем еще раз
+                const finalCheck = JSON.parse(localStorage.getItem('tasks') || '[]');
+                const finalFound = finalCheck.find(t => t.id === newTask.id);
+                if (!finalFound) {
+                    console.error('CRITICAL: Task still not saved after manual attempt!');
+                    console.error('Created task:', newTask);
+                    console.error('All tasks:', finalCheck);
+                    throw new Error('Критическая ошибка: задача не может быть сохранена в localStorage');
+                }
+                console.log('✅ Task saved on second attempt:', finalFound);
+            } else {
+                console.log('✅ Task verified in storage:', foundTask);
+            }
+            
+            // 10. ОТОБРАЖЕНИЕ СООБЩЕНИЯ
+            const displayDate = new Date(year, month - 1, day);
+            const dateStr = displayDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const descriptionText = cleanDescription ? `\n📝 Описание: ${cleanDescription}` : '';
+            addMessage('assistant', `✅ Задача создана на ${dateStr}: "${cleanTitle}"${descriptionText}\n🎯 Приоритет: ${finalPriority}`, true);
+            
+            // 11. ОБНОВЛЕНИЕ UI
+            if (window.greetingPanel && typeof window.greetingPanel.updateStats === 'function') {
                 window.greetingPanel.updateStats();
             }
             
-            // Если мы на странице задач, обновляем список задач
+            // Обновляем страницу задач если мы на ней
             if (window.location.pathname.includes('tasks.html')) {
-                // Перезагружаем страницу задач, чтобы показать новую задачу
-                // Или можно вызвать функцию обновления, если она доступна
                 setTimeout(() => {
-                    if (window.loadTasksForDate) {
-                        const currentDate = new Date(formattedDate);
-                        window.loadTasksForDate(currentDate);
+                    if (typeof window.loadTasksForDate === 'function') {
+                        const [y, m, d] = formattedDate.split('-').map(Number);
+                        window.loadTasksForDate(new Date(y, m - 1, d));
                     } else {
-                        // Если функция недоступна, просто перезагружаем страницу
                         window.location.reload();
                     }
-                }, 500);
+                }, 300);
             }
+            
+            console.log('=== createTaskFromChat SUCCESS ===');
+            return newTask;
+            
         } catch (error) {
-            console.error('Ошибка при создании задачи:', error);
-            addMessage('assistant', '❌ Произошла ошибка при создании задачи. Попробуйте еще раз.', true);
+            console.error('=== createTaskFromChat ERROR ===');
+            console.error('Error:', error);
+            console.error('Error message:', error.message);
+            console.error('Error stack:', error.stack);
+            console.error('Input was:', { dateText, title, description, priority });
+            
+            addMessage('assistant', `❌ Ошибка при создании задачи: ${error.message}`, true);
+            throw error; // Пробрасываем ошибку дальше
         }
     }
     

@@ -17,17 +17,35 @@ export async function loadTasks() {
 
 export async function createTask(taskData) {
     try {
+        console.log('createTask called with data:', taskData);
         const tasksJson = localStorage.getItem('tasks');
         const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+        console.log('Current tasks count before creation:', tasks.length);
         
+        const taskId = Date.now();
         const newTask = {
-            id: Date.now(),
+            id: taskId,
             ...taskData,
             created_at: new Date().toISOString(),
         };
         
+        console.log('New task object:', newTask);
+        
         tasks.push(newTask);
         localStorage.setItem('tasks', JSON.stringify(tasks));
+        
+        // Проверяем, что задача действительно сохранилась
+        const verifyJson = localStorage.getItem('tasks');
+        const verifyTasks = verifyJson ? JSON.parse(verifyJson) : [];
+        const verifyTask = verifyTasks.find(t => t.id === taskId);
+        console.log('Task saved, verification:', verifyTask ? 'SUCCESS' : 'FAILED');
+        console.log('Total tasks after save:', verifyTasks.length);
+        
+        if (!verifyTask) {
+            console.error('CRITICAL: Task was not saved properly!');
+            throw new Error('Task was not saved to localStorage');
+        }
+        
         return newTask;
     } catch (error) {
         console.error('Error creating task:', error);

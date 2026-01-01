@@ -1644,7 +1644,7 @@ function renderSavedPlans(savedGoals) {
         
         const planMeta = document.createElement('p');
         planMeta.className = 'saved-plan-meta';
-        planMeta.textContent = `${totalDates} ${dateWord}, ${totalTasks} ${taskWord}`;
+        planMeta.innerHTML = `${totalDates} ${dateWord}<br>${totalTasks} ${taskWord}`;
         
         planHeader.appendChild(planTitle);
         planHeader.appendChild(planMeta);
