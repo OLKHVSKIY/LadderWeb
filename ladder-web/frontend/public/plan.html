@@ -9,7 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/themes/light.css">
+    <link rel="stylesheet" href="/assets/css/themes/light.css" id="theme-light">
+    <link rel="stylesheet" href="/assets/css/themes/dark.css" id="theme-dark">
     <link rel="stylesheet" href="/assets/css/pages/tasks.css">
     <link rel="stylesheet" href="/assets/css/pages/plan.css">
     <link rel="stylesheet" href="/assets/css/animations/transitions.css">
@@ -21,10 +22,31 @@
         } */
     </style>
     <script>
-        // Применяем язык ДО загрузки страницы
+        // Применяем тему и язык ДО загрузки страницы
         (function() {
+            // Применяем язык
             const lang = localStorage.getItem('language') || 'ru';
             document.documentElement.lang = lang;
+            
+            // Применяем тему
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            if (document.body) {
+                document.body.setAttribute('data-theme', theme);
+            }
+            
+            // Показываем/скрываем соответствующий CSS файл темы
+            const lightTheme = document.getElementById('theme-light');
+            const darkTheme = document.getElementById('theme-dark');
+            if (lightTheme && darkTheme) {
+                if (theme === 'dark') {
+                    lightTheme.disabled = true;
+                    darkTheme.disabled = false;
+                } else {
+                    lightTheme.disabled = false;
+                    darkTheme.disabled = true;
+                }
+            }
         })();
     </script>
 </head>

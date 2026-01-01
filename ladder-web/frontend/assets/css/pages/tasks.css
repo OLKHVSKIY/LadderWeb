@@ -118,6 +118,7 @@ body {
 }
 
 .greeting-text {
+    margin-top: 13px;
     font-size: 28px;
     font-weight: 600;
     color: #FFFFFF;
@@ -134,7 +135,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    margin-top: 8px;
+    margin-top: 40px;
 }
 
 .greeting-stats-text {
@@ -670,7 +671,7 @@ img.nav-icon {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 78px;
+    width: 70px;
     height: 55px;
     background: #efeef2c4;
     border-radius: 40px;

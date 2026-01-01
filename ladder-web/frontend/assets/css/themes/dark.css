@@ -1,0 +1,1621 @@
+/* Dark Theme - Cursor Style */
+:root[data-theme="dark"] {
+    /* Основные цвета фона (как в Cursor) */
+    --bg-primary: #1e1e1e;
+    --bg-secondary: #252526;
+    --bg-tertiary: #2d2d30;
+    --bg-hover: #2a2d2e;
+    --bg-active: #37373d;
+    --bg-selected: #094771;
+    
+    /* Панели и контейнеры */
+    --panel-bg: #252526;
+    --panel-border: #3c3c3c;
+    --panel-hover: #2a2d2e;
+    
+    /* Текст */
+    --text-primary: #cccccc;
+    --text-secondary: #858585;
+    --text-disabled: #3c3c3c;
+    --text-link: #4fc3f7;
+    --text-link-hover: #81d4fa;
+    
+    /* Границы */
+    --border-color: #3c3c3c;
+    --border-light: #454545;
+    --border-dark: #2d2d30;
+    
+    /* Акцентные цвета (синий как в Cursor) */
+    --accent-primary: #007acc;
+    --accent-hover: #0e639c;
+    --accent-active: #1177bb;
+    --accent-light: #1a8cd8;
+    
+    /* Цвета статусов */
+    --success-color: #4caf50;
+    --success-hover: #66bb6a;
+    --danger-color: #f44336;
+    --danger-hover: #e57373;
+    --warning-color: #ff9800;
+    --warning-hover: #ffb74d;
+    --info-color: #2196f3;
+    --info-hover: #64b5f6;
+    
+    /* Тени */
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 8px 32px rgba(0, 0, 0, 0.5);
+    
+    /* Инпут и формы */
+    --input-bg: #3c3c3c;
+    --input-border: #454545;
+    --input-focus: #007acc;
+    --input-hover: #464647;
+    
+    /* Скроллбар */
+    --scrollbar-track: #1e1e1e;
+    --scrollbar-thumb: #424242;
+    --scrollbar-thumb-hover: #4e4e4e;
+    
+    /* Модальные окна */
+    --modal-bg: #252526;
+    --modal-overlay: rgba(0, 0, 0, 0.7);
+    --modal-border: #3c3c3c;
+    
+    /* Карточки */
+    --card-bg: #2d2d30;
+    --card-hover: #37373d;
+    --card-border: #3c3c3c;
+    
+    /* Старое совместимость */
+    --light-bg: var(--bg-secondary);
+    --dark-bg: var(--bg-primary);
+    --primary-color: var(--accent-primary);
+    --secondary-color: var(--text-secondary);
+}
+
+/* Применение темной темы */
+body[data-theme="dark"],
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Кастомный скроллбар для темной темы */
+:root[data-theme="dark"] ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: 5px;
+}
+
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox скроллбар */
+:root[data-theme="dark"] {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+/* ========================================
+   ИКОНКИ И ИЗОБРАЖЕНИЯ - БЕЛЫЕ В ТЕМНОЙ ТЕМЕ
+   ======================================== */
+
+/* Все черные иконки и PNG становятся белыми */
+:root[data-theme="dark"] img[src*=".png"],
+:root[data-theme="dark"] img[src*=".svg"],
+:root[data-theme="dark"] .nav-icon,
+:root[data-theme="dark"] .nav-item img,
+:root[data-theme="dark"] svg:not(.no-invert),
+:root[data-theme="dark"] .icon,
+:root[data-theme="dark"] .task-priority-icon,
+:root[data-theme="dark"] .settings-btn img,
+:root[data-theme="dark"] .burger-menu svg,
+:root[data-theme="dark"] #burger-menu svg,
+:root[data-theme="dark"] .back-btn svg,
+:root[data-theme="dark"] .toolbar-btn svg,
+:root[data-theme="dark"] .advantage-icon svg,
+:root[data-theme="dark"] .page-icon svg,
+:root[data-theme="dark"] .error-button-icon svg {
+    filter: brightness(0) invert(1) !important;
+}
+
+/* Исключения для цветных иконок (градиенты, цветные логотипы и т.д.) */
+/* Иконка GPT должна быть белой, поэтому не исключаем её */
+:root[data-theme="dark"] .ai-menu-icon,
+:root[data-theme="dark"] .sidebar-subscription-banner img,
+:root[data-theme="dark"] .subscription-banner img,
+:root[data-theme="dark"] .avatar-container img,
+:root[data-theme="dark"] .avatar-wreath-image {
+    filter: none !important;
+}
+
+/* Бегущая строка в сайдбаре */
+:root[data-theme="dark"] .marquee-content span {
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   ОСНОВНЫЕ ЭЛЕМЕНТЫ
+   ======================================== */
+
+:root[data-theme="dark"] body {
+    background-color: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] a {
+    color: var(--text-link);
+}
+
+:root[data-theme="dark"] a:hover {
+    color: var(--text-link-hover);
+}
+
+/* Кнопки */
+:root[data-theme="dark"] .btn-primary {
+    background-color: var(--accent-primary);
+    color: #ffffff;
+    border: none;
+}
+
+:root[data-theme="dark"] .btn-primary:hover {
+    background-color: var(--accent-hover);
+}
+
+:root[data-theme="dark"] button {
+    color: var(--text-primary);
+}
+
+/* Инпуты */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+    background-color: var(--input-bg);
+    border-color: var(--input-border);
+    color: var(--text-primary);
+}
+
+:root[data-theme="dark"] input:focus,
+:root[data-theme="dark"] textarea:focus,
+:root[data-theme="dark"] select:focus {
+    border-color: var(--input-focus);
+    outline: none;
+}
+
+:root[data-theme="dark"] input:hover,
+:root[data-theme="dark"] textarea:hover,
+:root[data-theme="dark"] select:hover {
+    background-color: var(--input-hover);
+}
+
+/* ========================================
+   HEADER
+   ======================================== */
+
+:root[data-theme="dark"] #main-header,
+:root[data-theme="dark"] .main-header {
+    background: var(--panel-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] #main-header nav a,
+:root[data-theme="dark"] .main-header a {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] #main-header nav a:hover,
+:root[data-theme="dark"] .main-header a:hover {
+    background-color: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .page-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .back-btn {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .back-btn:hover {
+    background-color: var(--bg-hover);
+}
+
+:root[data-theme="dark"] .burger-menu,
+:root[data-theme="dark"] .burger-menu svg {
+    color: var(--text-primary) !important;
+    stroke: var(--text-primary) !important;
+}
+
+/* ========================================
+   TASK CARDS
+   ======================================== */
+
+:root[data-theme="dark"] .task-card {
+    background: var(--card-bg) !important;
+    border-color: var(--card-border) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-card:hover {
+    background: var(--card-hover) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .task-text {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-card.completed .task-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-description {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-checkbox {
+    border-color: var(--border-color) !important;
+    background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .task-checkbox:hover {
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .task-checkbox.checked {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .task-menu {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-menu:hover {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-menu-dropdown {
+    background: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow-xl) !important;
+}
+
+:root[data-theme="dark"] .task-menu-item {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-menu-item:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .task-menu-item.danger {
+    color: var(--danger-color) !important;
+}
+
+:root[data-theme="dark"] .task-menu-item.danger:hover {
+    background: rgba(244, 67, 54, 0.1) !important;
+}
+
+/* ========================================
+   MODALS
+   ======================================== */
+
+:root[data-theme="dark"] .modal-overlay,
+:root[data-theme="dark"] .custom-modal-overlay {
+    background: var(--modal-overlay) !important;
+}
+
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .custom-modal-content {
+    background: var(--modal-bg) !important;
+    border-color: var(--modal-border) !important;
+    color: var(--text-primary) !important;
+    box-shadow: var(--shadow-xl) !important;
+}
+
+:root[data-theme="dark"] .modal-header h2,
+:root[data-theme="dark"] .modal-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .modal-close,
+:root[data-theme="dark"] .custom-modal-close {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .modal-close:hover,
+:root[data-theme="dark"] .custom-modal-close:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .modal-body,
+:root[data-theme="dark"] .custom-modal-message {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .custom-modal-icon-alert,
+:root[data-theme="dark"] .custom-modal-icon-success {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .custom-modal-icon-error,
+:root[data-theme="dark"] .custom-modal-icon-confirm {
+    background: rgba(244, 67, 54, 0.15) !important;
+    color: var(--danger-color) !important;
+}
+
+:root[data-theme="dark"] .custom-modal-btn-primary {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .custom-modal-btn-primary:hover {
+    background: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .custom-modal-btn-secondary {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .custom-modal-btn-secondary:hover {
+    background: var(--bg-hover) !important;
+}
+
+/* ========================================
+   TASKS PAGE
+   ======================================== */
+
+:root[data-theme="dark"] body {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .main-content {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-number {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-month-year {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .week-day {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .week-day-name {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .week-day-number {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .week-day.active {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .week-day.active .week-day-name,
+:root[data-theme="dark"] .week-day.active .week-day-number {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .greeting-panel {
+    background: var(--panel-bg) !important;
+}
+
+:root[data-theme="dark"] .greeting-panel-content {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-list {
+    background: transparent !important;
+}
+
+:root[data-theme="dark"] .date-picker,
+:root[data-theme="dark"] .date-picker-button {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-picker:hover,
+:root[data-theme="dark"] .date-picker-button:hover {
+    background: var(--card-hover) !important;
+}
+
+:root[data-theme="dark"] .calendar-container {
+    background: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .calendar-day,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .calendar-day:hover,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .calendar-day.selected,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div.selected {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .empty-state {
+    color: var(--text-secondary) !important;
+}
+
+/* ========================================
+   CHAT PAGE
+   ======================================== */
+
+:root[data-theme="dark"] .chat-container {
+    background: var(--bg-primary) !important;
+}
+
+:root[data-theme="dark"] .chat-messages {
+    background: var(--bg-primary) !important;
+}
+
+:root[data-theme="dark"] .chat-message.user .chat-message-avatar {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .chat-message.assistant .chat-message-avatar {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .chat-message.user .chat-message-content {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .chat-message.assistant .chat-message-content {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .chat-input-container {
+    background: var(--panel-bg) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .chat-input-wrapper {
+    background: var(--input-bg) !important;
+}
+
+:root[data-theme="dark"] .chat-input {
+    background: transparent !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .chat-input::placeholder {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .chat-send-btn {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .chat-send-btn:hover {
+    background: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .chat-empty-state {
+    color: var(--text-secondary) !important;
+}
+
+/* ========================================
+   SETTINGS PAGE
+   ======================================== */
+
+:root[data-theme="dark"] .settings-section-title {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .settings-list {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .setting-item {
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .setting-item:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .setting-item-label .label-text {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .setting-item-label .label-description {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .setting-input,
+:root[data-theme="dark"] .setting-select {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .setting-input:focus,
+:root[data-theme="dark"] .setting-select:focus {
+    border-color: var(--input-focus) !important;
+}
+
+:root[data-theme="dark"] .setting-toggle {
+    background: var(--input-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .setting-toggle.active {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .setting-toggle::after {
+    background: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .setting-toggle.active::after {
+    background: #ffffff !important;
+}
+
+:root[data-theme="dark"] .avatar-section {
+    background: var(--card-bg) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .avatar-container {
+    background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .avatar-placeholder {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .avatar-change-btn {
+    background: var(--input-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .avatar-change-btn:hover {
+    background: var(--input-hover) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-modal {
+    background: var(--modal-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-header h2 {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .ai-menu-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-option {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .ai-menu-option:hover {
+    background: var(--card-hover) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .ai-option-content h3 {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .ai-option-content p {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-option:first-child {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-option:first-child:hover {
+    background: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .ai-menu-option:first-child .ai-option-content h3,
+:root[data-theme="dark"] .ai-menu-option:first-child .ai-option-content p {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   NOTES PAGE
+   ======================================== */
+
+:root[data-theme="dark"] .note-editor-overlay {
+    background: var(--modal-overlay) !important;
+}
+
+:root[data-theme="dark"] .note-editor-container {
+    background: var(--modal-bg) !important;
+}
+
+:root[data-theme="dark"] .note-toolbar {
+    background: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .toolbar-group {
+    border-right-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .toolbar-btn {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .toolbar-btn:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .note-editor {
+    background: var(--modal-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .sticker {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .sticker-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .sticker-content {
+    color: var(--text-primary) !important;
+}
+
+/* Стикеры - светлые имеют черный текст, темные - белый */
+:root[data-theme="dark"] .note-sticker:not([style*="rgb(30"]):not([style*="rgb(37"]):not([style*="rgb(45"]):not([style*="rgb(60"]):not([style*="#1"]):not([style*="#2"]):not([style*="#3"]):not([style*="#4"]):not([style*="#5"]):not([style*="#6"]):not([style*="#7"]):not([style*="#8"]):not([style*="#9"]) .sticker-content {
+    color: #000000 !important;
+}
+
+/* ========================================
+   SIDEBAR
+   ======================================== */
+
+:root[data-theme="dark"] .sidebar-overlay {
+    background: var(--modal-overlay) !important;
+}
+
+:root[data-theme="dark"] .sidebar-overlay.active,
+:root[data-theme="dark"] body .sidebar-overlay.active,
+:root[data-theme="dark"] html body .sidebar-overlay.active,
+html[data-theme="dark"] body .sidebar-overlay.active,
+html[data-theme="dark"] .sidebar-overlay.active {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+}
+
+:root[data-theme="dark"] .sidebar {
+    background: var(--panel-bg) !important;
+    border-right-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .sidebar-item {
+    color: var(--text-primary) !important;
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .sidebar-item:hover,
+:root[data-theme="dark"] .sidebar-item.active {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .sidebar-item.active {
+    border-left-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .sidebar-item-text {
+    color: #ffffff !important;
+    text-shadow: none !important;
+}
+
+:root[data-theme="dark"] .sidebar-item:hover .sidebar-item-text {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   BOTTOM NAVIGATION
+   ======================================== */
+
+:root[data-theme="dark"] .bottom-navigation {
+    background: var(--panel-bg) !important;
+    border-top-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .nav-item {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .nav-item:hover {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .nav-label {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .nav-item.active::before {
+    background: var(--card-bg) !important;
+}
+
+:root[data-theme="dark"] .nav-item.active {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .nav-item.active .nav-label {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .nav-item:hover .nav-label {
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   OTHER COMPONENTS
+   ======================================== */
+
+:root[data-theme="dark"] .suggest-modal-overlay {
+    background: var(--modal-overlay) !important;
+}
+
+:root[data-theme="dark"] .suggest-modal {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .share-modal-overlay {
+    background: var(--modal-overlay) !important;
+}
+
+:root[data-theme="dark"] .share-modal {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .calendar {
+    background: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .calendar-header,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div:nth-child(-n+7) {
+    background: var(--bg-tertiary) !important;
+    border-bottom-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div:nth-child(-n+7) {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-year-label,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-controls .calendar-year-month .calendar-month-label {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-controls .calendar-year-month > div:not(.calendar-year-label):not(.calendar-month-label) {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   PLAN PAGE & OTHER PAGES
+   ======================================== */
+
+:root[data-theme="dark"] .plan-page {
+    background: var(--bg-primary) !important;
+}
+
+:root[data-theme="dark"] .goal-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .goal-card:hover {
+    background: var(--card-hover) !important;
+}
+
+:root[data-theme="dark"] .goal-action-btn {
+    background: var(--bg-tertiary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .goal-action-btn:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .goal-action-btn svg {
+    stroke: #ffffff !important;
+    filter: brightness(0) invert(1) !important;
+}
+
+:root[data-theme="dark"] .goal-action-btn.save-plan-btn {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .goal-action-btn.save-plan-btn:hover {
+    background: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .status-badge {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .status-badge.editing {
+    background: rgba(255, 193, 7, 0.2) !important;
+    color: #FFC107 !important;
+}
+
+:root[data-theme="dark"] .status-badge.saved {
+    background: rgba(40, 167, 69, 0.2) !important;
+    color: #28A745 !important;
+}
+
+:root[data-theme="dark"] .date-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .date-actions {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .goal-creation-card {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .goal-creation-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .goal-creation-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .goal-input-wrapper input,
+:root[data-theme="dark"] .goal-input {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .goal-input-wrapper input:focus,
+:root[data-theme="dark"] .goal-input:focus {
+    border-color: var(--input-focus) !important;
+}
+
+:root[data-theme="dark"] .goal-title,
+:root[data-theme="dark"] .goal-description {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-card {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-action-btn {
+    background: var(--bg-tertiary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-action-btn:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .date-picker-container {
+    background: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .date-picker-month,
+:root[data-theme="dark"] .date-picker-year,
+:root[data-theme="dark"] .date-picker-day {
+    background: var(--input-bg) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month:hover,
+:root[data-theme="dark"] .date-picker-year:hover,
+:root[data-theme="dark"] .date-picker-day:hover {
+    background: var(--bg-hover) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month.active,
+:root[data-theme="dark"] .date-picker-year.active,
+:root[data-theme="dark"] .date-picker-day.active {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month-modal,
+:root[data-theme="dark"] .date-picker-year-modal,
+:root[data-theme="dark"] .date-picker-day-modal {
+    background: var(--input-bg) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month-modal:hover,
+:root[data-theme="dark"] .date-picker-year-modal:hover,
+:root[data-theme="dark"] .date-picker-day-modal:hover {
+    background: var(--bg-hover) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month-modal.active,
+:root[data-theme="dark"] .date-picker-year-modal.active,
+:root[data-theme="dark"] .date-picker-day-modal.active {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-close-modal {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .save-button,
+:root[data-theme="dark"] .save-plan-btn {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .save-button:hover,
+:root[data-theme="dark"] .save-plan-btn:hover {
+    background: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .info-page {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .subscription-page {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .subscription-plan {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .subscription-plan:hover {
+    background: var(--card-bg) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+/* ========================================
+   UTILITY CLASSES
+   ======================================== */
+
+:root[data-theme="dark"] .loading {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .error-state {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .empty-state {
+    color: var(--text-secondary) !important;
+}
+
+
+/* ========================================
+   404 PAGE
+   ======================================== */
+
+:root[data-theme="dark"] .error-page {
+    background: var(--bg-primary) !important;
+}
+
+:root[data-theme="dark"] .error-container {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .error-number {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .error-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .error-description {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .error-button {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .error-button:hover {
+    background: var(--accent-hover) !important;
+}
+
+:root[data-theme="dark"] .error-particle {
+    background: var(--accent-primary) !important;
+    opacity: 0.2 !important;
+}
+
+/* ========================================
+   INFO PAGE - Дополнительные стили
+   ======================================== */
+
+:root[data-theme="dark"] .info-section-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .info-section-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .advantage-item {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .advantage-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .advantage-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .page-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .page-icon {
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   SUBSCRIPTION PAGE - Дополнительные стили
+   ======================================== */
+
+:root[data-theme="dark"] .subscription-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .subscription-page-title {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .subscription-back-btn {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .subscription-container {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .current-plan-label {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .current-plan-badge {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   ADDITIONAL UTILITIES
+   ======================================== */
+
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] h5,
+:root[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] p {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .text-primary {
+    color: var(--text-primary) !important;
+}
+
+/* ========================================
+   SUGGEST MODAL - Форма предложить идею
+   ======================================== */
+
+:root[data-theme="dark"] .suggest-modal-content {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .suggest-modal-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .suggest-modal-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-label {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .suggest-form-input,
+:root[data-theme="dark"] .suggest-form-textarea {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .suggest-form-input:focus,
+:root[data-theme="dark"] .suggest-form-textarea:focus {
+    background: var(--input-hover) !important;
+    border-color: var(--input-focus) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-input::placeholder,
+:root[data-theme="dark"] .suggest-form-textarea::placeholder {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .suggest-modal-close {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .suggest-modal-close:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-btn-cancel {
+    background: var(--card-bg) !important;
+    color: #ffffff !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-btn-cancel:hover {
+    background: var(--card-hover) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-btn-submit {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .suggest-form-btn-submit:hover {
+    background: var(--accent-hover) !important;
+}
+
+/* ========================================
+   FEATURE CARD - Страница информации
+   ======================================== */
+
+:root[data-theme="dark"] .feature-card {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .feature-card-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .feature-card-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .feature-card-icon svg {
+    color: #ffffff !important;
+    filter: brightness(0) invert(1) !important;
+}
+
+:root[data-theme="dark"] .feature-item {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .feature-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .page-icon {
+    background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .page-icon svg {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .page-name {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .page-description {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .nav-button-demo {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .nav-button-demo:hover {
+    background: var(--card-hover) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+/* ========================================
+   GPT FORM FIELD
+   ======================================== */
+
+:root[data-theme="dark"] .gpt-form-field label {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   GOAL HEADER & TASK ITEM
+   ======================================== */
+
+:root[data-theme="dark"] .goal-header {
+    background: var(--card-bg) !important;
+}
+
+:root[data-theme="dark"] .goal-info,
+:root[data-theme="dark"] .goal-title,
+:root[data-theme="dark"] .goal-description {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .task-item {
+    background: var(--bg-active) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .task-item .task-text {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .saved-plan-card {
+    background: var(--bg-tertiary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .saved-plan-card .saved-plan-title,
+:root[data-theme="dark"] .saved-plan-card .saved-plan-description,
+:root[data-theme="dark"] .saved-plan-card .saved-plan-meta,
+:root[data-theme="dark"] .saved-plan-header {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   WORKSPACE PANEL - Шторка пространства
+   ======================================== */
+
+:root[data-theme="dark"] .workspaces-panel-content {
+    background: var(--panel-bg) !important;
+}
+
+:root[data-theme="dark"] .workspace-name-bar {
+    background: var(--panel-bg) !important;
+}
+
+:root[data-theme="dark"] .workspace-name-text {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .workspace-item {
+    background: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .workspace-item-name {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .workspace-personal-badge {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+:root[data-theme="dark"] .workspace-item.active .workspace-personal-badge {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+}
+
+:root[data-theme="dark"] .workspace-action-btn {
+    background: var(--bg-tertiary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .workspace-action-btn:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .workspace-action-btn svg {
+    stroke: #ffffff !important;
+}
+
+:root[data-theme="dark"] .workspace-create-content,
+:root[data-theme="dark"] .workspace-edit-content {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .workspace-create-content h3,
+:root[data-theme="dark"] .workspace-edit-content h3 {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .workspace-create-content input,
+:root[data-theme="dark"] .workspace-edit-content input {
+    background: var(--input-bg) !important;
+    border-color: var(--input-border) !important;
+    color: #ffffff !important;
+}
+
+/* ========================================
+   STICKERS - Иконки черные, текст по цвету фона
+   ======================================== */
+
+/* Иконки на стикерах - черные (убираем инверсию) */
+:root[data-theme="dark"] .sticker-btn svg,
+:root[data-theme="dark"] .sticker-controls svg {
+    filter: none !important;
+    stroke: #333333 !important;
+}
+
+/* Текст на светлых стикерах - черный, на темных - белый */
+:root[data-theme="dark"] .note-sticker .sticker-content {
+    color: #000000 !important;
+}
+
+/* Темные стикеры (определяем по темному фону) - белый текст */
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#1"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#2"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#3"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#4"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#5"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#6"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#7"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#8"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#9"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(30"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(37"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(45"],
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(60"] {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#1"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#2"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#3"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#4"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#5"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#6"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#7"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#8"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="#9"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(30"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(37"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(45"] .sticker-content,
+:root[data-theme="dark"] .note-sticker[style*="background"][style*="rgb(60"] .sticker-content {
+    color: #ffffff !important;
+}
+
+/* ========================================
+   CALENDAR - Полная темная тема
+   ======================================== */
+
+:root[data-theme="dark"] .calendar {
+    background: var(--panel-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div.current-day {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div.selected-day {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div.prev-month,
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div.next-month {
+    color: var(--text-secondary) !important;
+}
+
+/* Все ссылки внутри календаря тоже белые */
+:root[data-theme="dark"] .calendar .calendar-inner .calendar-body div > a {
+    color: #ffffff !important;
+}
+
+
+/* ========================================
+   DATE PICKER - Дополнительные стили
+   ======================================== */
+
+:root[data-theme="dark"] .date-picker-modal {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .date-picker-container,
+:root[data-theme="dark"] .date-picker-months-modal,
+:root[data-theme="dark"] .date-picker-years-modal,
+:root[data-theme="dark"] .date-picker-days-modal {
+    background: transparent !important;
+}
+
+:root[data-theme="dark"] .date-picker-header {
+    border-bottom-color: var(--border-color) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month,
+:root[data-theme="dark"] .date-picker-year,
+:root[data-theme="dark"] .date-picker-day {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-month:hover,
+:root[data-theme="dark"] .date-picker-year:hover,
+:root[data-theme="dark"] .date-picker-day:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .date-picker-month.active,
+:root[data-theme="dark"] .date-picker-year.active,
+:root[data-theme="dark"] .date-picker-day.active {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-picker-day.other-month {
+    color: var(--text-secondary) !important;
+}
+
+/* ========================================
+   ADD MENU - Меню добавления
+   ======================================== */
+
+:root[data-theme="dark"] .add-menu-content {
+    background: var(--modal-bg) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .add-menu-option {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .add-menu-option:hover {
+    background: var(--bg-hover) !important;
+}
+
+:root[data-theme="dark"] .add-option-icon {
+    background: var(--bg-tertiary) !important;
+}
+
+:root[data-theme="dark"] .add-option-text {
+    color: #ffffff !important;
+}
+
+
+/* ========================================
+   GPT PLAN PAGE
+   ======================================== */
+
+:root[data-theme="dark"] .gpt-result-content {
+    background: var(-bg-primary) !important;
+}
+
+:root[data-theme="dark"] .gpt-date-card {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .gpt-date-header {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .gpt-task-item {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .gpt-task-text {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .gpt-generating-title .dot {
+    background: #ffffff !important;
+}
+
+:root[data-theme="dark"] .weekend-day-btn {
+    color: #000000 !important;
+}
+
+:root[data-theme="dark"] .weekend-day-btn.active {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+/* Дополнительное переопределение для сайдбара в темной теме - максимальная специфичность */
+html[data-theme="dark"] .sidebar-overlay.active,
+html[data-theme="dark"] body .sidebar-overlay.active {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(30px) !important;
+    -webkit-backdrop-filter: blur(30px) !important;
+}

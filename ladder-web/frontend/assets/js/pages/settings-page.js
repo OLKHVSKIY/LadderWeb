@@ -1,5 +1,13 @@
 // Страница настроек
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Инициализируем тему перед загрузкой страницы
+    try {
+        const { initTheme } = await import('../modules/theme.js');
+        initTheme();
+    } catch (error) {
+        console.error('Error initializing theme:', error);
+    }
+    
     initSettingsPage();
 });
 
@@ -389,6 +397,17 @@ async function saveSettings() {
     localStorage.setItem('language', settings.language);
     localStorage.setItem('notifications', settings.notifications.toString());
     localStorage.setItem('email_notifications', settings.email_notifications.toString());
+    
+    // Применяем новую тему
+    try {
+        const { applyTheme } = await import('../modules/theme.js');
+        applyTheme(settings.theme);
+    } catch (error) {
+        console.error('Error applying theme:', error);
+        // Fallback - просто устанавливаем атрибут
+        document.documentElement.setAttribute('data-theme', settings.theme);
+        document.body.setAttribute('data-theme', settings.theme);
+    }
     
     // Применяем новый язык
     if (window.i18n) {

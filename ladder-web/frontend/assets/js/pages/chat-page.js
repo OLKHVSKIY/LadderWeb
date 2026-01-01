@@ -2310,7 +2310,7 @@ function setupSidebar() {
                 sidebarOverlay.style.setProperty('opacity', '1', 'important');
                 sidebarOverlay.style.setProperty('visibility', 'visible', 'important');
                 sidebarOverlay.style.setProperty('z-index', '3000', 'important');
-                sidebarOverlay.style.setProperty('background', 'rgba(255, 255, 255, 1)', 'important');
+                // Фон устанавливается через CSS в зависимости от темы
                 
                 // Принудительно устанавливаем скорость анимации бегущей строки на 60 секунд
                 setTimeout(() => {
