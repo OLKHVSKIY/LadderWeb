@@ -110,6 +110,11 @@ const translations = {
         'chat.ai': 'AI',
         'chat.loading': 'Загрузка...',
         'chat.error': 'Ошибка при отправке сообщения',
+        'chat.empty.title': 'Добро пожаловать в Чат',
+        'chat.empty.description': 'Здесь вы можете:',
+        'chat.empty.feature1': 'Создать задачу или заметку',
+        'chat.empty.feature2': 'Получить помощь с планированием',
+        'chat.empty.feature3': 'Задать вопросы и получить ответы',
         
         // AI Меню
         'ai.menu.title': 'Выберите тип проекта',
@@ -853,6 +858,11 @@ const translations = {
         'chat.ai': 'IA',
         'chat.loading': 'Cargando...',
         'chat.error': 'Error al enviar mensaje',
+        'chat.empty.title': 'Bienvenido al Chat',
+        'chat.empty.description': 'Aquí puedes:',
+        'chat.empty.feature1': 'Crear una tarea o nota',
+        'chat.empty.feature2': 'Obtener ayuda con la planificación',
+        'chat.empty.feature3': 'Hacer preguntas y obtener respuestas',
         
         // Menú IA
         'ai.menu.title': 'Elige el tipo de proyecto',

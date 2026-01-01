@@ -631,6 +631,9 @@ function initChatPage() {
     
     // Добавление сообщения в чат
     function addMessage(role, text, useTypewriter = false) {
+        // Скрываем пустое состояние при добавлении первого сообщения
+        hideEmptyState();
+        
         const messageDiv = document.createElement('div');
         messageDiv.className = `chat-message ${role}`;
         
@@ -966,9 +969,54 @@ function initChatPage() {
         // Получаем текущий язык интерфейса
         const currentLang = localStorage.getItem('language') || 'ru';
         const languageInstructions = {
-            'ru': 'Ты - умный ассистент для управления задачами и заметками. ВСЕГДА отвечай ТОЛЬКО на русском языке.',
-            'en': 'You are a smart assistant for managing tasks and notes. ALWAYS respond ONLY in English.',
-            'es': 'Eres un asistente inteligente para gestionar tareas y notas. SIEMPRE responde SOLO en español.'
+            'ru': `Ты - умный и дружелюбный ассистент. ВСЕГДА отвечай ТОЛЬКО на русском языке.
+
+ТВОИ ОСНОВНЫЕ ВОЗМОЖНОСТИ:
+1. Отвечать на любые вопросы: образовательные, поучительные, общие вопросы, помощь с информацией
+2. Помогать с управлением задачами и заметками (создание, анализ, статистика)
+3. Давать советы и рекомендации
+4. Объяснять сложные темы простым языком
+
+ОГРАНИЧЕНИЯ:
+- НЕ обсуждай политику, политические темы, политические партии и политических деятелей
+- НЕ используй нецензурную лексику, мат, оскорбления
+- НЕ давай медицинские диагнозы или рекомендации по лечению (только общую информацию)
+- Будь вежливым, дружелюбным и профессиональным
+
+КОГДА ПОЛЬЗОВАТЕЛЬ ПРОСИТ СОЗДАТЬ ЗАДАЧУ ИЛИ ЗАМЕТКУ - используй специальные команды (см. ниже).
+КОГДА ПОЛЬЗОВАТЕЛЬ ЗАДАЕТ ОБЩИЙ ВОПРОС - отвечай на него полно и полезно, как обычный AI-ассистент.`,
+            'en': `You are a smart and friendly assistant. ALWAYS respond ONLY in English.
+
+YOUR MAIN CAPABILITIES:
+1. Answer any questions: educational, instructive, general questions, help with information
+2. Help with task and note management (creation, analysis, statistics)
+3. Give advice and recommendations
+4. Explain complex topics in simple language
+
+RESTRICTIONS:
+- DO NOT discuss politics, political topics, political parties, or political figures
+- DO NOT use profanity, swear words, or offensive language
+- DO NOT provide medical diagnoses or treatment recommendations (only general information)
+- Be polite, friendly, and professional
+
+WHEN USER ASKS TO CREATE A TASK OR NOTE - use special commands (see below).
+WHEN USER ASKS A GENERAL QUESTION - answer it fully and helpfully, like a regular AI assistant.`,
+            'es': `Eres un asistente inteligente y amigable. SIEMPRE responde SOLO en español.
+
+TUS CAPACIDADES PRINCIPALES:
+1. Responder cualquier pregunta: educativas, instructivas, preguntas generales, ayuda con información
+2. Ayudar con la gestión de tareas y notas (creación, análisis, estadísticas)
+3. Dar consejos y recomendaciones
+4. Explicar temas complejos en lenguaje simple
+
+RESTRICCIONES:
+- NO discutas política, temas políticos, partidos políticos o figuras políticas
+- NO uses lenguaje soez, palabrotas o lenguaje ofensivo
+- NO proporciones diagnósticos médicos o recomendaciones de tratamiento (solo información general)
+- Sé educado, amigable y profesional
+
+CUANDO EL USUARIO PIDE CREAR UNA TAREA O NOTA - usa comandos especiales (ver abajo).
+CUANDO EL USUARIO HACE UNA PREGUNTA GENERAL - respóndela completamente y de manera útil, como un asistente de IA regular.`
         };
         const baseInstruction = languageInstructions[currentLang] || languageInstructions['ru'];
         
@@ -1027,9 +1075,15 @@ function initChatPage() {
 - Если описание ЕСТЬ: CREATE_TASK:30 декабря:запустить бота:описание задачи:1
 - Если описание ПУСТОЕ (пользователь сказал "нет"): CREATE_TASK:30 декабря:запустить бота::1 (ОБЯЗАТЕЛЬНО два двоеточия подряд :: между названием и приоритетом!)
 - КРИТИЧЕСКИ ВАЖНО: Если описание пустое, НЕ используй формат с тремя частями! ВСЕГДА используй формат с четырьмя частями и двумя двоеточиями подряд для пустого описания!
-   
+
+ТВОИ ОСНОВНЫЕ ЗАДАЧИ:
+1. Отвечать на ЛЮБЫЕ вопросы пользователя: образовательные, поучительные, общие вопросы, помощь с информацией - отвечай полно и полезно!
 2. Анализировать задачи и статистику. Отвечай подробно и дружелюбно.
 3. Отвечать на вопросы о задачах и заметках.
+4. Давать советы и рекомендации по различным темам.
+5. Объяснять сложные темы простым языком.
+
+ВАЖНО: Если пользователь задает общий вопрос (не про создание задачи/заметки), просто отвечай на него как обычный AI-ассистент! Не пытайся создавать задачи или заметки, если пользователь этого не просит.
 
 СТАТИСТИКА ЗАДАЧ:
 - Сегодня (${todayStr}): ${todayTasks.length} задач (выполнено: ${todayCompleted})
@@ -1143,11 +1197,31 @@ function initChatPage() {
             context += 'Нет заметок\n';
         }
         
-        context += `\nВажно: 
+        const importantNotes = {
+            'ru': `\nВАЖНО - СОЗДАНИЕ ЗАДАЧ И ЗАМЕТОК (используй ТОЛЬКО когда пользователь явно просит создать задачу или заметку):
 - Если пользователь просит создать ЗАДАЧУ (с датой), веди диалог с уточнениями. После получения всех данных используй формат CREATE_TASK:дата:название:описание:приоритет
 - Если пользователь просит создать ЗАМЕТКУ (без даты), создай её сразу командой CREATE_NOTE:текст заметки (без вопросов про описание и приоритет!)
 - Текущий год: ${new Date().getFullYear()}. Если пользователь указал дату без года (например, "28 декабря"), всегда используй текущий год (${new Date().getFullYear()})
-- Формат даты в CREATE_TASK должен быть понятным (например, "28 декабря" или "28 декабря 2025"), но если год не указан, система автоматически использует текущий год`;
+- Формат даты в CREATE_TASK должен быть понятным (например, "28 декабря" или "28 декабря 2025"), но если год не указан, система автоматически использует текущий год
+
+ПОМНИ: Если пользователь задает общий вопрос (не про создание задачи/заметки), просто отвечай на него полно и полезно!`,
+            'en': `\nIMPORTANT - CREATING TASKS AND NOTES (use ONLY when user explicitly asks to create a task or note):
+- If user asks to create a TASK (with date), have a dialogue with clarifications. After getting all data, use format CREATE_TASK:date:title:description:priority
+- If user asks to create a NOTE (without date), create it immediately with command CREATE_NOTE:note text (without questions about description and priority!)
+- Current year: ${new Date().getFullYear()}. If user specified date without year (e.g., "December 28"), always use current year (${new Date().getFullYear()})
+- Date format in CREATE_TASK should be clear (e.g., "December 28" or "December 28, 2025"), but if year is not specified, system automatically uses current year
+
+REMEMBER: If user asks a general question (not about creating task/note), just answer it fully and helpfully!`,
+            'es': `\nIMPORTANTE - CREAR TAREAS Y NOTAS (usa SOLO cuando el usuario explícitamente pide crear una tarea o nota):
+- Si el usuario pide crear una TAREA (con fecha), mantén un diálogo con aclaraciones. Después de obtener todos los datos, usa el formato CREATE_TASK:fecha:título:descripción:prioridad
+- Si el usuario pide crear una NOTA (sin fecha), créala inmediatamente con el comando CREATE_NOTE:texto de la nota (¡sin preguntas sobre descripción y prioridad!)
+- Año actual: ${new Date().getFullYear()}. Si el usuario especificó fecha sin año (ej., "28 de diciembre"), siempre usa el año actual (${new Date().getFullYear()})
+- El formato de fecha en CREATE_TASK debe ser claro (ej., "28 de diciembre" o "28 de diciembre de 2025"), pero si el año no se especifica, el sistema usa automáticamente el año actual
+
+RECUERDA: ¡Si el usuario hace una pregunta general (no sobre crear tarea/nota), simplemente respóndela completamente y de manera útil!`
+        };
+        
+        context += importantNotes[currentLang] || importantNotes['ru'];
         
         return context;
     }
@@ -1451,16 +1525,22 @@ function initChatPage() {
                 return;
             }
             
-        const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
+            const history = JSON.parse(localStorage.getItem('chat_history') || '[]');
             const message = { role, text, timestamp: Date.now() };
+            
+            // Добавляем новое сообщение
             history.push(message);
             
-        // Храним последние 100 сообщений
-        if (history.length > 100) {
-            history.shift();
-        }
+            // Храним только последние 100 сообщений - удаляем старые безвозвратно
+            const MAX_MESSAGES = 100;
+            if (history.length > MAX_MESSAGES) {
+                // Удаляем самые старые сообщения (первые в массиве)
+                const messagesToRemove = history.length - MAX_MESSAGES;
+                history.splice(0, messagesToRemove);
+                console.log(`Removed ${messagesToRemove} old messages, keeping only last ${MAX_MESSAGES} messages`);
+            }
             
-        localStorage.setItem('chat_history', JSON.stringify(history));
+            localStorage.setItem('chat_history', JSON.stringify(history));
             console.log(`Chat message saved: ${role} (${text.substring(0, 50)}...), total messages: ${history.length}`);
         } catch (error) {
             console.error('Error saving chat message:', error);
@@ -1485,6 +1565,7 @@ function initChatPage() {
             
             if (!historyStr) {
                 console.log('No chat history found in localStorage');
+                showEmptyState();
                 return;
             }
             
@@ -1497,8 +1578,19 @@ function initChatPage() {
                 return;
             }
             
+            // Ограничиваем историю до 100 последних сообщений при загрузке
+            const MAX_MESSAGES = 100;
+            if (history.length > MAX_MESSAGES) {
+                const messagesToRemove = history.length - MAX_MESSAGES;
+                history.splice(0, messagesToRemove);
+                // Сохраняем обрезанную историю обратно в localStorage
+                localStorage.setItem('chat_history', JSON.stringify(history));
+                console.log(`Trimmed chat history: removed ${messagesToRemove} old messages, keeping last ${MAX_MESSAGES} messages`);
+            }
+            
             if (history.length === 0) {
                 console.log('No chat history found (empty array)');
+                showEmptyState();
                 return;
             }
             
@@ -1553,6 +1645,11 @@ function initChatPage() {
                 loadedCount++;
             });
             
+            // Скрываем пустое состояние, если сообщения загружены
+            if (loadedCount > 0) {
+                hideEmptyState();
+            }
+            
             console.log(`Chat history loaded successfully: ${loadedCount} messages`);
             
             // Прокручиваем вниз после загрузки
@@ -1579,8 +1676,68 @@ function initChatPage() {
         const chatMessages = document.getElementById('chat-messages');
         if (chatMessages) {
             chatMessages.innerHTML = '';
+            showEmptyState();
         }
         console.log('История чата очищена');
+    }
+    
+    // Экспортируем функцию для доступа из консоли
+    window.clearChatHistory = clearChatHistory;
+    
+    // Показ пустого состояния
+    function showEmptyState() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) return;
+        
+        // Проверяем, есть ли уже сообщения
+        const existingMessages = chatMessages.querySelectorAll('.chat-message');
+        if (existingMessages.length > 0) {
+            return; // Если есть сообщения, не показываем пустое состояние
+        }
+        
+        // Проверяем, не показано ли уже пустое состояние
+        if (chatMessages.querySelector('.chat-empty-state')) {
+            return;
+        }
+        
+        // Создаем элемент пустого состояния
+        const emptyState = document.createElement('div');
+        emptyState.className = 'chat-empty-state';
+        emptyState.innerHTML = `
+            <div class="chat-empty-content">
+                <h2 class="chat-empty-title" data-i18n="chat.empty.title">Добро пожаловать в Чат</h2>
+                <p class="chat-empty-description" data-i18n="chat.empty.description">Здесь вы можете:</p>
+                <ul class="chat-empty-features">
+                    <li data-i18n="chat.empty.feature1">Создать задачу или заметку</li>
+                    <li data-i18n="chat.empty.feature2">Получить помощь с планированием</li>
+                    <li data-i18n="chat.empty.feature3">Задать вопросы и получить ответы</li>
+                </ul>
+            </div>
+        `;
+        
+        chatMessages.appendChild(emptyState);
+        
+        // Применяем переводы, если i18n доступен (с небольшой задержкой на случай, если модуль еще загружается)
+        setTimeout(() => {
+            if (window.i18n && typeof window.i18n.applyTranslations === 'function') {
+                try {
+                    window.i18n.applyTranslations();
+                } catch (error) {
+                    console.warn('Error applying translations to empty state:', error);
+                }
+            }
+        }, 100);
+    }
+    
+    // Скрытие пустого состояния
+    function hideEmptyState() {
+        const chatMessages = document.getElementById('chat-messages');
+        if (!chatMessages) return;
+        
+        const emptyState = chatMessages.querySelector('.chat-empty-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
     }
 }
 

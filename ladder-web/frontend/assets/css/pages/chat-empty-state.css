@@ -1,0 +1,98 @@
+/* Пустое состояние чата */
+
+.chat-empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    padding: 40px 20px;
+    animation: fadeIn 0.5s ease;
+}
+
+.chat-empty-content {
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+}
+
+.chat-empty-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+}
+
+.chat-empty-description {
+    font-size: 17px;
+    font-weight: 400;
+    color: #666666;
+    margin: 0 0 24px 0;
+    line-height: 1.5;
+}
+
+.chat-empty-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+.chat-empty-features li {
+    font-size: 16px;
+    font-weight: 400;
+    color: #000000;
+    padding: 12px 20px;
+    background: #F9F9F9;
+    border-radius: 12px;
+    border: 1px solid #F0F0F0;
+    position: relative;
+    padding-left: 48px;
+    transition: all 0.2s ease;
+}
+
+.chat-empty-features li::before {
+    content: '•';
+    position: absolute;
+    left: 20px;
+    color: #000000;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1;
+}
+
+.chat-empty-features li:hover {
+    background: #F5F5F5;
+    border-color: #E0E0E0;
+    transform: translateX(4px);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .chat-empty-state {
+        padding: 32px 16px;
+    }
+    
+    .chat-empty-title {
+        font-size: 24px;
+    }
+    
+    .chat-empty-description {
+        font-size: 16px;
+    }
+    
+    .chat-empty-features li {
+        font-size: 15px;
+        padding: 10px 16px;
+        padding-left: 40px;
+    }
+    
+    .chat-empty-features li::before {
+        left: 16px;
+    }
+}
+
