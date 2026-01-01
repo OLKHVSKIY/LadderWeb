@@ -1,5 +1,13 @@
-/* Импорт шрифта Onset! */
+/* Импорты должны быть в самом начале файла */
 @import url('https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('./components/header.css');
+@import url('./components/task-card.css');
+@import url('./components/calendar.css');
+@import url('./components/modal.css');
+@import url('./pages/home.css');
+@import url('./pages/tasks.css');
+@import url('./pages/settings.css');
+@import url('./animations/transitions.css');
 
 /* Основные стили */
 * {
@@ -68,14 +76,4 @@ body {
 .btn-telegram:hover {
     background-color: #006699;
 }
-
-/* Импорт компонентов и страниц */
-@import url('./components/header.css');
-@import url('./components/task-card.css');
-@import url('./components/calendar.css');
-@import url('./components/modal.css');
-@import url('./pages/home.css');
-@import url('./pages/tasks.css');
-@import url('./pages/settings.css');
-@import url('./animations/transitions.css');
 

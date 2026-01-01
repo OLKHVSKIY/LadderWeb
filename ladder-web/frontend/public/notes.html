@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style="background-color: #1e1e1e;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Ladder - Заметки</title>
     <link rel="icon" type="image/png" href="/assets/images/icons/ai.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+            }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+            }
+        })();
+    </script>
+    <script>
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/themes/light.css" id="theme-light">
     <link rel="stylesheet" href="/assets/css/themes/dark.css" id="theme-dark">
@@ -20,18 +44,35 @@
         /* body:not(.i18n-ready) .main-content {
             visibility: hidden;
         } */
+        
+        /* Применяем темный фон сразу только для темной темы, чтобы избежать белого мерцания */
+        html {
+            background-color: #1e1e1e !important;
+        }
+        body {
+            background-color: #1e1e1e !important;
+        }
     </style>
     <script>
         // Применяем тему и язык ДО загрузки страницы
         (function() {
+            // СНАЧАЛА применяем тему, чтобы CSS сразу сработал
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            
             // Применяем язык
             const lang = localStorage.getItem('language') || 'ru';
             document.documentElement.lang = lang;
-            
-            // Применяем тему
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            document.body.setAttribute('data-theme', theme);
+            // Применяем фон сразу, чтобы избежать белого экрана при переключении
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+                if (document.body) {
+                    document.body.style.backgroundColor = '#1e1e1e';
+                }
+            }
+            if (document.body) {
+                document.body.setAttribute('data-theme', theme);
+            }
             
             // Показываем/скрываем соответствующий CSS файл темы
             const lightTheme = document.getElementById('theme-light');

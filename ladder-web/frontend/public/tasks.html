@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="ru" style="background-color: #1e1e1e;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,6 +8,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Onest:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script>
+        // БЛОКИРУЮЩИЙ скрипт - устанавливает фон ДО загрузки CSS
+        (function() {
+            const theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+            }
+        })();
+    </script>
     <link rel="stylesheet" href="/assets/css/style.css">
     <link rel="stylesheet" href="/assets/css/themes/light.css" id="theme-light">
     <link rel="stylesheet" href="/assets/css/themes/dark.css" id="theme-dark">
@@ -22,17 +31,39 @@
         /* body:not(.i18n-ready) .main-content {
             visibility: hidden;
         } */
+        
+        /* Применяем темный фон по умолчанию, чтобы избежать белого мерцания */
+        html {
+            background-color: #1e1e1e !important;
+        }
+        body {
+            background-color: #1e1e1e !important;
+        }
+        /* Для светлой темы переопределяем */
+        html[data-theme="light"] {
+            background-color: #ffffff !important;
+        }
+        html[data-theme="light"] body {
+            background-color: #f8f9fa !important;
+        }
     </style>
     <script>
         // Применяем тему и язык ДО загрузки страницы
         (function() {
+            // СНАЧАЛА применяем тему, чтобы CSS сразу сработал
+            const theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+            
             // Применяем язык
             const lang = localStorage.getItem('language') || 'ru';
             document.documentElement.lang = lang;
-            
-            // Применяем тему
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
+            // Применяем фон сразу, чтобы избежать белого экрана при переключении
+            if (theme === 'dark') {
+                document.documentElement.style.backgroundColor = '#1e1e1e';
+                if (document.body) {
+                    document.body.style.backgroundColor = '#1e1e1e';
+                }
+            }
             if (document.body) {
                 document.body.setAttribute('data-theme', theme);
             }
@@ -291,7 +322,7 @@
                 </div>
                 
                 <div class="task-create-field">
-                    <label for="task-date-type" data-i18n="tasks.date">Дата</label>
+                    <span class="task-create-field-label" data-i18n="tasks.date">Дата</span>
                     <div class="date-type-selector">
                         <button type="button" class="date-type-option active" data-type="single" data-i18n="tasks.singleDay">Один день</button>
                         <button type="button" class="date-type-option" data-type="range" data-i18n="tasks.range">Период</button>
@@ -299,7 +330,7 @@
                 </div>
                 
                 <div class="task-create-field" id="single-date-field">
-                    <label data-i18n="tasks.selectDate">Выберите дату</label>
+                    <span class="task-create-field-label" data-i18n="tasks.selectDate">Выберите дату</span>
                     <div class="selected-date-display" id="selected-date-display">
                         <span class="date-number-display" id="date-number-display"></span>
                         <span class="date-month-year-display" id="date-month-year-display"></span>

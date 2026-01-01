@@ -243,20 +243,26 @@ class GreetingPanel {
             const allTasks = tasksJson ? JSON.parse(tasksJson) : [];
             
             // Фильтруем задачи на сегодня (всегда читаем свежие данные)
+            // Используем локальное форматирование даты, чтобы избежать проблем с часовыми поясами
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const todayStr = today.toISOString().split('T')[0];
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            const todayStr = `${year}-${month}-${day}`;
             
             const todayTasks = allTasks.filter(task => {
                 if (task.due_date) {
-                    const taskDate = new Date(task.due_date);
-                    taskDate.setHours(0, 0, 0, 0);
-                    const taskDateStr = taskDate.toISOString().split('T')[0];
-                    return taskDateStr === todayStr;
+                    // Парсим дату задачи как строку YYYY-MM-DD, без использования Date для сравнения
+                    // Это избегает проблем с часовыми поясами
+                    const taskDateStr = task.due_date;
+                    // Если дата в формате ISO с временем, извлекаем только дату
+                    const taskDate = taskDateStr.includes('T') ? taskDateStr.split('T')[0] : taskDateStr;
+                    return taskDate === todayStr;
                 }
                 if (task.start_date && task.end_date) {
-                    const startDate = new Date(task.start_date).toISOString().split('T')[0];
-                    const endDate = new Date(task.end_date).toISOString().split('T')[0];
+                    // Аналогично для диапазона дат
+                    const startDate = task.start_date.includes('T') ? task.start_date.split('T')[0] : task.start_date;
+                    const endDate = task.end_date.includes('T') ? task.end_date.split('T')[0] : task.end_date;
                     return todayStr >= startDate && todayStr <= endDate;
                 }
                 return false;

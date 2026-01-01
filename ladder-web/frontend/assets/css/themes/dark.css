@@ -172,10 +172,6 @@ body {
     background-color: var(--accent-hover);
 }
 
-:root[data-theme="dark"] button {
-    color: var(--text-primary);
-}
-
 /* Инпуты */
 :root[data-theme="dark"] input,
 :root[data-theme="dark"] textarea,

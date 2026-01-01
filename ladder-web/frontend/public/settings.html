@@ -19,34 +19,6 @@
             visibility: hidden;
         } */
     </style>
-    <script>
-        // Применяем тему и язык ДО загрузки страницы
-        (function() {
-            // Применяем язык
-            const lang = localStorage.getItem('language') || 'ru';
-            document.documentElement.lang = lang;
-            
-            // Применяем тему
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            if (document.body) {
-                document.body.setAttribute('data-theme', theme);
-            }
-            
-            // Показываем/скрываем соответствующий CSS файл темы
-            const lightTheme = document.getElementById('theme-light');
-            const darkTheme = document.getElementById('theme-dark');
-            if (lightTheme && darkTheme) {
-                if (theme === 'dark') {
-                    lightTheme.disabled = true;
-                    darkTheme.disabled = false;
-                } else {
-                    lightTheme.disabled = false;
-                    darkTheme.disabled = true;
-                }
-            }
-        })();
-    </script>
 </head>
 <body>
     <!-- Верхний хедер -->
