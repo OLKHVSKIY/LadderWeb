@@ -500,6 +500,7 @@ function createTaskCard(task) {
             <div class="task-menu-dropdown" data-task-id="${task.id}">
                 <button class="task-menu-item" data-action="rename">${window.i18n ? window.i18n.t('common.rename') : 'Переименовать'}</button>
                 <button class="task-menu-item" data-action="edit">${window.i18n ? window.i18n.t('common.edit') : 'Редактировать'}</button>
+                <button class="task-menu-item" data-action="share">${window.i18n ? window.i18n.t('common.share') : 'Поделиться'}</button>
                 <button class="task-menu-item" data-action="delete">${window.i18n ? window.i18n.t('common.delete') : 'Удалить'}</button>
             </div>
         </div>
@@ -638,6 +639,9 @@ function handleTaskMenuAction(action, taskId) {
         case 'edit':
             editTask(taskId);
             break;
+        case 'share':
+            shareTask(taskId);
+            break;
         case 'delete':
             (async () => {
                 // Используем только customModal, без fallback на confirm
@@ -773,6 +777,209 @@ function editTask(taskId) {
     } catch (error) {
         console.error('Error loading task for editing:', error);
     }
+}
+
+function shareTask(taskId) {
+    try {
+        // Получаем задачу из localStorage
+        const tasksJson = localStorage.getItem('tasks');
+        const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+        const task = tasks.find(t => t.id === taskId);
+        
+        if (!task) {
+            console.error('Задача не найдена');
+            return;
+        }
+        
+        // Сохраняем taskId для использования в модальном окне
+        openShareModal(task, taskId);
+    } catch (error) {
+        console.error('Ошибка при открытии модального окна шаринга:', error);
+    }
+}
+
+function openShareModal(task, taskId) {
+    // Создаем overlay если его нет
+    let overlay = document.getElementById('share-modal-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'share-modal-overlay';
+        overlay.className = 'share-modal-overlay';
+        document.body.appendChild(overlay);
+    }
+    
+    // Получаем настройки пользователя
+    const userName = localStorage.getItem('user_name') || '';
+    const userEmail = localStorage.getItem('user_email') || '';
+    
+    // Проверяем, есть ли введенный email в настройках
+    let titleText = window.i18n ? window.i18n.t('tasks.shareWithUser') : 'Поделиться с пользователем?';
+    let emailInput = '';
+    let userNameDisplay = '';
+    
+    // Функция для обновления заголовка при вводе email
+    const updateTitle = (email) => {
+        if (email && email === userEmail && userName) {
+            titleText = (window.i18n ? window.i18n.t('tasks.shareWith') : 'Поделиться с') + ' ' + userName + '?';
+            const titleElement = overlay.querySelector('.share-modal-title');
+            if (titleElement) {
+                titleElement.textContent = titleText;
+            }
+        } else {
+            titleText = window.i18n ? window.i18n.t('tasks.shareWithUser') : 'Поделиться с пользователем?';
+            const titleElement = overlay.querySelector('.share-modal-title');
+            if (titleElement) {
+                titleElement.textContent = titleText;
+            }
+        }
+    };
+    
+    // Создаем содержимое модального окна
+    overlay.innerHTML = `
+        <div class="share-modal-content">
+            <button class="share-modal-close" id="share-modal-close">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+            <h2 class="share-modal-title">${titleText}</h2>
+            <p class="share-modal-description">${window.i18n ? window.i18n.t('tasks.shareDescription') : 'Вы можете поделиться своей задачей с другим человеком'}</p>
+            <form class="share-form" id="share-form">
+                <div class="share-form-group">
+                    <input 
+                        type="email" 
+                        class="share-form-input" 
+                        id="share-email-input"
+                        placeholder="${window.i18n ? window.i18n.t('tasks.shareEmailPlaceholder') : 'email@example.com'}"
+                        required
+                    >
+                </div>
+                <div class="share-form-buttons">
+                    <button type="button" class="share-form-btn share-form-btn-cancel" id="share-cancel-btn">
+                        ${window.i18n ? window.i18n.t('common.cancel') : 'Отмена'}
+                    </button>
+                    <button type="submit" class="share-form-btn share-form-btn-submit" id="share-submit-btn">
+                        ${window.i18n ? window.i18n.t('common.share') : 'Поделиться'}
+                    </button>
+                </div>
+            </form>
+        </div>
+    `;
+    
+    // Показываем модальное окно
+    overlay.classList.add('active');
+    
+    // Обработчик закрытия
+    const closeModal = () => {
+        overlay.classList.remove('active');
+        setTimeout(() => {
+            overlay.innerHTML = '';
+        }, 300);
+    };
+    
+    // Обработчики событий
+    const closeBtn = overlay.querySelector('#share-modal-close');
+    const cancelBtn = overlay.querySelector('#share-cancel-btn');
+    const form = overlay.querySelector('#share-form');
+    const emailInputEl = overlay.querySelector('#share-email-input');
+    
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    // Закрытие при клике на overlay
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+            closeModal();
+        }
+    });
+    
+    // Обновление заголовка при вводе email
+    emailInputEl.addEventListener('input', (e) => {
+        updateTitle(e.target.value);
+    });
+    
+    // Обработка отправки формы
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = emailInputEl.value.trim();
+        
+        if (!email) {
+            return;
+        }
+        
+        // Здесь можно добавить логику отправки на сервер
+        // TODO: Отправка задачи на указанный email
+        console.log('Отправка задачи на email:', email, task);
+        closeModal();
+    });
+}
+
+function copyToClipboard(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+            // Показываем уведомление об успешном копировании
+            showShareNotification();
+        }).catch(err => {
+            console.error('Ошибка при копировании:', err);
+            // Fallback для старых браузеров
+            fallbackCopyToClipboard(text);
+        });
+    } else {
+        fallbackCopyToClipboard(text);
+    }
+}
+
+function fallbackCopyToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showShareNotification();
+    } catch (err) {
+        console.error('Ошибка при копировании (fallback):', err);
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+function showShareNotification() {
+    // Создаем временное уведомление
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #000000;
+        color: #FFFFFF;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 500;
+        z-index: 10000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.3s ease;
+    `;
+    notification.textContent = window.i18n ? (window.i18n.t('tasks.copied') || 'Скопировано в буфер обмена') : 'Скопировано в буфер обмена';
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                document.body.removeChild(notification);
+            }
+        }, 300);
+    }, 2000);
 }
 
 function deleteTask(taskId) {

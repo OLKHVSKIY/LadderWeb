@@ -54,7 +54,7 @@ body {
 /* Основной контент */
 .main-content {
     margin-top: 60px;
-    padding: 10px;
+    padding: 15px;
     padding-bottom: 40px;
     animation: fadeIn 0.5s ease;
 }
@@ -96,7 +96,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 16px 20px;
+    padding: 16px 10px;
     border-bottom: 1px solid #F5F5F5;
     transition: background-color 0.3s ease;
 }
@@ -887,8 +887,10 @@ a.nav-item .nav-label {
     }
     
     .nav-item.nav-add-btn {
-        width: 75px;
-        height: 75px;
+        width: 75px !important;
+        height: 75px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
     }
     
     .nav-icon {

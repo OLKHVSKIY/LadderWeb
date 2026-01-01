@@ -787,8 +787,8 @@ img.nav-icon {
     }
     
     .nav-item.active::before {
-        width: 80px;
-        height: 55px;
+        width: 100px;
+        height: 65px;
     }
     
     .nav-item:nth-child(2) {
@@ -819,8 +819,10 @@ img.nav-icon {
     }
     
     .nav-item.nav-add-btn {
-        width: 75px;
-        height: 75px;
+        width: 75px !important;
+        height: 75px !important;
+        min-width: 75px !important;
+        max-width: 75px !important;
     }
     
     .nav-icon {
