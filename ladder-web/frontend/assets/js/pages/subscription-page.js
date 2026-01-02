@@ -47,6 +47,15 @@ function initSubscriptionPage() {
                     price: planPrice
                 });
                 
+                // Отслеживаем подписку для админ-панели
+                import('../modules/subscription-tracker.js').then(({ trackSubscription }) => {
+                    const userId = 1; // Получаем ID текущего пользователя
+                    trackSubscription(userId, planType, 'active');
+                });
+                
+                // Сохраняем план пользователя
+                localStorage.setItem('user_plan', planType);
+                
                 // Здесь будет логика обработки подписки
                 // Например, переход на страницу оплаты или вызов API
                 alert(`Выбрана подписка: ${planDuration} за ${planPrice}`);

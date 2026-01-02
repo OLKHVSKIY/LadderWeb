@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Ladder</title>
+    <link rel="stylesheet" href="/assets/css/pages/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="sidebar-header">
+                <h1 class="sidebar-logo">Ladder</h1>
+                <span class="sidebar-subtitle">Admin Panel</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#overview" class="nav-item active" data-section="overview">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                    </svg>
+                    <span>Обзор</span>
+                </a>
+                <a href="#users" class="nav-item" data-section="users">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <span>Пользователи</span>
+                </a>
+                <a href="#tasks" class="nav-item" data-section="tasks">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span>Задачи</span>
+                </a>
+                <a href="#analytics" class="nav-item" data-section="analytics">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="20" x2="12" y2="10"></line>
+                        <line x1="18" y1="20" x2="18" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="16"></line>
+                    </svg>
+                    <span>Аналитика</span>
+                </a>
+                <a href="#suggestions" class="nav-item" data-section="suggestions">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                    <span>Предложения</span>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <h2 class="page-title" id="page-title">Обзор</h2>
+                <div class="header-actions">
+                    <button class="refresh-btn" id="refresh-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 4 23 10 17 10"></polyline>
+                            <polyline points="1 20 1 14 7 14"></polyline>
+                            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Overview Section -->
+            <section class="admin-section active" id="overview-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon users">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-users">0</div>
+                            <div class="stat-label">Всего пользователей</div>
+                            <div class="stat-change positive" id="users-change">
+                                <span>+0</span> за месяц
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon tasks">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 11l3 3L22 4"></path>
+                                <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-tasks">0</div>
+                            <div class="stat-label">Всего задач</div>
+                            <div class="stat-change positive" id="tasks-change">
+                                <span>+0</span> за месяц
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon registrations">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="8.5" cy="7" r="4"></circle>
+                                <line x1="20" y1="8" x2="20" y2="14"></line>
+                                <line x1="23" y1="11" x2="17" y2="11"></line>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="new-registrations">0</div>
+                            <div class="stat-label">Новых регистраций</div>
+                            <div class="stat-change positive" id="registrations-change">
+                                <span>+0</span> за месяц
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon suggestions">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-suggestions">0</div>
+                            <div class="stat-label">Предложений</div>
+                            <div class="stat-change" id="suggestions-change">
+                                <span>0</span> непрочитанных
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon subscriptions">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16v6H4z"></path>
+                                <path d="M4 14h16v6H4z"></path>
+                                <path d="M9 4v16"></path>
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="total-subscriptions">0</div>
+                            <div class="stat-label">Платных подписок</div>
+                            <div class="stat-change positive" id="subscriptions-change">
+                                <span>0</span> активных
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <h3 class="chart-title">Регистрации по дням</h3>
+                        <div class="chart-container" id="registrations-chart">
+                            <canvas id="registrations-chart-canvas"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <h3 class="chart-title">Использование функций</h3>
+                        <div class="chart-container" id="features-chart">
+                            <canvas id="features-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Users Section -->
+            <section class="admin-section" id="users-section">
+                <div class="section-header">
+                    <div class="search-box">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                        <input type="text" id="users-search" placeholder="Поиск пользователей...">
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя</th>
+                                <th>Email</th>
+                                <th>Дата регистрации</th>
+                                <th>Задач создано</th>
+                                <th>Статус</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Users will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Tasks Section -->
+            <section class="admin-section" id="tasks-section">
+                <div class="section-header">
+                    <div class="filters">
+                        <select id="tasks-filter" class="filter-select">
+                            <option value="all">Все задачи</option>
+                            <option value="today">Сегодня</option>
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Название</th>
+                                <th>Пользователь</th>
+                                <th>Дата создания</th>
+                                <th>Приоритет</th>
+                                <th>Статус</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tasks-table-body">
+                            <!-- Tasks will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="admin-section" id="analytics-section">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <h3 class="analytics-title">Популярные функции</h3>
+                        <div class="feature-list" id="features-list">
+                            <!-- Features will be loaded here -->
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3 class="analytics-title">Активность пользователей</h3>
+                        <div class="chart-container" id="activity-chart">
+                            <canvas id="activity-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Suggestions Section -->
+            <section class="admin-section" id="suggestions-section">
+                <div class="section-header">
+                    <div class="suggestions-filters">
+                        <button class="filter-btn active" data-filter="all">Все</button>
+                        <button class="filter-btn" data-filter="unread">Непрочитанные</button>
+                        <button class="filter-btn" data-filter="read">Прочитанные</button>
+                    </div>
+                </div>
+
+                <div class="suggestions-list" id="suggestions-list">
+                    <!-- Suggestions will be loaded here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/assets/js/pages/admin.js"></script>
+</body>
+</html>
+

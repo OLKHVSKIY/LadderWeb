@@ -167,16 +167,28 @@ function openSuggestModal() {
         }
         
         try {
-            // Сохраняем в localStorage
-            const suggestions = JSON.parse(localStorage.getItem('suggestions') || '[]');
+            // Сохраняем в localStorage для админ-панели
+            const suggestions = JSON.parse(localStorage.getItem('admin_suggestions') || '[]');
             suggestions.push({
+                id: Date.now(),
+                name: title, // Используем title как name для совместимости
+                message: description, // Используем description как message
+                email: email || null,
+                created_at: new Date().toISOString(),
+                read: false
+            });
+            localStorage.setItem('admin_suggestions', JSON.stringify(suggestions));
+            
+            // Также сохраняем в старый формат для обратной совместимости
+            const oldSuggestions = JSON.parse(localStorage.getItem('suggestions') || '[]');
+            oldSuggestions.push({
                 id: Date.now(),
                 title,
                 description,
                 email: email || null,
                 date: new Date().toISOString()
             });
-            localStorage.setItem('suggestions', JSON.stringify(suggestions));
+            localStorage.setItem('suggestions', JSON.stringify(oldSuggestions));
             
             // Показываем сообщение об успехе
             if (window.customModal && window.customModal.alert) {
