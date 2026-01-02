@@ -152,6 +152,13 @@ class ApiClient {
         return this.request('/users/me');
     }
 
+    async updateProfile(payload) {
+        return this.request('/users/me', {
+            method: 'PATCH',
+            body: JSON.stringify(payload),
+        });
+    }
+
     // Notes endpoints
     async getNotes(workspaceId) {
         const encoded = encodeURIComponent(workspaceId || 'personal');

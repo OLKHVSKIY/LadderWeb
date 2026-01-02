@@ -414,16 +414,13 @@ async function saveSettings() {
         window.i18n.setLanguage(settings.language);
     }
     
-    // TODO: Отправка на сервер
-    // try {
-    //     await fetch('/api/settings', {
-    //         method: 'POST',
-    //         headers: { 'Content-Type': 'application/json' },
-    //         body: JSON.stringify(settings)
-    //     });
-    // } catch (error) {
-    //     console.error('Error saving settings:', error);
-    // }
+    // Отправка в API (профиль пользователя)
+    try {
+        const { api } = await import('../modules/api.js');
+        await api.updateProfile({ name: settings.name, email: settings.email });
+    } catch (error) {
+        console.warn('Profile update failed:', error);
+    }
     
     // Показ уведомления об успешном сохранении
     const saveBtn = document.getElementById('save-settings-btn');

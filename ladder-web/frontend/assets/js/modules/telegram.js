@@ -15,7 +15,14 @@ export function initTelegram() {
     const user = tg.initDataUnsafe?.user;
     if (user) {
         localStorage.setItem('telegram_user', JSON.stringify(user));
+        const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+        if (fullName && !localStorage.getItem('user_name')) {
+            localStorage.setItem('user_name', fullName);
+        }
     }
+
+    // Регистрация пользователя в БД через initData
+    registerWebAppUser(tg.initData);
 
     // Настройка темы
     if (tg.colorScheme === 'dark') {
@@ -59,3 +66,32 @@ window.onTelegramAuth = function(user) {
     });
 };
 
+async function registerWebAppUser(initData) {
+    if (!initData) return;
+    if (localStorage.getItem('user_id')) return;
+
+    try {
+        const response = await fetch('/api/auth/telegram-webapp', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ init_data: initData }),
+        });
+        if (!response.ok) {
+            return;
+        }
+        const data = await response.json();
+        if (data?.user_id) {
+            localStorage.setItem('user_id', String(data.user_id));
+        }
+        if (data?.name && !localStorage.getItem('user_name')) {
+            localStorage.setItem('user_name', data.name);
+        }
+        if (data?.email && !localStorage.getItem('user_email')) {
+            localStorage.setItem('user_email', data.email);
+        }
+    } catch (error) {
+        console.warn('WebApp registration failed:', error);
+    }
+}

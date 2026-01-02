@@ -14,3 +14,6 @@ class TelegramAuthRequest(BaseModel):
     auth_date: int
     hash: str
 
+
+class TelegramWebAppAuthRequest(BaseModel):
+    init_data: str
