@@ -8,6 +8,9 @@ export function initTelegram() {
     tg.ready();
     tg.expand();
 
+    // Добавляем класс для определения Telegram Mini App
+    document.body.classList.add('telegram-webapp');
+
     // Получение данных пользователя
     const user = tg.initDataUnsafe?.user;
     if (user) {

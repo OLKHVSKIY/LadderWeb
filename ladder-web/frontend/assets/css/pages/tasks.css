@@ -257,7 +257,6 @@ body.greeting-panel-open .main-header .header-divider {
     z-index: 300;
 }
 
-
 .burger-menu {
     width: 24px;
     height: 24px;
@@ -406,6 +405,11 @@ body.sidebar-open #burger-menu svg,
     margin-left: auto;
     margin-right: auto;
     animation: fadeIn 0.5s ease;
+}
+
+/* Увеличиваем отступ для main-content в Telegram Mini App */
+body.telegram-webapp .main-content {
+    margin-top: 130px; /* 60px (хедер) + 70px (спейсер) */
 }
 
 /* Выбранная дата */

@@ -1,3 +1,31 @@
+/* Блок-спейсер для Telegram Mini App */
+.telegram-spacer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #FFFFFF;
+    z-index: 299;
+    transition: background 0.3s ease;
+}
+
+/* Показываем спейсер только в Telegram Mini App */
+body:not(.telegram-webapp) .telegram-spacer {
+    display: none;
+}
+
+/* Темная тема для спейсера */
+[data-theme="dark"] .telegram-spacer {
+    background: #1e1e1e;
+}
+
+/* Сдвигаем хедер вниз в Telegram Mini App */
+body.telegram-webapp .main-header,
+body.telegram-webapp #main-header {
+    top: 70px;
+}
+
 /* Draggable Header */
 #main-header {
     position: fixed;
