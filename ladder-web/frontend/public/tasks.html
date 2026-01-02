@@ -203,9 +203,17 @@
             </svg>
         </button>
         <h1 class="page-title" data-i18n="tasks.title">Все задачи</h1>
-        <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
-            <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
-        </button>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="search-btn" id="search-btn" aria-label="Поиск">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+            <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
+                <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
+            </button>
+        </div>
     </header>
 
     <!-- Основной контент -->
@@ -319,6 +327,12 @@
                         </button>
                     </div>
                     <input type="hidden" id="task-priority" name="priority" value="1">
+                </div>
+                
+                <div class="task-create-field">
+                    <label for="task-tags" data-i18n="tasks.tags">Хештеги</label>
+                    <input type="text" id="task-tags" name="tags" data-i18n-placeholder="tasks.tagsPlaceholder" placeholder="Например: #работа #срочно (через пробел)" autocomplete="off">
+                    <small class="task-tags-hint" data-i18n="tasks.tagsHint" style="font-size: 12px; color: #999; margin-top: 4px; display: block;">Введите хештеги через пробел</small>
                 </div>
                 
                 <div class="task-create-field">

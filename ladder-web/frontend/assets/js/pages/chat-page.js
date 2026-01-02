@@ -93,6 +93,9 @@ function initChatPage() {
     // Кнопка GPT меню
     setupAiMenu();
     
+    // Кнопка поиска
+    setupSearchModal();
+    
     // Навигация теперь работает через обычные ссылки в HTML, JavaScript не нужен
     // setupNavigation();
     
@@ -263,6 +266,10 @@ function initChatPage() {
         
         // Добавляем сообщение пользователя
         addMessage('user', message);
+        
+        // Сохраняем запрос в историю поиска
+        saveSearchQuery(message);
+        
         chatInput.value = '';
         chatInput.style.height = 'auto';
         
@@ -2458,5 +2465,340 @@ function handleSidebarAction(action) {
             // Здесь можно добавить форму предложения идеи
             break;
     }
+}
+
+// Функция для настройки модального окна поиска
+function setupSearchModal() {
+    const searchBtn = document.getElementById('search-btn');
+    const searchModalOverlay = document.getElementById('search-modal-overlay');
+    const searchModalClose = document.getElementById('search-modal-close');
+    const searchConfirmBtn = document.getElementById('search-confirm-btn');
+    const searchHistoryList = document.getElementById('search-history-list');
+    const searchExamplesList = document.getElementById('search-examples-list');
+    
+    if (!searchBtn || !searchModalOverlay) return;
+    
+    // Открытие модального окна
+    searchBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        searchModalOverlay.classList.add('active');
+        updateSearchHistory();
+    });
+    
+    // Закрытие при клике на overlay
+    searchModalOverlay.addEventListener('click', (e) => {
+        if (e.target === searchModalOverlay) {
+            searchModalOverlay.classList.remove('active');
+        }
+    });
+    
+    // Закрытие при клике на кнопку закрытия
+    if (searchModalClose) {
+        searchModalClose.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            searchModalOverlay.classList.remove('active');
+        });
+    }
+    
+    // Обработка кликов на примеры поиска
+    if (searchExamplesList) {
+        searchExamplesList.addEventListener('click', (e) => {
+            const exampleItem = e.target.closest('.search-example-item');
+            if (exampleItem) {
+                const template = exampleItem.dataset.template;
+                if (template) {
+                    // Вставляем шаблон в поле ввода чата
+                    const chatInput = document.getElementById('chat-input');
+                    if (chatInput) {
+                        chatInput.value = template;
+                        chatInput.focus();
+                        // НЕ закрываем модальное окно, чтобы пользователь мог редактировать
+                    }
+                }
+            }
+        });
+    }
+    
+    // Обработка кликов на историю запросов
+    if (searchHistoryList) {
+        searchHistoryList.addEventListener('click', (e) => {
+            const historyItem = e.target.closest('.search-history-item');
+            if (historyItem) {
+                const query = historyItem.dataset.query;
+                if (query) {
+                    // Вставляем запрос в поле ввода чата
+                    const chatInput = document.getElementById('chat-input');
+                    if (chatInput) {
+                        chatInput.value = query;
+                        chatInput.focus();
+                        // НЕ закрываем модальное окно, чтобы пользователь мог редактировать
+                    }
+                }
+            }
+        });
+    }
+    
+    // Обработка кнопки подтвердить
+    if (searchConfirmBtn) {
+        searchConfirmBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Получаем текст из поля ввода
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput && chatInput.value.trim()) {
+                // Если есть функция sendMessage, вызываем её
+                if (typeof window.sendMessage === 'function') {
+                    // Закрываем модальное окно
+                    searchModalOverlay.classList.remove('active');
+                    // Вызываем sendMessage для отправки запроса
+                    window.sendMessage();
+                } else {
+                    // Если sendMessage недоступна, просто закрываем модальное окно
+                    searchModalOverlay.classList.remove('active');
+                }
+            } else {
+                // Если поле пустое, просто закрываем модальное окно
+                searchModalOverlay.classList.remove('active');
+            }
+        });
+    }
+    
+    // Функция для обновления истории запросов
+    function updateSearchHistory() {
+        if (!searchHistoryList) return;
+        
+        // Получаем историю запросов из localStorage
+        const searchHistory = JSON.parse(localStorage.getItem('search_history') || '[]');
+        
+        // Очищаем список
+        searchHistoryList.innerHTML = '';
+        
+        // Показываем только последние 2 запроса
+        const recentHistory = searchHistory.slice(-2).reverse();
+        
+        if (recentHistory.length === 0) {
+            // Если истории нет, скрываем секцию истории
+            const searchHistorySection = document.getElementById('search-history');
+            if (searchHistorySection) {
+                searchHistorySection.style.display = 'none';
+            }
+        } else {
+            // Показываем секцию истории
+            const searchHistorySection = document.getElementById('search-history');
+            if (searchHistorySection) {
+                searchHistorySection.style.display = 'flex';
+            }
+            
+            // Убеждаемся, что список истории виден
+            if (searchHistoryList) {
+                searchHistoryList.style.display = 'flex';
+            }
+            
+            // Добавляем элементы истории в формате "отображаемый текст • тип"
+            recentHistory.forEach(item => {
+                const historyItem = document.createElement('button');
+                historyItem.className = 'search-history-item';
+                historyItem.type = 'button';
+                // Используем оригинальный query для вставки в поле ввода
+                historyItem.dataset.query = item.query || item.displayText;
+                
+                const historyText = document.createElement('span');
+                historyText.className = 'search-history-text';
+                // Используем displayText если есть, иначе генерируем его
+                let displayText = item.displayText;
+                if (!displayText && item.query) {
+                    // Генерируем displayText для старых записей
+                    const itemType = item.type || 'search';
+                    displayText = generateDisplayText(item.query, itemType);
+                } else if (!displayText) {
+                    displayText = item.query || 'Запрос';
+                }
+                // Формат: "отображаемый текст • тип"
+                historyText.textContent = `${displayText} • ${item.type || 'search'}`;
+                
+                historyItem.appendChild(historyText);
+                searchHistoryList.appendChild(historyItem);
+            });
+        }
+    }
+}
+
+// Функция для генерации отображаемого текста на основе типа и запроса
+function generateDisplayText(query, type) {
+    const lowerQuery = query.toLowerCase();
+    
+    if (type === 'tasks') {
+        // Извлекаем информацию из запроса
+        // Формат: task: название due: дата #тег
+        // Или обычный текст типа "купить молоко завтра в 18:00 #домой"
+        
+        let displayText = 'Создать задачу';
+        const parts = [];
+        
+        // Проверяем, есть ли формат task: ... due: ... #...
+        if (lowerQuery.startsWith('task:')) {
+            const dueMatch = query.match(/due:\s*([^#]+)/i);
+            const tagMatch = query.match(/#(\w+)/);
+            
+            if (dueMatch) {
+                const dueDate = dueMatch[1].trim();
+                // Преобразуем относительные даты в формат "завтра, 18:00" или просто "завтра"
+                let formattedDate = dueDate;
+                // Если есть время, извлекаем его
+                const timeMatch = dueDate.match(/(\d{1,2}:\d{2})/);
+                const time = timeMatch ? timeMatch[1] : null;
+                
+                // Убираем время из даты для форматирования
+                let dateOnly = dueDate.replace(/\d{1,2}:\d{2}/, '').trim();
+                
+                // Преобразуем относительные даты
+                if (dateOnly.includes('завтра') || dateOnly.includes('tomorrow')) {
+                    formattedDate = time ? `завтра, ${time}` : 'завтра';
+                } else if (dateOnly.includes('сегодня') || dateOnly.includes('today')) {
+                    formattedDate = time ? `сегодня, ${time}` : 'сегодня';
+                } else if (dateOnly.includes('послезавтра')) {
+                    formattedDate = time ? `послезавтра, ${time}` : 'послезавтра';
+                } else if (time) {
+                    formattedDate = `${dateOnly}, ${time}`;
+                }
+                
+                parts.push(formattedDate);
+            }
+            
+            if (tagMatch) {
+                parts.push(`#${tagMatch[1]}`);
+            }
+        } else {
+            // Обычный формат: "купить молоко завтра в 18:00 #домой"
+            // Извлекаем дату и время (поддерживаем формат "в 18:00" и просто "18:00")
+            const timeMatch = query.match(/(?:в\s+)?(\d{1,2}:\d{2})/);
+            const time = timeMatch ? timeMatch[1] : null;
+            
+            // Ищем относительные даты
+            let datePart = '';
+            if (lowerQuery.includes('завтра') || lowerQuery.includes('tomorrow')) {
+                datePart = time ? `завтра, ${time}` : 'завтра';
+            } else if (lowerQuery.includes('сегодня') || lowerQuery.includes('today')) {
+                datePart = time ? `сегодня, ${time}` : 'сегодня';
+            } else if (lowerQuery.includes('послезавтра')) {
+                datePart = time ? `послезавтра, ${time}` : 'послезавтра';
+            } else if (time) {
+                // Если есть только время, но нет явной даты
+                datePart = time;
+            }
+            
+            if (datePart) {
+                parts.push(datePart);
+            }
+            
+            // Извлекаем теги
+            const tagMatch = query.match(/#(\w+)/);
+            if (tagMatch) {
+                parts.push(`#${tagMatch[1]}`);
+            }
+        }
+        
+        if (parts.length > 0) {
+            displayText += ' • ' + parts.join(' • ');
+        }
+        
+        return displayText;
+    } else if (type === 'plan') {
+        // Извлекаем дату или день недели из запроса
+        let planDate = '';
+        
+        if (lowerQuery.startsWith('plan:')) {
+            const planMatch = query.match(/plan:\s*(.+)/i);
+            if (planMatch) {
+                planDate = planMatch[1].trim();
+            }
+        } else {
+            // Ищем день недели в обычном запросе
+            const dayNames = {
+                'понедельник': 'понедельник',
+                'вторник': 'вторник',
+                'среда': 'среду',
+                'четверг': 'четверг',
+                'пятница': 'пятницу',
+                'суббота': 'субботу',
+                'воскресенье': 'воскресенье',
+                'monday': 'понедельник',
+                'tuesday': 'вторник',
+                'wednesday': 'среду',
+                'thursday': 'четверг',
+                'friday': 'пятницу',
+                'saturday': 'субботу',
+                'sunday': 'воскресенье'
+            };
+            
+            for (const [key, value] of Object.entries(dayNames)) {
+                if (lowerQuery.includes(key)) {
+                    planDate = value;
+                    break;
+                }
+            }
+        }
+        
+        if (planDate) {
+            return `Открыть календарь на ${planDate}`;
+        }
+        return 'Открыть календарь';
+    } else {
+        // Для search просто возвращаем стандартный текст
+        return 'Поиск по задачам и заметкам';
+    }
+}
+
+// Функция для сохранения запроса в историю
+function saveSearchQuery(query, type) {
+    // Определяем тип запроса
+    const lowerQuery = query.toLowerCase();
+    let queryType = 'search'; // По умолчанию
+    
+    // Проверяем, начинается ли запрос с task:/search:/plan:
+    if (lowerQuery.startsWith('task:')) {
+        queryType = 'tasks';
+    } else if (lowerQuery.startsWith('search:')) {
+        queryType = 'search';
+    } else if (lowerQuery.startsWith('plan:')) {
+        queryType = 'plan';
+    } else if (lowerQuery.includes('задач') || lowerQuery.includes('task') || 
+               lowerQuery.includes('создай') || lowerQuery.includes('сделай') ||
+               lowerQuery.includes('добавь') || lowerQuery.includes('купить') ||
+               lowerQuery.includes('подготовить')) {
+        // Проверяем, не является ли это запросом на поиск задач
+        if (lowerQuery.includes('покажи') || lowerQuery.includes('найди') || 
+            lowerQuery.includes('где') || lowerQuery.includes('поиск')) {
+            queryType = 'search';
+        } else {
+            queryType = 'tasks';
+        }
+    } else if (lowerQuery.includes('план') || lowerQuery.includes('plan') ||
+               lowerQuery.includes('календарь') || lowerQuery.includes('calendar')) {
+        queryType = 'plan';
+    }
+    
+    // Генерируем отображаемый текст
+    const displayText = generateDisplayText(query, queryType);
+    
+    // Получаем текущую историю
+    const searchHistory = JSON.parse(localStorage.getItem('search_history') || '[]');
+    
+    // Добавляем новый запрос
+    searchHistory.push({
+        query: query, // Оригинальный запрос для вставки в поле ввода
+        displayText: displayText, // Отображаемый текст
+        type: queryType,
+        timestamp: Date.now()
+    });
+    
+    // Оставляем только последние 10 запросов (но показываем только 2)
+    const limitedHistory = searchHistory.slice(-10);
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('search_history', JSON.stringify(limitedHistory));
 }
 

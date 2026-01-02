@@ -4,6 +4,7 @@
 @import url('./components/task-card.css');
 @import url('./components/calendar.css');
 @import url('./components/modal.css');
+@import url('./components/quick-add.css');
 @import url('./pages/home.css');
 @import url('./pages/tasks.css');
 @import url('./pages/settings.css');

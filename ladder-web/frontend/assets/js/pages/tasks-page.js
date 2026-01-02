@@ -485,11 +485,17 @@ function createTaskCard(task) {
         `<div class="task-description">${escapeHtml(task.description)}</div>` : 
         '';
     
+    // Показываем теги, если они есть
+    const tagsHtml = task.tags && task.tags.length > 0 ? 
+        `<div class="task-tags">${task.tags.map(tag => `<span class="task-tag">${escapeHtml(tag)}</span>`).join('')}</div>` : 
+        '';
+    
     card.innerHTML = `
         <div class="task-checkbox ${isCompleted ? 'checked' : ''}" data-task-id="${task.id}"></div>
         <div class="task-content">
             <span class="task-text" style="${isCompleted ? 'text-decoration: line-through; color: #999999;' : ''}">${escapeHtml(task.title)}</span>
             ${descriptionHtml}
+            ${tagsHtml}
         </div>
         ${priorityIcon}
         <div class="task-menu-wrapper">
@@ -1263,6 +1269,14 @@ let selectedStartDate = null;
 let selectedEndDate = null;
 let editingTaskId = null; // ID задачи, которую редактируем (null для создания новой)
 
+// Функция для форматирования даты в YYYY-MM-DD используя локальное время (избегает проблем с часовыми поясами)
+function formatDateLocal(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
 function initTaskCreateModal() {
     const modal = document.getElementById('task-create-modal');
     const closeBtn = document.getElementById('task-create-close');
@@ -1388,10 +1402,16 @@ function openTaskEditModal(task) {
     const titleInput = document.getElementById('task-title');
     const descriptionInput = document.getElementById('task-description');
     const priorityInput = document.getElementById('task-priority');
+    const tagsInput = document.getElementById('task-tags');
     
     if (titleInput) titleInput.value = task.title || '';
     if (descriptionInput) descriptionInput.value = task.description || '';
     if (priorityInput) priorityInput.value = task.priority || 1;
+    if (tagsInput) {
+        // Преобразуем массив тегов в строку (убираем # если есть, затем выводим через пробел)
+        const tagsArray = task.tags || [];
+        tagsInput.value = tagsArray.map(tag => tag.replace(/^#+/, '')).join(' ');
+    }
     
     // Устанавливаем активный приоритет
     const priorityOptions = document.querySelectorAll('.priority-option');
@@ -1726,8 +1746,8 @@ function updateRangeDateDisplay() {
     // Обновляем скрытые поля
     const startInput = document.getElementById('task-start-date');
     const endInput = document.getElementById('task-end-date');
-    if (startInput) startInput.value = selectedStartDate.toISOString().split('T')[0];
-    if (endInput) endInput.value = selectedEndDate.toISOString().split('T')[0];
+    if (startInput) startInput.value = formatDateLocal(selectedStartDate);
+    if (endInput) endInput.value = formatDateLocal(selectedEndDate);
 }
 
 function updateDatePickerModal() {
@@ -1776,7 +1796,7 @@ function updateDateDisplay() {
     // Обновляем скрытое поле
     const dateInput = document.getElementById('task-date');
     if (dateInput) {
-        dateInput.value = date.toISOString().split('T')[0];
+        dateInput.value = formatDateLocal(date);
     }
 }
 
@@ -1785,12 +1805,20 @@ async function handleTaskCreate(form) {
     const title = formData.get('title');
     const description = formData.get('description') || '';
     const priority = parseInt(formData.get('priority')) || 1;
+    const tagsInput = formData.get('tags') || '';
     
     if (!title || title.trim() === '') {
         const alertText = window.i18n ? window.i18n.t('modal.enterTaskTitle') : 'Пожалуйста, введите название задачи';
         alert(alertText);
         return;
     }
+    
+    // Парсим хештеги из строки (разделяем по пробелам, убираем # если есть, фильтруем пустые)
+    const tags = tagsInput.trim()
+        .split(/\s+/)
+        .map(tag => tag.trim().replace(/^#+/, '')) // Убираем # в начале
+        .filter(tag => tag.length > 0)
+        .map(tag => tag.startsWith('#') ? tag : `#${tag}`); // Добавляем # если нет
     
     let dueDate = null;
     let startDate = null;
@@ -1801,15 +1829,15 @@ async function handleTaskCreate(form) {
             alert('Пожалуйста, выберите дату');
             return;
         }
-        dueDate = currentSelectedDateModal.toISOString().split('T')[0];
+        dueDate = formatDateLocal(currentSelectedDateModal);
     } else {
         // Для периода
         if (!selectedStartDate || !selectedEndDate) {
             alert('Пожалуйста, выберите период');
             return;
         }
-        startDate = selectedStartDate.toISOString().split('T')[0];
-        endDate = selectedEndDate.toISOString().split('T')[0];
+        startDate = formatDateLocal(selectedStartDate);
+        endDate = formatDateLocal(selectedEndDate);
     }
     
     // При редактировании сохраняем текущий статус completed
@@ -1831,6 +1859,7 @@ async function handleTaskCreate(form) {
         title: title.trim(),
         description: description.trim(),
         priority: priority,
+        tags: tags,
         due_date: dueDate,
         start_date: startDate,
         end_date: endDate,

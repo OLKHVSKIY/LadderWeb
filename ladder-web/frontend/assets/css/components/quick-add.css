@@ -1,0 +1,212 @@
+/* Quick Add+ (Spotlight-like) */
+.quick-add-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5000;
+    padding: 10px;
+}
+
+.quick-add-overlay.active {
+    display: flex;
+}
+
+.quick-add-modal {
+    width: 100%;
+    max-width: 680px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+    padding: 20px 20px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    animation: qa-fade-in 0.2s ease;
+}
+
+.quick-add-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.quick-add-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.quick-add-close {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.quick-add-close:hover {
+    background: #f5f5f7;
+    color: #000000;
+}
+
+.quick-add-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+.quick-add-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f5f5f7;
+    border-radius: 14px;
+    padding: 12px 14px;
+    border: 1px solid #ececec;
+}
+
+.quick-add-input-wrap > svg {
+    width: 20px;
+    height: 20px;
+    color: #6b6b6b;
+    flex-shrink: 0;
+}
+
+.quick-add-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 16px;
+    color: #000000;
+}
+
+.quick-add-attach-btn {
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #6b6b6b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.quick-add-attach-btn:hover {
+    background: #e8e8e8;
+    color: #000000;
+}
+
+.quick-add-attach-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.quick-add-hints {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.quick-add-pill {
+    background: #f3f3f3;
+    color: #555555;
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid #ececec;
+}
+
+
+.quick-add-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.quick-add-suggestion {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #f8f8f8;
+    border: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    gap: 12px;
+}
+
+.quick-add-suggestion:hover {
+    background: #f1f1f5;
+}
+
+.quick-add-suggestion-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+}
+
+.quick-add-suggestion-meta {
+    font-size: 12px;
+    color: #666666;
+}
+
+.quick-add-suggestion-chip {
+    font-size: 12px;
+    color: #555555;
+    background: #e9e9ec;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.quick-add-footer {
+    margin-top: 8px;
+    padding-top: 12px;
+    border-top: 1px solid #ececec;
+}
+
+.quick-add-confirm-btn {
+    width: 100%;
+    padding: 12px 24px;
+    background: #000000;
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.quick-add-confirm-btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.quick-add-confirm-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@keyframes qa-fade-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+

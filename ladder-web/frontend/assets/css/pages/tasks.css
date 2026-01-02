@@ -317,8 +317,35 @@ body.sidebar-open #burger-menu svg,
     color: #000000;
     margin: 0;
     text-align: center;
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.search-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #000000;
+    transition: transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.search-btn:hover {
+    transform: scale(1.1);
+}
+
+.search-btn svg {
+    width: 100%;
+    height: 100%;
 }
 
 .settings-btn {
@@ -330,6 +357,7 @@ body.sidebar-open #burger-menu svg,
     padding: 0;
     color: #000000;
     transition: transform 0.3s ease;
+    flex-shrink: 0;
 }
 
 .settings-btn:hover {
@@ -438,7 +466,7 @@ body.sidebar-open #burger-menu svg,
     align-items: center;
     padding: 5px 5px;
     border-radius: 12px;
-    background: #f4f3f69c;
+    background: #ebe9ee8f;
     cursor: pointer;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
@@ -872,8 +900,10 @@ img.nav-icon {
 /* Скрытие элементов хедера при открытом сайдбаре */
 .sidebar-overlay.active ~ .main-header .page-title,
 .sidebar-overlay.active ~ .main-header .settings-btn,
+.sidebar-overlay.active ~ .main-header .search-btn,
 body:has(.sidebar-overlay.active) .main-header .page-title,
-body:has(.sidebar-overlay.active) .main-header .settings-btn {
+body:has(.sidebar-overlay.active) .main-header .settings-btn,
+body:has(.sidebar-overlay.active) .main-header .search-btn {
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -883,6 +913,7 @@ body:has(.sidebar-overlay.active) .main-header .settings-btn {
 /* Альтернативный способ через класс на body */
 body.sidebar-open .main-header .page-title,
 body.sidebar-open .main-header .settings-btn,
+body.sidebar-open .main-header .search-btn,
 body.sidebar-open .main-header .header-divider {
     opacity: 0;
     visibility: hidden;

@@ -428,3 +428,307 @@ body .sidebar-overlay.active .sidebar-marquee .marquee-content,
     line-height: 1.3;
 }
 
+/* Модальное окно поиска */
+.search-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.25s;
+    padding: 20px;
+}
+
+.search-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.search-modal-content {
+    background: #FFFFFF;
+    border: 1px solid #000000;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transform: scale(0.92) translateY(10px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+.search-modal-overlay.active .search-modal-content {
+    transform: scale(1) translateY(0);
+}
+
+.search-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px 20px 28px;
+    border-bottom: 1px solid #E5E5E5;
+}
+
+.search-modal-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #000000;
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.search-modal-close {
+    width: 32px;
+    height: 32px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000000;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 0;
+}
+
+.search-modal-close:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.search-modal-close:active {
+    background: rgba(0, 0, 0, 0.1);
+    transform: scale(0.95);
+}
+
+.search-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.search-examples {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-examples-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.search-examples-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-example-item {
+    padding: 12px 16px;
+    background: #F5F5F5;
+    border: none;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Onest', sans-serif;
+    font-size: 15px;
+    color: #000000;
+}
+
+.search-example-item:hover {
+    background: #E5E5E5;
+    transform: translateX(4px);
+}
+
+.search-example-item:active {
+    transform: translateX(2px) scale(0.98);
+}
+
+.search-example-text {
+    display: block;
+}
+
+.search-history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-history-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000000;
+    margin: 0;
+}
+
+.search-history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-history-item {
+    padding: 12px 16px;
+    background: #F5F5F5;
+    border: none;
+    border-radius: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Onest', sans-serif;
+    font-size: 15px;
+    color: #000000;
+    display: block;
+    width: 100%;
+}
+
+.search-history-item:hover {
+    background: #E5E5E5;
+    transform: translateX(4px);
+}
+
+.search-history-item:active {
+    transform: translateX(2px) scale(0.98);
+}
+
+.search-history-text {
+    display: block;
+    width: 100%;
+}
+
+.search-history-badge {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.search-history-badge.tasks {
+    background: #000000;
+    color: #FFFFFF;
+}
+
+.search-history-badge.plan {
+    background: #58ABF5;
+    color: #FFFFFF;
+}
+
+.search-history-badge.search {
+    background: #F5F5F5;
+    color: #000000;
+    border: 1px solid #000000;
+}
+
+.search-modal-footer {
+    padding: 20px 28px 24px 28px;
+    border-top: 1px solid #E5E5E5;
+}
+
+.search-confirm-btn {
+    width: 100%;
+    padding: 14px 24px;
+    background: #000000;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Onest', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.search-confirm-btn:hover {
+    background: #333333;
+    transform: translateY(-1px);
+}
+
+.search-confirm-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Темная тема для модального окна поиска */
+html[data-theme="dark"] .search-modal-content {
+    background: #1e1e1e;
+    border-color: #333333;
+}
+
+html[data-theme="dark"] .search-modal-title {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-modal-close {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-modal-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+html[data-theme="dark"] .search-modal-header {
+    border-bottom-color: #333333;
+}
+
+html[data-theme="dark"] .search-examples-title,
+html[data-theme="dark"] .search-history-title {
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-example-item {
+    background: #2a2a2a;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-example-item:hover {
+    background: #333333;
+}
+
+html[data-theme="dark"] .search-history-item {
+    background: #2a2a2a;
+    color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-history-item:hover {
+    background: #333333;
+}
+
+html[data-theme="dark"] .search-history-badge.search {
+    background: #2a2a2a;
+    color: #FFFFFF;
+    border-color: #FFFFFF;
+}
+
+html[data-theme="dark"] .search-modal-footer {
+    border-top-color: #333333;
+}
+
+html[data-theme="dark"] .search-confirm-btn {
+    background: #FFFFFF;
+    color: #000000;
+}
+
+html[data-theme="dark"] .search-confirm-btn:hover {
+    background: #E5E5E5;
+}
+

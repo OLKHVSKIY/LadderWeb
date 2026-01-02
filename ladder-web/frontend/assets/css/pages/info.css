@@ -360,8 +360,11 @@ body.info-page {
     color: #000000;
     margin: 0;
     text-align: center;
-    flex: 1;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     transition: all 0.3s ease;
+    pointer-events: none;
 }
 
 .info-page .burger-menu {

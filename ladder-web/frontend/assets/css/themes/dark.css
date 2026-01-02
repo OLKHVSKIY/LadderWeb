@@ -117,7 +117,6 @@ body {
 :root[data-theme="dark"] .nav-item img,
 :root[data-theme="dark"] svg:not(.no-invert),
 :root[data-theme="dark"] .icon,
-:root[data-theme="dark"] .task-priority-icon,
 :root[data-theme="dark"] .settings-btn img,
 :root[data-theme="dark"] .burger-menu svg,
 :root[data-theme="dark"] #burger-menu svg,
@@ -131,6 +130,15 @@ body {
 
 /* Исключения для цветных иконок (градиенты, цветные логотипы и т.д.) */
 /* Иконка GPT должна быть белой, поэтому не исключаем её */
+/* Иконки приоритета должны оставаться цветными (красный, желтый, синий) */
+:root[data-theme="dark"] .task-priority-icon,
+:root[data-theme="dark"] .task-priority-icon img,
+:root[data-theme="dark"] .priority-option img,
+:root[data-theme="dark"] .task-priority img,
+:root[data-theme="dark"] .gpt-task-priority img,
+:root[data-theme="dark"] img[src*="thunder-red.png"],
+:root[data-theme="dark"] img[src*="thunder-yellow.png"],
+:root[data-theme="dark"] img[src*="thunder-blue.png"],
 :root[data-theme="dark"] .ai-menu-icon,
 :root[data-theme="dark"] .sidebar-subscription-banner img,
 :root[data-theme="dark"] .subscription-banner img,
@@ -176,7 +184,6 @@ body {
 :root[data-theme="dark"] input,
 :root[data-theme="dark"] textarea,
 :root[data-theme="dark"] select {
-    background-color: var(--input-bg);
     border-color: var(--input-border);
     color: var(--text-primary);
 }
@@ -1614,4 +1621,205 @@ html[data-theme="dark"] body .sidebar-overlay.active {
     background: rgba(0, 0, 0, 0.8) !important;
     backdrop-filter: blur(30px) !important;
     -webkit-backdrop-filter: blur(30px) !important;
+}
+
+/* Темная тема для модального окна создания задачи */
+:root[data-theme="dark"] .task-create-modal {
+    background: rgba(0, 0, 0, 0.7) !important;
+}
+
+:root[data-theme="dark"] .task-create-modal-content {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-create-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .task-create-header h2 {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-create-close {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-create-close svg {
+    stroke: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-create-field label {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .task-create-field input[type="text"],
+:root[data-theme="dark"] .task-create-field textarea {
+    background: var(--bg-active) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .task-create-field input[type="text"]:focus,
+:root[data-theme="dark"] .task-create-field textarea:focus {
+    border-color: var(--accent-primary) !important;
+}
+
+:root[data-theme="dark"] .task-create-field small,
+:root[data-theme="dark"] .task-tags-hint {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .priority-selector {
+    background: var(--bg-active) !important;
+}
+
+:root[data-theme="dark"] .priority-option {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .priority-option.active {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-type-selector {
+    background: var(--bg-active) !important;
+}
+
+:root[data-theme="dark"] .date-type-option {
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-type-option.active {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .selected-date-display {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .date-number-display {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .date-month-year-display {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .task-create-submit {
+    background: var(--accent-primary) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .task-create-cancel {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Темная тема для тегов на карточке задачи */
+:root[data-theme="dark"] .task-tag {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Quick Add+ */
+:root[data-theme="dark"] .quick-add-overlay {
+    background: rgba(0, 0, 0, 0.65) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+:root[data-theme="dark"] .quick-add-modal {
+    background: var(--card-bg) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45) !important;
+}
+
+:root[data-theme="dark"] .quick-add-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .quick-add-close {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-close:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-close svg {
+    stroke: currentColor !important;
+}
+
+:root[data-theme="dark"] .quick-add-input-wrap {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .quick-add-input-wrap > svg {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-attach-btn {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-attach-btn:hover {
+    background: var(--bg-hover) !important;
+    color: var(--text-primary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-attach-btn svg {
+    stroke: currentColor !important;
+}
+
+:root[data-theme="dark"] .quick-add-input {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .quick-add-input::placeholder {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-pill {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+
+:root[data-theme="dark"] .quick-add-suggestion {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .quick-add-suggestion-title {
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .quick-add-suggestion-meta {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .quick-add-suggestion-chip {
+    background: rgba(255, 255, 255, 0.12) !important;
+    color: #ffffff !important;
+}
+
+:root[data-theme="dark"] .quick-add-footer {
+    border-top-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+:root[data-theme="dark"] .quick-add-confirm-btn {
+    background: #ffffff !important;
+    color: #000000 !important;
+}
+
+:root[data-theme="dark"] .quick-add-confirm-btn:hover {
+    background: #e5e5e5 !important;
 }

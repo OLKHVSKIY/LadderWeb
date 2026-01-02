@@ -93,9 +93,17 @@
             </svg>
         </button>
         <h1 class="page-title" data-i18n="chat.title">Чат с AI</h1>
-        <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
-            <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
-        </button>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <button class="search-btn" id="search-btn" aria-label="Поиск">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+            </button>
+            <button class="settings-btn" id="settings-btn" data-i18n="[aria-label]common.settings" aria-label="Настройки">
+                <img src="/assets/images/icons/settings.png" alt="Настройки" width="24" height="24">
+            </button>
+        </div>
     </header>
 
     <!-- Сайдбар -->
@@ -256,6 +264,46 @@
                         <p data-i18n="ai.menu.plan.description">AI создаст план автоматически</p>
                     </div>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно поиска -->
+    <div class="search-modal-overlay" id="search-modal-overlay">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <h2 class="search-modal-title">Поиск</h2>
+                <button class="search-modal-close" id="search-modal-close" aria-label="Закрыть">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="search-modal-body">
+                <div class="search-examples">
+                    <h3 class="search-examples-title">Примеры поиска</h3>
+                    <div class="search-examples-list" id="search-examples-list">
+                        <button class="search-example-item" type="button" data-template="task: date:">
+                            <span class="search-example-text">task: Подготовить отчет date: завтра #работа</span>
+                        </button>
+                        <button class="search-example-item" type="button" data-template="search:">
+                            <span class="search-example-text">search: заметки о встрече</span>
+                        </button>
+                        <button class="search-example-item" type="button" data-template="plan:">
+                            <span class="search-example-text">plan: суббота</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="search-history" id="search-history" style="display: none;">
+                    <h3 class="search-history-title">Последние запросы</h3>
+                    <div class="search-history-list" id="search-history-list">
+                        <!-- История будет добавлена динамически -->
+                    </div>
+                </div>
+            </div>
+            <div class="search-modal-footer">
+                <button class="search-confirm-btn" id="search-confirm-btn" type="button">Подтвердить</button>
             </div>
         </div>
     </div>
