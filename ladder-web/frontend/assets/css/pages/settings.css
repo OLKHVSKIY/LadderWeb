@@ -495,7 +495,6 @@ body {
 /* Стили для ссылок навигации */
 a.nav-item {
     text-decoration: none;
-    color: inherit;
     pointer-events: auto !important; /* Явно разрешаем клики на ссылках */
     position: relative;
     z-index: 10;
