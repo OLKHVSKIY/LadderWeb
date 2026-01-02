@@ -833,7 +833,7 @@ ${p.startFrom} ${startDateFormatted} ${p.distribute} ${currentPlanData.daysCount
 // Вызов Yandex GPT API
 async function callYandexGpt(prompt) {
     // Используем прокси через бэкенд для обхода CORS
-    const apiUrl = 'http://localhost:8001/api/ai/yandex-gpt/chat';
+    const apiUrl = '/api/ai/yandex-gpt/chat';
     
     // Определяем язык для системного промпта
     const goalLanguage = detectLanguage(currentPlanData.description);
@@ -1135,4 +1135,3 @@ function getUserId() {
     }
     return userId;
 }
-

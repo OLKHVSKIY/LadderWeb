@@ -624,7 +624,7 @@ function initChatPage() {
                 try {
                     // Используем простой прокси-сервер (порт 8001) или бэкенд (порт 8000)
                     // Простой прокси запускается через: python yandex-gpt-proxy.py
-                    const apiUrl = 'http://localhost:8001/api/ai/yandex-gpt/chat';
+                    const apiUrl = '/api/ai/yandex-gpt/chat';
                     
                     const requestBody = {
                         model: model,
@@ -2801,4 +2801,3 @@ function saveSearchQuery(query, type) {
     // Сохраняем в localStorage
     localStorage.setItem('search_history', JSON.stringify(limitedHistory));
 }
-
