@@ -1,5 +1,16 @@
 /* Стили для страницы План - Конструктор целей */
 
+/* Фон для светлой темы */
+body.plan-page[data-theme="light"],
+body.plan-page:not([data-theme="dark"]) {
+    background-color: #FFFFFF !important;
+}
+
+html[data-theme="light"] body.plan-page,
+html:not([data-theme="dark"]) body.plan-page {
+    background-color: #FFFFFF !important;
+}
+
 /* Скрываем header-divider на странице плана */
 body.plan-page .header-divider,
 .header-divider {

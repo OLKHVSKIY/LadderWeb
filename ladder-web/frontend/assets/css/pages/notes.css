@@ -1,5 +1,16 @@
 /* Стили для страницы заметок */
 
+/* Фон для светлой темы */
+body[data-theme="light"],
+body:not([data-theme="dark"]) {
+    background-color: #FFFFFF !important;
+}
+
+html[data-theme="light"] body,
+html:not([data-theme="dark"]) body {
+    background-color: #FFFFFF !important;
+}
+
 /* Скрываем header-divider на странице заметок */
 .main-header .header-divider {
     display: none !important;
