@@ -5,22 +5,19 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas.user import User
-from app.services.auth_service import AuthService
-from fastapi.security import OAuth2PasswordBearer
+from app.api.deps import get_current_user_id
+from app.models.user import User as UserModel
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
 
 
 @router.get("/me", response_model=User)
 async def get_current_user_profile(
-    token: str = Depends(oauth2_scheme),
+    user_id: int = Depends(get_current_user_id),
     db: Session = Depends(get_db)
 ):
     """Получить профиль текущего пользователя"""
-    auth_service = AuthService(db)
-    user = auth_service.get_current_user(token)
+    user = db.query(UserModel).filter(UserModel.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     return user
-

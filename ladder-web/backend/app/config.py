@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     # Telegram
     TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_WEBHOOK_URL: str = ""
+    ADMIN_TELEGRAM_IDS: str = ""
+    ADMIN_PANEL_URL: str = "https://ladder-telegram-bot.ru/public/admin.html"
     
     # OpenAI
     OPENAI_API_KEY: str = ""
@@ -36,6 +38,11 @@ class Settings(BaseSettings):
         env_file = ".env"
         case_sensitive = True
 
+    def admin_ids(self) -> List[int]:
+        raw = self.ADMIN_TELEGRAM_IDS
+        if not raw:
+            return []
+        return [int(item.strip()) for item in raw.split(",") if item.strip()]
+
 
 settings = Settings()
-

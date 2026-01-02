@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from app.config import settings
 from app.database import engine, Base
-from app.api import auth, tasks, ai, telegram, users
+from app.api import auth, tasks, ai, telegram, users, admin, notes
 import logging
 
 logger = logging.getLogger(__name__)
@@ -42,6 +42,8 @@ app.include_router(tasks.router, prefix="/api/tasks", tags=["tasks"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(telegram.router, prefix="/api/telegram", tags=["telegram"])
 app.include_router(users.router, prefix="/api/users", tags=["users"])
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
+app.include_router(notes.router, prefix="/api/notes", tags=["notes"])
 
 # Статические файлы (опционально, если директория существует)
 import os
@@ -63,4 +65,3 @@ async def health_check():
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

@@ -1,24 +1,35 @@
 // Admin Panel JavaScript
 
+let adminData = {
+    users: [],
+    tasks: [],
+    suggestions: [],
+    subscriptions: [],
+    telegram_users: []
+};
+let adminDataLoaded = false;
+
 document.addEventListener('DOMContentLoaded', () => {
     initAdminPanel();
 });
 
-function initAdminPanel() {
+async function initAdminPanel() {
     // Navigation
     setupNavigation();
     
     // Load initial data
+    await loadAdminData();
     loadOverviewData();
     
     // Setup refresh button
     const refreshBtn = document.getElementById('refresh-btn');
     if (refreshBtn) {
-        refreshBtn.addEventListener('click', () => {
+        refreshBtn.addEventListener('click', async () => {
             const activeSection = document.querySelector('.admin-section.active');
             if (activeSection) {
                 const sectionName = activeSection.id.replace('-section', '');
                 console.log('Refreshing section:', sectionName);
+                await loadAdminData();
                 loadSectionData(sectionName);
             }
         });
@@ -30,6 +41,43 @@ function initAdminPanel() {
         updateRegistrationsChart(users);
         updateFeaturesChart();
     }, 100);
+}
+
+async function loadAdminData() {
+    const adminId = getAdminIdFromUrl();
+    if (!adminId) {
+        adminDataLoaded = false;
+        return;
+    }
+
+    try {
+        const response = await fetch('/api/admin/data', {
+            headers: {
+                'X-Admin-Id': adminId
+            }
+        });
+        if (!response.ok) {
+            adminDataLoaded = false;
+            return;
+        }
+        const data = await response.json();
+        adminData = {
+            users: data.users || [],
+            tasks: data.tasks || [],
+            suggestions: data.suggestions || [],
+            subscriptions: data.subscriptions || [],
+            telegram_users: data.telegram_users || []
+        };
+        adminDataLoaded = true;
+    } catch (error) {
+        console.error('Failed to load admin data:', error);
+        adminDataLoaded = false;
+    }
+}
+
+function getAdminIdFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('admin_id');
 }
 
 // Navigation
@@ -661,6 +709,9 @@ function updateSubscriptionsChart() {
 
 // Data functions
 function getUsers() {
+    if (adminDataLoaded) {
+        return adminData.users;
+    }
     // Получаем пользователей из localStorage
     const userName = localStorage.getItem('user_name') || '';
     const userEmail = localStorage.getItem('user_email') || '';
@@ -725,6 +776,9 @@ function getUsers() {
 }
 
 function getTasks() {
+    if (adminDataLoaded) {
+        return adminData.tasks;
+    }
     const tasksJson = localStorage.getItem('tasks') || '[]';
     const tasks = JSON.parse(tasksJson);
     const users = getUsers();
@@ -741,6 +795,9 @@ function getTasks() {
 }
 
 function getSuggestions() {
+    if (adminDataLoaded) {
+        return adminData.suggestions;
+    }
     const suggestionsJson = localStorage.getItem('admin_suggestions') || '[]';
     let suggestions = JSON.parse(suggestionsJson);
     
@@ -767,6 +824,9 @@ function getSuggestions() {
 }
 
 function getSubscriptions() {
+    if (adminDataLoaded) {
+        return adminData.subscriptions;
+    }
     const subscriptionsJson = localStorage.getItem('admin_subscriptions') || '[]';
     let subscriptions = JSON.parse(subscriptionsJson);
     
@@ -926,4 +986,3 @@ function markAsRead(suggestionId) {
 // Делаем функции глобальными для использования в onclick
 window.viewUser = viewUser;
 window.markAsRead = markAsRead;
-

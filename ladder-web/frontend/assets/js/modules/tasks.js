@@ -1,14 +1,17 @@
 // Модуль работы с задачами
-// Использует localStorage вместо API, так как backend не требуется
+// Использует API с fallback на localStorage
+
+import { api } from './api.js';
 
 export async function loadTasks() {
     try {
-        // Пытаемся загрузить из localStorage
-        const tasksJson = localStorage.getItem('tasks');
-        if (tasksJson) {
-            return JSON.parse(tasksJson);
+        const tasks = await api.getTasks();
+        if (Array.isArray(tasks)) {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            return tasks;
         }
-        return [];
+        const tasksJson = localStorage.getItem('tasks');
+        return tasksJson ? JSON.parse(tasksJson) : [];
     } catch (error) {
         console.error('Error loading tasks:', error);
         return [];
@@ -17,71 +20,76 @@ export async function loadTasks() {
 
 export async function createTask(taskData) {
     try {
-        console.log('createTask called with data:', taskData);
+        const created = await api.createTask(taskData);
+        if (created && created.id) {
+            const tasksJson = localStorage.getItem('tasks');
+            const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+            tasks.push(created);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            return created;
+        }
+        throw new Error('API create failed');
+    } catch (error) {
+        console.error('Error creating task:', error);
         const tasksJson = localStorage.getItem('tasks');
         const tasks = tasksJson ? JSON.parse(tasksJson) : [];
-        console.log('Current tasks count before creation:', tasks.length);
-        
         const taskId = Date.now();
         const newTask = {
             id: taskId,
             ...taskData,
             created_at: new Date().toISOString(),
         };
-        
-        console.log('New task object:', newTask);
-        
         tasks.push(newTask);
         localStorage.setItem('tasks', JSON.stringify(tasks));
-        
-        // Проверяем, что задача действительно сохранилась
-        const verifyJson = localStorage.getItem('tasks');
-        const verifyTasks = verifyJson ? JSON.parse(verifyJson) : [];
-        const verifyTask = verifyTasks.find(t => t.id === taskId);
-        console.log('Task saved, verification:', verifyTask ? 'SUCCESS' : 'FAILED');
-        console.log('Total tasks after save:', verifyTasks.length);
-        
-        if (!verifyTask) {
-            console.error('CRITICAL: Task was not saved properly!');
-            throw new Error('Task was not saved to localStorage');
-        }
-        
         return newTask;
-    } catch (error) {
-        console.error('Error creating task:', error);
-        throw error;
     }
 }
 
 export async function updateTask(id, taskData) {
     try {
+        const updated = await api.updateTask(id, taskData);
+        if (updated && updated.id) {
+            const tasksJson = localStorage.getItem('tasks');
+            const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+            const index = tasks.findIndex(t => t.id === id);
+            if (index !== -1) {
+                tasks[index] = { ...tasks[index], ...updated };
+            } else {
+                tasks.push(updated);
+            }
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            return updated;
+        }
+        throw new Error('API update failed');
+    } catch (error) {
+        console.error('Error updating task:', error);
         const tasksJson = localStorage.getItem('tasks');
         const tasks = tasksJson ? JSON.parse(tasksJson) : [];
-        
         const index = tasks.findIndex(t => t.id === id);
         if (index !== -1) {
             tasks[index] = { ...tasks[index], ...taskData };
             localStorage.setItem('tasks', JSON.stringify(tasks));
             return tasks[index];
         }
-        throw new Error('Task not found');
-    } catch (error) {
-        console.error('Error updating task:', error);
         throw error;
     }
 }
 
 export async function deleteTask(id) {
     try {
+        await api.deleteTask(id);
         const tasksJson = localStorage.getItem('tasks');
         const tasks = tasksJson ? JSON.parse(tasksJson) : [];
-        
         const filteredTasks = tasks.filter(t => t.id !== id);
         localStorage.setItem('tasks', JSON.stringify(filteredTasks));
         return true;
     } catch (error) {
         console.error('Error deleting task:', error);
-        throw error;
+        const tasksJson = localStorage.getItem('tasks');
+        const tasks = tasksJson ? JSON.parse(tasksJson) : [];
+        const filteredTasks = tasks.filter(t => t.id !== id);
+        localStorage.setItem('tasks', JSON.stringify(filteredTasks));
+        return true;
     }
 }
 
@@ -99,4 +107,3 @@ export function formatTaskDate(dateString) {
         day: 'numeric',
     });
 }
-

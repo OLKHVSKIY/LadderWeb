@@ -7,21 +7,9 @@ from typing import List
 from app.database import get_db
 from app.schemas.task import Task, TaskCreate, TaskUpdate
 from app.services.task_service import TaskService
-from app.services.auth_service import AuthService
-from fastapi.security import OAuth2PasswordBearer
+from app.api.deps import get_current_user_id
 
 router = APIRouter()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/auth/login")
-
-
-def get_current_user_id(
-    token: str = Depends(oauth2_scheme),
-    db: Session = Depends(get_db)
-):
-    """Получить ID текущего пользователя"""
-    auth_service = AuthService(db)
-    user = auth_service.get_current_user(token)
-    return user.id
 
 
 @router.get("", response_model=List[Task])
@@ -90,4 +78,3 @@ async def delete_task(
     if not success:
         raise HTTPException(status_code=404, detail="Задача не найдена")
     return {"message": "Задача удалена"}
-

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Проверяем приглашение по ссылке
     await checkInviteCode();
     
-    initNotesPage();
+    await initNotesPage();
 });
 
 // Проверка кода приглашения из URL
@@ -46,7 +46,7 @@ window.addEventListener('load', () => {
     }
 });
 
-function initNotesPage() {
+async function initNotesPage() {
     try {
         // Проверяем параметры URL для открытия заметки
         const urlParams = new URLSearchParams(window.location.search);
@@ -92,6 +92,9 @@ function initNotesPage() {
         // Кнопка GPT меню
         setupAiMenu();
         
+        // Подтягиваем заметки из API (если доступен)
+        await syncNotesFromApi();
+
         // Загрузка сохраненных стикеров
         loadStickers();
         
@@ -143,6 +146,34 @@ function initNotesPage() {
         });
     } catch (error) {
         console.error('Error initializing notes page:', error);
+    }
+}
+
+function getCurrentWorkspaceId() {
+    return localStorage.getItem('currentWorkspaceId') || 'personal';
+}
+
+async function syncNotesFromApi() {
+    try {
+        const { loadNotes } = await import('../modules/notes.js');
+        const workspaceId = getCurrentWorkspaceId();
+        const stickers = await loadNotes(workspaceId);
+        if (Array.isArray(stickers)) {
+            localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+            saveStickersToWorkspace(stickers, true);
+        }
+    } catch (error) {
+        console.warn('Notes API unavailable, using localStorage:', error);
+    }
+}
+
+async function syncNotesToApi(stickers) {
+    try {
+        const { saveNotes } = await import('../modules/notes.js');
+        const workspaceId = getCurrentWorkspaceId();
+        await saveNotes(workspaceId, stickers);
+    } catch (error) {
+        console.warn('Failed to sync notes to API:', error);
     }
 }
 
@@ -821,7 +852,7 @@ function saveSticker(sticker) {
 }
 
 // Сохранение стикеров в текущее пространство
-function saveStickersToWorkspace(stickers) {
+function saveStickersToWorkspace(stickers, skipApiSync = false) {
     try {
         const workspacesJson = localStorage.getItem('workspaces');
         if (workspacesJson) {
@@ -838,6 +869,10 @@ function saveStickersToWorkspace(stickers) {
         }
     } catch (error) {
         console.error('Error saving to workspace:', error);
+    }
+
+    if (!skipApiSync) {
+        syncNotesToApi(stickers);
     }
 }
 
@@ -2533,4 +2568,3 @@ function escapeHtml(text) {
     div.textContent = text;
     return div.innerHTML;
 }
-
