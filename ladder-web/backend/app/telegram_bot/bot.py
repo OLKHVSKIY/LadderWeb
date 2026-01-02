@@ -1,7 +1,6 @@
 """
 Основной файл Telegram бота
 """
-import asyncio
 from telegram import Bot
 from app.config import settings
 from app.telegram_bot.handlers import start, tasks, ai, settings as settings_handler
@@ -17,7 +16,7 @@ class LadderBot:
         # Обработчики будут зарегистрированы через декораторы
         pass
 
-    async def start_polling(self):
+    def start_polling(self):
         """Запуск бота в режиме polling"""
         from telegram.ext import Application
         
@@ -29,7 +28,7 @@ class LadderBot:
         application.add_handler(ai.handler)
         application.add_handler(settings_handler.handler)
         
-        await application.run_polling()
+        application.run_polling()
 
     async def set_webhook(self):
         """Установка webhook"""
@@ -38,5 +37,4 @@ class LadderBot:
 
 if __name__ == "__main__":
     bot = LadderBot()
-    asyncio.run(bot.start_polling())
-
+    bot.start_polling()
