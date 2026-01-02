@@ -79,10 +79,6 @@ frontend/.cache/
 frontend/.parcel-cache/
 frontend/dist/
 
-# Docker
-docker-compose.override.yml
-.dockerignore
-
 # Static files
 staticfiles/
 media/

@@ -53,8 +53,6 @@ ladder-web/
 ├── frontend/          # HTML/JS/CSS фронтенд
 ├── backend/           # Python FastAPI бэкенд
 ├── shared/            # Общий код
-├── docker/            # Docker конфигурации
-└── docker-compose.yml # Docker Compose
 ```
 
 ## 🛠️ Установка
@@ -115,24 +113,6 @@ poetry run python server.py
 
 # Yandex GPT Proxy (из корня ladder-web)
 poetry run python yandex-gpt-proxy.py
-```
-
-### Быстрый старт с Docker
-
-```bash
-# Клонировать репозиторий
-git clone <repository-url>
-cd ladder-web
-
-# Создать .env файл
-cp backend/.env.example backend/.env
-# Отредактировать backend/.env с вашими настройками
-
-# Запустить все сервисы
-docker-compose up -d
-
-# Применить миграции
-docker-compose exec backend alembic upgrade head
 ```
 
 ### Локальная установка (с Poetry - рекомендуется)
@@ -239,12 +219,6 @@ pytest
 
 ```bash
 gunicorn app.main:app --config gunicorn.conf.py
-```
-
-### Docker Production
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ## 📝 Миграции БД

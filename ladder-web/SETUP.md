@@ -23,25 +23,25 @@
 
 4. **Запустите проект**
    ```bash
-   # Установите зависимости (если нужно)
+   # Установите зависимости
    cd backend
-   pip install -r requirements.txt
-   
-   # Запустите бэкенд прокси для Yandex GPT
+   poetry install
+
+   # Запустите бэкенд
+   poetry run uvicorn app.main:app --reload
+
+   # В другом терминале запустите прокси
    cd ..
-   python yandex-gpt-proxy.py
-   
-   # В другом терминале запустите фронтенд
-   npm run dev
-   # или
-   python server.py
+   poetry run python yandex-gpt-proxy.py
+
+   # В третьем терминале запустите фронтенд
+   poetry run python server.py
    ```
 
 ## Структура проекта
 
 - `backend/` - FastAPI бэкенд
 - `frontend/` - Frontend приложение
-- `docker/` - Docker конфигурации
 - `.env` - Переменные окружения (не коммитится в git)
 - `.env.example` - Шаблон для `.env` файла
 
@@ -62,6 +62,5 @@
 
 При разработке убедитесь, что:
 1. Файл `.env` существует и содержит правильные ключи
-2. Бэкенд прокси запущен (`python yandex-gpt-proxy.py`)
-3. Фронтенд сервер запущен (`npm run dev` или `python server.py`)
-
+2. Бэкенд прокси запущен (`poetry run python yandex-gpt-proxy.py`)
+3. Фронтенд сервер запущен (`poetry run python server.py`)

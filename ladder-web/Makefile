@@ -1,12 +1,10 @@
-.PHONY: help install dev test build deploy clean
+.PHONY: help install dev test clean
 
 help:
 	@echo "Доступные команды:"
 	@echo "  make install    - Установить зависимости"
-	@echo "  make dev        - Запустить в режиме разработки"
+	@echo "  make dev        - Показать команды запуска локально"
 	@echo "  make test       - Запустить тесты"
-	@echo "  make build      - Собрать проект"
-	@echo "  make deploy     - Развернуть проект"
 	@echo "  make clean      - Очистить временные файлы"
 
 install:
@@ -20,29 +18,15 @@ install-pip:
 	cd frontend && npm install
 
 dev:
-	docker-compose up -d
-	@echo "Backend: http://localhost:8000"
-	@echo "Frontend: http://localhost:3000"
-	@echo "Nginx: http://localhost"
-
-dev-local:
-	@echo "Запуск локально (требует 3 терминала):"
-	@echo "Терминал 1: cd backend && poetry run uvicorn app.main:app --reload"
-	@echo "Терминал 2: poetry run python yandex-gpt-proxy.py"
-	@echo "Терминал 3: poetry run python server.py"
+	@echo "Запуск локально (3 терминала):"
+	@echo "1) cd backend && poetry run uvicorn app.main:app --reload"
+	@echo "2) cd .. && poetry run python yandex-gpt-proxy.py"
+	@echo "3) cd .. && poetry run python server.py"
 
 test:
 	cd backend && pytest
-
-build:
-	docker-compose build
-
-deploy:
-	docker-compose up -d --build
 
 clean:
 	find . -type d -name __pycache__ -exec rm -r {} +
 	find . -type f -name "*.pyc" -delete
 	find . -type d -name ".pytest_cache" -exec rm -r {} +
-	docker-compose down -v
-

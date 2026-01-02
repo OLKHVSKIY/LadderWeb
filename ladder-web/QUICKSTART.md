@@ -24,6 +24,7 @@ cd LadderWeb/ladder-web
 ```bash
 # Backend зависимости
 cd backend
+poetry config virtualenvs.in-project true
 poetry install
 cd ..
 ```
@@ -83,7 +84,7 @@ poetry run python server.py
 Можно использовать Makefile:
 
 ```bash
-make dev  # Запустит все сервисы через Docker
+make dev  # Покажет команды запуска локально
 ```
 
 ## Проблемы?
@@ -91,4 +92,3 @@ make dev  # Запустит все сервисы через Docker
 - **Ошибка подключения к API**: Проверьте, что Yandex GPT Proxy запущен на порту 8001
 - **Ошибка базы данных**: Убедитесь, что PostgreSQL запущен (или используйте SQLite для разработки)
 - **Порт занят**: Измените порты в соответствующих файлах
-
