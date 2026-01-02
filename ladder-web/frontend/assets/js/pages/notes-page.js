@@ -48,6 +48,10 @@ window.addEventListener('load', () => {
 
 function initNotesPage() {
     try {
+        // Проверяем параметры URL для открытия заметки
+        const urlParams = new URLSearchParams(window.location.search);
+        const noteIdParam = urlParams.get('note');
+        
         // Убеждаемся, что основной контент виден
         const mainContent = document.querySelector('.main-content');
         if (mainContent) {
@@ -93,6 +97,26 @@ function initNotesPage() {
         
         // Показываем пустое состояние, если стикеров нет
         updateEmptyState();
+        
+        // Открываем заметку, если указан ID в URL или localStorage
+        const noteIdToOpen = noteIdParam || localStorage.getItem('openNoteId');
+        if (noteIdToOpen) {
+            // Убираем из localStorage
+            localStorage.removeItem('openNoteId');
+            
+            // Открываем заметку после небольшой задержки (чтобы страница успела загрузиться)
+            setTimeout(() => {
+                const noteId = parseInt(noteIdToOpen);
+                if (!isNaN(noteId)) {
+                    openNoteEditor(noteId);
+                }
+            }, 500);
+            
+            // Убираем параметр из URL
+            if (noteIdParam) {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
     
         // Обработчик изменения размера окна - только обновление высоты контента
         let resizeTimeout;

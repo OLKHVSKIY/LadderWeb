@@ -74,6 +74,12 @@
     border-radius: 14px;
     padding: 12px 14px;
     border: 1px solid #ececec;
+    transition: none;
+}
+
+.quick-add-input-wrap:hover {
+    background: #f5f5f7;
+    border-color: #ececec;
 }
 
 .quick-add-input-wrap > svg {
@@ -90,6 +96,14 @@
     outline: none;
     font-size: 16px;
     color: #000000;
+}
+
+.quick-add-input:hover {
+    background: transparent;
+}
+
+.quick-add-input:focus {
+    background: transparent;
 }
 
 .quick-add-attach-btn {

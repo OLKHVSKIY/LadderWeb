@@ -10,16 +10,129 @@ document.addEventListener('DOMContentLoaded', () => {
     initTasksPage();
 });
 
-let currentSelectedDate = new Date();
+// Инициализируем с текущей датой (обнуляем время для корректной работы)
+// ВАЖНО: эта переменная будет перезаписана в initTasksPage(), но инициализируем правильно
+let currentSelectedDate = (() => {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return today;
+})();
 let mainDateCalendar = null;
 
 function initTasksPage() {
-    // Инициализация календаря
-    initWeekCalendar();
+    // ВСЕГДА начинаем с текущей даты - ПРИНУДИТЕЛЬНО
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     
-    // Инициализация даты - используем текущую дату
-    currentSelectedDate = new Date();
+    // ПРИНУДИТЕЛЬНО сбрасываем на текущую дату
+    currentSelectedDate = new Date(today);
+    
+    // Проверяем параметры URL для открытия задачи
+    const urlParams = new URLSearchParams(window.location.search);
+    const taskIdParam = urlParams.get('task');
+    const dateParam = urlParams.get('date');
+    
+    // ТОЛЬКО если есть валидный параметр date в URL И параметр task (переход к задаче через поиск)
+    // Используем дату из URL только для показа дня с задачей, но не сохраняем её
+    if (dateParam && taskIdParam) {
+        try {
+            // Парсим дату из параметра URL только для отображения дня с задачей
+            let parsedDate = null;
+            
+            // Формат YYYY-MM-DD
+            if (dateParam.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                const [year, month, day] = dateParam.split('-').map(Number);
+                parsedDate = new Date(year, month - 1, day);
+            } else {
+                parsedDate = new Date(dateParam);
+            }
+            
+            // Проверяем валидность
+            if (!isNaN(parsedDate.getTime())) {
+                const currentYear = now.getFullYear();
+                const parsedYear = parsedDate.getFullYear();
+                
+                // Используем дату из URL только если она в текущем году или следующем
+                if (parsedYear === currentYear || parsedYear === currentYear + 1) {
+                    parsedDate.setHours(0, 0, 0, 0);
+                    currentSelectedDate = parsedDate;
+                    // ВАЖНО: эта дата будет использована только для отображения, затем URL очистится
+                } else {
+                    // Если год не совпадает - используем сегодня
+                    currentSelectedDate = new Date(today);
+                }
+            } else {
+                // Если дата невалидна - используем сегодня
+                currentSelectedDate = new Date(today);
+            }
+        } catch (e) {
+            console.error('Error parsing date from URL:', e);
+            // В случае ошибки используем текущую дату
+            currentSelectedDate = new Date(today);
+        }
+    }
+    // Если есть только dateParam без taskParam - игнорируем его (чтобы не сохранялась дата при обновлении)
+    
+    // ПРИНУДИТЕЛЬНАЯ проверка: если год не совпадает с текущим - сбрасываем на сегодня
+    const currentYear = now.getFullYear();
+    const selectedYear = currentSelectedDate.getFullYear();
+    
+    if (selectedYear !== currentYear && selectedYear !== currentYear + 1) {
+        console.log('Year mismatch detected, resetting to today. Selected year:', selectedYear, 'Current year:', currentYear);
+        currentSelectedDate = new Date(today);
+    }
+    
+    // Финальная проверка и обнуление времени
+    currentSelectedDate.setHours(0, 0, 0, 0);
+    
+    // Дополнительная проверка валидности
+    if (isNaN(currentSelectedDate.getTime())) {
+        console.log('Invalid date detected, resetting to today');
+        currentSelectedDate = new Date(today);
+    }
+    
+    // ПРИНУДИТЕЛЬНАЯ проверка года ПЕРЕД логированием
+    const finalCheckYear = now.getFullYear();
+    const finalCheckSelectedYear = currentSelectedDate.getFullYear();
+    const finalCheckMonth = now.getMonth();
+    const finalCheckSelectedMonth = currentSelectedDate.getMonth();
+    const finalCheckDay = now.getDate();
+    const finalCheckSelectedDay = currentSelectedDate.getDate();
+    
+    // Проверяем год
+    if (finalCheckSelectedYear !== finalCheckYear && finalCheckSelectedYear !== finalCheckYear + 1) {
+        console.warn('FINAL CHECK: Year mismatch! Resetting to today. Selected:', finalCheckSelectedYear, 'Current:', finalCheckYear);
+        currentSelectedDate = new Date(today);
+    }
+    
+    // Если год следующий, но мы еще не в декабре текущего года - это странно, сбрасываем
+    if (finalCheckSelectedYear === finalCheckYear + 1 && finalCheckMonth < 11) {
+        console.warn('FINAL CHECK: Date too far in future! Resetting to today.');
+        currentSelectedDate = new Date(today);
+    }
+    
+    // Если год текущий, но дата слишком далеко в будущем (более чем на 2 месяца) - сбрасываем
+    if (finalCheckSelectedYear === finalCheckYear) {
+        const daysDiff = Math.floor((currentSelectedDate - today) / (1000 * 60 * 60 * 24));
+        if (daysDiff > 60) { // Более чем на 2 месяца вперед
+            console.warn('FINAL CHECK: Date too far in future (more than 2 months)! Resetting to today. Days diff:', daysDiff);
+            currentSelectedDate = new Date(today);
+        }
+    }
+    
+    // Логируем для отладки
+    console.log('Init tasks page - currentSelectedDate:', currentSelectedDate);
+    console.log('Init tasks page - date string:', currentSelectedDate.toISOString().split('T')[0]);
+    console.log('Init tasks page - day:', currentSelectedDate.getDate(), 'month:', currentSelectedDate.getMonth() + 1, 'year:', currentSelectedDate.getFullYear());
+    console.log('Init tasks page - TODAY:', today);
+    console.log('Init tasks page - NOW:', now);
+    console.log('Init tasks page - URL dateParam:', dateParam);
+    
+    // Обновляем отображение даты (большие цифры) - ВАЖНО: делаем это ПЕРВЫМ
     updateSelectedDate(currentSelectedDate);
+    
+    // Инициализация календаря (после установки даты)
+    initWeekCalendar();
     
     // Инициализация выпадающего списка даты
     initDatePicker();
@@ -29,6 +142,19 @@ function initTasksPage() {
     
     // Обработчики событий
     setupEventHandlers();
+    
+    // Очищаем параметры из URL сразу после использования, чтобы при обновлении страницы всегда показывалась текущая дата
+    // НЕ открываем редактор задачи автоматически - просто показываем день с задачей
+    if (taskIdParam || dateParam) {
+        // Убираем параметры из URL сразу после инициализации (до загрузки задач)
+        // Это гарантирует, что при обновлении страницы всегда будет текущая дата
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+    
+    // Убираем openTaskId из localStorage, если он есть (но не открываем редактор)
+    if (localStorage.getItem('openTaskId')) {
+        localStorage.removeItem('openTaskId');
+    }
 }
 
 function initWeekCalendar() {
@@ -41,7 +167,31 @@ function updateSelectedDate(date) {
     
     if (!dateNumber || !dateMonthYear) return;
     
-    currentSelectedDate = new Date(date);
+    // Создаем новую дату из переданной
+    let newDate = new Date(date);
+    
+    // Проверяем валидность
+    if (isNaN(newDate.getTime())) {
+        // Если дата невалидна, используем текущую дату
+        const now = new Date();
+        newDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+    
+    // Обнуляем время
+    newDate.setHours(0, 0, 0, 0);
+    
+    // Проверяем год - если дата слишком старая или новая, используем сегодня
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const selectedYear = newDate.getFullYear();
+    
+    if (selectedYear < currentYear - 1 || selectedYear > currentYear + 1) {
+        newDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    }
+    
+    // Устанавливаем дату
+    currentSelectedDate = newDate;
+    
     const lang = window.i18n ? window.i18n.getCurrentLanguage() : (localStorage.getItem('language') || 'ru');
     
     // Получаем сокращенные названия месяцев в зависимости от языка
@@ -55,9 +205,16 @@ function updateSelectedDate(date) {
          lang === 'en' ? ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][monthKeys.indexOf(key)] :
          ['ene.', 'feb.', 'mar.', 'abr.', 'may', 'jun.', 'jul.', 'ago.', 'sep.', 'oct.', 'nov.', 'dic.'][monthKeys.indexOf(key)]));
     
-    const month = monthNames[date.getMonth()];
-    const day = date.getDate();
-    const year = date.getFullYear();
+    // Используем currentSelectedDate вместо переданного date для гарантии
+    const displayDate = currentSelectedDate;
+    const month = monthNames[displayDate.getMonth()];
+    const day = displayDate.getDate();
+    const year = displayDate.getFullYear();
+    
+    // Логируем для отладки
+    console.log('updateSelectedDate - displaying:', day, month, year);
+    console.log('updateSelectedDate - date object:', displayDate);
+    console.log('updateSelectedDate - ISO string:', displayDate.toISOString().split('T')[0]);
     
     dateNumber.textContent = day;
     dateMonthYear.textContent = `${month} ${year}`;

@@ -201,6 +201,14 @@ body {
     background-color: var(--input-hover);
 }
 
+/* Убираем выделение при наведении для полей ввода quick-add и chat */
+:root[data-theme="dark"] .quick-add-input:hover,
+:root[data-theme="dark"] .quick-add-input-wrap:hover,
+:root[data-theme="dark"] .chat-input:hover,
+:root[data-theme="dark"] .chat-input-wrapper:hover {
+    background-color: transparent !important;
+}
+
 /* ========================================
    HEADER
    ======================================== */
@@ -1757,6 +1765,11 @@ html[data-theme="dark"] body .sidebar-overlay.active {
 }
 
 :root[data-theme="dark"] .quick-add-input-wrap {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+}
+
+:root[data-theme="dark"] .quick-add-input-wrap:hover {
     background: var(--bg-tertiary) !important;
     border-color: var(--border-color) !important;
 }

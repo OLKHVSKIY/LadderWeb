@@ -81,30 +81,22 @@ export function initQuickAdd() {
                 // Обрабатываем команды
                 const lowerQuery = query.toLowerCase();
                 
-                if (lowerQuery.startsWith('task:')) {
-                    // Обработка команды task:
+                // Улучшенное распознавание команд (с пробелами и без)
+                if (lowerQuery.startsWith('task:') || /^task\s+/.test(lowerQuery)) {
+                    // Обработка команды task: или task 
                     await handleTaskCommand(query, overlay, closeOverlay);
                 } else if (lowerQuery.startsWith('search:')) {
                     // Обработка команды search:
                     await handleSearchCommand(query, overlay, closeOverlay);
+                } else if (lowerQuery.startsWith('note:')) {
+                    // Обработка команды note: (заменяет plan:)
+                    await handleNoteCommand(query, overlay, closeOverlay);
                 } else if (lowerQuery.startsWith('plan:')) {
-                    // Обработка команды plan:
+                    // Обработка команды plan: (перенаправление на страницу плана)
                     handlePlanCommand(query, closeOverlay);
                 } else {
-                    // Обычный запрос - отправляем в чат или просто закрываем
-                    closeOverlay();
-                    
-                    if (typeof window.sendMessage === 'function') {
-                        const chatInput = document.getElementById('chat-input');
-                        if (chatInput) {
-                            chatInput.value = query;
-                            setTimeout(() => {
-                                window.sendMessage();
-                            }, 100);
-                        } else {
-                            window.sendMessage();
-                        }
-                    }
+                    // Если нет команды - считаем это search
+                    await handleSearchCommand(`search: ${query}`, overlay, closeOverlay);
                 }
             } else {
                 // Если поле пустое, просто закрываем
@@ -157,7 +149,7 @@ function updateQuickAddHistory(overlay, input) {
             
             suggestionItem.innerHTML = `
                 <div style="flex: 1;">
-                    <div class="quick-add-suggestion-title">${queryText}.</div>
+                    <div class="quick-add-suggestion-title">${escapeHtml(queryText)}.</div>
                 </div>
                 <span class="quick-add-suggestion-chip">${typeLabel}</span>
             `;
@@ -264,6 +256,15 @@ function generateQuickAddDisplayText(query, type) {
             return `Открыть календарь на ${planDate}`;
         }
         return 'Открыть календарь';
+    } else if (type === 'note') {
+        // Для note просто возвращаем текст заметки
+        if (lowerQuery.startsWith('note:')) {
+            const noteMatch = query.match(/note:\s*(.+)/i);
+            if (noteMatch) {
+                return noteMatch[1].trim();
+            }
+        }
+        return 'Создать заметку';
     } else {
         return 'Поиск по задачам и заметкам';
     }
@@ -274,10 +275,12 @@ function saveQuickAddQuery(query) {
     const lowerQuery = query.toLowerCase();
     let queryType = 'search';
     
-    if (lowerQuery.startsWith('task:')) {
+    if (lowerQuery.startsWith('task:') || /^task\s+/.test(lowerQuery)) {
         queryType = 'tasks';
     } else if (lowerQuery.startsWith('search:')) {
         queryType = 'search';
+    } else if (lowerQuery.startsWith('note:')) {
+        queryType = 'note';
     } else if (lowerQuery.startsWith('plan:')) {
         queryType = 'plan';
     } else if (lowerQuery.includes('задач') || lowerQuery.includes('task')) {
@@ -328,15 +331,28 @@ async function handleTaskCommand(query, overlay, closeOverlay) {
         const dateText = dateMatch ? dateMatch[1].trim() : '';
         
         // Извлекаем название задачи (всё между task: и date:/due:)
-        // Поддерживаем формат с пробелом и без: task: название или task:название
-        const taskMatch = queryWithoutTags.match(/task:\s*(.+?)(?:\s+date:|\s+due:|date:|due:|$)/i);
-        let title = taskMatch ? taskMatch[1].trim() : '';
+        // Поддерживаем формат с пробелом и без: task: название или task:название или task название
+        let title = '';
         
-        // Если не нашли через регулярку, пробуем другой способ
-        if (!title && queryWithoutTags.includes('task:')) {
+        // Вариант 1: task: название date:
+        const taskMatch1 = queryWithoutTags.match(/task:\s*(.+?)(?:\s+date:|\s+due:|date:|due:|$)/i);
+        if (taskMatch1) {
+            title = taskMatch1[1].trim();
+        }
+        
+        // Вариант 2: task название date: (без двоеточия)
+        if (!title) {
+            const taskMatch2 = queryWithoutTags.match(/^task\s+(.+?)(?:\s+date:|\s+due:|date:|due:|$)/i);
+            if (taskMatch2) {
+                title = taskMatch2[1].trim();
+            }
+        }
+        
+        // Вариант 3: Разделяем по date:/due:
+        if (!title && queryWithoutTags.includes('task')) {
             const parts = queryWithoutTags.split(/(?:date:|due:)/i);
             if (parts.length > 0) {
-                title = parts[0].replace(/^task:\s*/i, '').trim();
+                title = parts[0].replace(/^task:?\s*/i, '').trim();
             }
         }
         
@@ -367,13 +383,13 @@ async function handleTaskCommand(query, overlay, closeOverlay) {
         const day = date.getDate();
         const formattedDate = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
         
-        // Извлекаем хештеги
+        // Извлекаем хештеги (сохраняем с #)
         const tags = [];
         if (tagMatches) {
             tagMatches.forEach(tag => {
-                // Убираем # и добавляем в массив
-                const tagName = tag.replace('#', '').trim();
-                if (tagName) {
+                // Сохраняем с # для фильтрации
+                const tagName = tag.trim(); // Оставляем # в начале
+                if (tagName && tagName.startsWith('#')) {
                     tags.push(tagName);
                 }
             });
@@ -389,7 +405,7 @@ async function handleTaskCommand(query, overlay, closeOverlay) {
             completed: false
         };
         
-        // Добавляем хештеги, если они есть
+        // Добавляем хештеги, если они есть (с #)
         if (tags.length > 0) {
             taskData.tags = tags;
         }
@@ -471,7 +487,8 @@ function showSearchResults(tasks, notes, overlay, closeOverlay) {
             id: task.id,
             title: task.title,
             date: task.due_date,
-            description: task.description
+            description: task.description,
+            tags: task.tags || []
         });
     });
     
@@ -486,7 +503,7 @@ function showSearchResults(tasks, notes, overlay, closeOverlay) {
         });
     });
     
-    // Сортируем по дате
+    // Сортируем по дате (новые сначала)
     results.sort((a, b) => {
         const dateA = a.date ? new Date(a.date) : new Date(0);
         const dateB = b.date ? new Date(b.date) : new Date(0);
@@ -498,34 +515,55 @@ function showSearchResults(tasks, notes, overlay, closeOverlay) {
         const item = document.createElement('div');
         item.className = 'quick-add-suggestion';
         
-        const dateStr = result.date ? formatDate(result.date) : '';
+        const dateStr = result.date ? formatDate(result.date) : 'Без даты';
         const typeLabel = result.type === 'task' ? 'задача' : 'заметка';
         const title = result.title || '';
+        const tagsHtml = result.tags && result.tags.length > 0 
+            ? `<div style="margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap;">${result.tags.map(tag => `<span style="font-size: 11px; color: #666; background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">${escapeHtml(tag)}</span>`).join('')}</div>` 
+            : '';
         
         item.innerHTML = `
             <div style="flex: 1;">
-                <div class="quick-add-suggestion-title">${dateStr}</div>
-                <div class="quick-add-suggestion-meta">${typeLabel}</div>
+                <div class="quick-add-suggestion-title">${escapeHtml(title)}</div>
+                <div class="quick-add-suggestion-meta">${dateStr} • ${typeLabel}</div>
+                ${tagsHtml}
             </div>
         `;
         
         item.addEventListener('click', () => {
             closeOverlay();
+            
             if (result.type === 'task') {
-                // Переходим на страницу задач с выбранной датой
+                // Переходим к задаче - просто открываем день с задачей, НЕ открываем редактор
                 const taskDate = result.date ? new Date(result.date).toISOString().split('T')[0] : '';
+                
+                // НЕ сохраняем openTaskId - мы просто хотим показать день с задачей
+                // Переходим на страницу задач с датой задачи (для показа правильного дня)
+                // Параметры будут удалены из URL сразу после загрузки страницы
                 if (taskDate) {
-                    window.location.href = `/public/tasks.html?date=${taskDate}`;
+                    window.location.href = `/public/tasks.html?date=${taskDate}&task=${result.id}`;
                 } else {
-                    window.location.href = `/public/tasks.html`;
+                    window.location.href = `/public/tasks.html?task=${result.id}`;
                 }
             } else {
-                window.location.href = `/public/notes.html`;
+                // Открываем заметку для редактирования
+                // Сохраняем ID заметки в localStorage для открытия после перехода
+                localStorage.setItem('openNoteId', result.id.toString());
+                
+                // Переходим на страницу заметок
+                window.location.href = `/public/notes.html?note=${result.id}`;
             }
         });
         
         suggestionsContainer.appendChild(item);
     });
+}
+
+// Функция для экранирования HTML
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }
 
 // Форматирование даты
@@ -597,6 +635,96 @@ function parseRelativeDate(dateStr) {
     return null;
 }
 
+// Обработка команды note:
+async function handleNoteCommand(query, overlay, closeOverlay) {
+    try {
+        // Парсим команду: note: текст заметки
+        const noteText = query.replace(/^note:\s*/i, '').trim();
+        
+        if (!noteText) {
+            alert('Укажите текст заметки после note:');
+            return;
+        }
+        
+        // Создаем заметку
+        await createNote(noteText);
+        
+        // Закрываем модальное окно
+        closeOverlay();
+        
+        // Переходим на страницу заметок
+        window.location.href = '/public/notes.html';
+    } catch (error) {
+        console.error('Error creating note:', error);
+        alert('Ошибка при создании заметки: ' + error.message);
+    }
+}
+
+// Функция создания заметки
+async function createNote(text) {
+    // Получаем существующие стикеры
+    let stickersJson = localStorage.getItem('notes_stickers');
+    let stickers = [];
+    
+    if (stickersJson) {
+        try {
+            stickers = JSON.parse(stickersJson);
+            if (!Array.isArray(stickers)) {
+                stickers = [];
+            }
+        } catch (parseError) {
+            console.error('Error parsing notes_stickers:', parseError);
+            stickers = [];
+        }
+    }
+    
+    // Создаем новый стикер с текущей датой
+    const stickerId = Date.now();
+    const today = new Date();
+    const sticker = {
+        id: stickerId,
+        type: 'note',
+        content: text,
+        text: text, // Для совместимости
+        color: '#FFEB3B',
+        height: 200,
+        locked: false,
+        created_at: today.toISOString(), // Текущая дата
+        date: today.toISOString().split('T')[0], // Дата в формате YYYY-MM-DD
+        position: {
+            x: Math.random() * 300 + 20,
+            y: Math.random() * 400 + 100
+        }
+    };
+    
+    // Добавляем стикер в массив
+    stickers.push(sticker);
+    
+    // Сохраняем в localStorage
+    localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+    
+    // Также сохраняем в текущий workspace
+    try {
+        const workspacesJson = localStorage.getItem('workspaces');
+        if (workspacesJson) {
+            const workspaces = JSON.parse(workspacesJson);
+            const currentWorkspaceId = localStorage.getItem('currentWorkspaceId');
+            const workspace = currentWorkspaceId 
+                ? workspaces.find(w => w.id === currentWorkspaceId)
+                : workspaces.find(w => w.isPersonal) || workspaces[0];
+            
+            if (workspace) {
+                workspace.stickers = stickers;
+                localStorage.setItem('workspaces', JSON.stringify(workspaces));
+            }
+        }
+    } catch (workspaceError) {
+        console.error('Error saving to workspace:', workspaceError);
+    }
+    
+    return sticker;
+}
+
 // Обработка команды plan:
 function handlePlanCommand(query, closeOverlay) {
     const planText = query.replace(/^plan:\s*/i, '').trim();
@@ -635,11 +763,11 @@ function createOverlay() {
             <div class="quick-add-hints">
                 <span class="quick-add-pill" data-template="task: date:">task: Подготовить отчет date: завтра #работа</span>
                 <span class="quick-add-pill" data-template="search:">search: заметки о встрече</span>
-                <span class="quick-add-pill" data-template="plan:">plan: суббота</span>
+                <span class="quick-add-pill" data-template="note:">note: текст заметки</span>
             </div>
             <div class="quick-add-suggestions" id="quick-add-suggestions">
                 <!-- История будет добавлена динамически -->
-            </div>
+                    </div>
             <div class="quick-add-footer">
                 <button class="quick-add-confirm-btn" id="quick-add-confirm-btn" type="button">Подтвердить</button>
             </div>
