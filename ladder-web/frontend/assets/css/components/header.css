@@ -16,14 +16,17 @@ body:not(.telegram-webapp) .telegram-spacer {
 }
 
 /* Темная тема для спейсера */
-[data-theme="dark"] .telegram-spacer {
+[data-theme="dark"] .telegram-spacer,
+body[data-theme="dark"] .telegram-spacer,
+html[data-theme="dark"] .telegram-spacer {
     background: #1e1e1e;
 }
 
 /* Сдвигаем хедер вниз в Telegram Mini App */
 body.telegram-webapp .main-header,
-body.telegram-webapp #main-header {
-    top: 70px;
+body.telegram-webapp #main-header,
+body.telegram-webapp .subscription-header {
+    top: 70px !important;
 }
 
 /* Draggable Header */

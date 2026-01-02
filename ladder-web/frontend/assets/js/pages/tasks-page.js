@@ -573,23 +573,45 @@ async function loadTasksForDate(date) {
         const day = String(date.getDate()).padStart(2, '0');
         const dateStr = `${year}-${month}-${day}`;
         
+        // Логирование для отладки на мобильных устройствах
+        console.log('🔍 loadTasksForDate - Filtering tasks for date:', dateStr);
+        console.log('🔍 loadTasksForDate - Total tasks in storage:', allTasks.length);
+        
         const tasks = allTasks.filter(task => {
             if (task.due_date) {
                 // Парсим дату задачи как строку YYYY-MM-DD, без использования Date для сравнения
                 // Это избегает проблем с часовыми поясами
-                const taskDateStr = task.due_date;
+                let taskDateStr = String(task.due_date || '').trim();
                 // Если дата в формате ISO с временем, извлекаем только дату
-                const taskDate = taskDateStr.includes('T') ? taskDateStr.split('T')[0] : taskDateStr;
+                let taskDate = taskDateStr.includes('T') ? taskDateStr.split('T')[0].trim() : taskDateStr.trim();
+                // Убираем пробелы и другие возможные символы
+                taskDate = taskDate.replace(/\s+/g, '');
+                
+                // Логирование для отладки (только первые 5 задач, чтобы не засорять консоль)
+                if (taskDateStr && allTasks.indexOf(task) < 5) {
+                    console.log(`🔍 Task "${task.title}" - due_date: "${taskDateStr}" -> parsed: "${taskDate}" | match with "${dateStr}": ${taskDate === dateStr}`);
+                }
+                
                 return taskDate === dateStr;
             }
             if (task.start_date && task.end_date) {
                 // Аналогично для диапазона дат
-                const startDate = task.start_date.includes('T') ? task.start_date.split('T')[0] : task.start_date;
-                const endDate = task.end_date.includes('T') ? task.end_date.split('T')[0] : task.end_date;
-                return dateStr >= startDate && dateStr <= endDate;
+                let startDateStr = String(task.start_date || '').trim();
+                let endDateStr = String(task.end_date || '').trim();
+                let startDate = startDateStr.includes('T') ? startDateStr.split('T')[0].trim() : startDateStr.trim();
+                let endDate = endDateStr.includes('T') ? endDateStr.split('T')[0].trim() : endDateStr.trim();
+                startDate = startDate.replace(/\s+/g, '');
+                endDate = endDate.replace(/\s+/g, '');
+                const inRange = dateStr >= startDate && dateStr <= endDate;
+                if (allTasks.indexOf(task) < 5) {
+                    console.log(`🔍 Task "${task.title}" - range: ${startDate} to ${endDate} | ${dateStr} in range: ${inRange}`);
+                }
+                return inRange;
             }
             return false;
         });
+        
+        console.log('🔍 loadTasksForDate - Filtered tasks count:', tasks.length);
         
         if (tasks.length === 0) {
             const emptyText = window.i18n ? window.i18n.t('tasks.empty') : 'Нет задач на этот день';

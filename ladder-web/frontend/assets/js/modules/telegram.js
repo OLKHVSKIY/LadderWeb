@@ -1,35 +1,48 @@
 // Модуль интеграции с Telegram WebApp
 export function initTelegram() {
-    if (!window.Telegram?.WebApp) {
+    // Проверка для локального тестирования через URL параметр ?telegram=1
+    const urlParams = new URLSearchParams(window.location.search);
+    const isTelegramTest = urlParams.get('telegram') === '1';
+    
+    if (!window.Telegram?.WebApp && !isTelegramTest) {
         return;
     }
 
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    // Добавляем класс для определения Telegram Mini App
+    // Добавляем класс для определения Telegram Mini App (для стилей)
     document.body.classList.add('telegram-webapp');
 
-    // Получение данных пользователя
-    const user = tg.initDataUnsafe?.user;
-    if (user) {
-        localStorage.setItem('telegram_user', JSON.stringify(user));
-        const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
-        if (fullName && !localStorage.getItem('user_name')) {
-            localStorage.setItem('user_name', fullName);
+    // Если это реальный Telegram WebApp
+    if (window.Telegram?.WebApp) {
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        // Получение данных пользователя
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            localStorage.setItem('telegram_user', JSON.stringify(user));
+            const fullName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+            if (fullName && !localStorage.getItem('user_name')) {
+                localStorage.setItem('user_name', fullName);
+            }
         }
+
+        // Регистрация пользователя в БД через initData
+        registerWebAppUser(tg.initData);
+
+        // Настройка темы
+        if (tg.colorScheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+
+        return tg;
     }
-
-    // Регистрация пользователя в БД через initData
-    registerWebAppUser(tg.initData);
-
-    // Настройка темы
-    if (tg.colorScheme === 'dark') {
-        document.documentElement.setAttribute('data-theme', 'dark');
+    
+    // Для локального тестирования просто возвращаем объект-заглушку
+    if (isTelegramTest) {
+        console.log('🧪 Режим тестирования Telegram Mini App активирован (добавьте ?telegram=1 в URL)');
+        return null;
     }
-
-    return tg;
 }
 
 export function getTelegramUser() {

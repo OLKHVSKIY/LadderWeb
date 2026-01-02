@@ -12,9 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBottomNav();
     initQuickAdd();
     
-    // Инициализация Telegram WebApp если доступно
-    if (window.Telegram?.WebApp) {
-        initTelegram();
-    }
+    // Инициализация Telegram WebApp (проверка внутри функции)
+    initTelegram();
 });
 
