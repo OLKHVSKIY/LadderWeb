@@ -4,7 +4,7 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 70px;
+    height: 75px;
     background: #FFFFFF;
     z-index: 299;
     transition: background 0.3s ease;
@@ -19,14 +19,14 @@
 [data-theme="dark"] .telegram-spacer,
 body[data-theme="dark"] .telegram-spacer,
 html[data-theme="dark"] .telegram-spacer {
-    background: #1e1e1e;
+    background: var(--panel-bg);
 }
 
 /* Сдвигаем хедер вниз всегда (так как spacer всегда видим) */
 .main-header,
 #main-header,
 .subscription-header {
-    top: 70px !important;
+    top: 75px !important;
 }
 
 /* Draggable Header */

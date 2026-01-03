@@ -487,6 +487,10 @@ body[data-theme="dark"] {
     color: var(--text-secondary) !important;
 }
 
+:root[data-theme="dark"] .empty-state-text {
+    color: var(--text-secondary) !important;
+}
+
 /* ========================================
    CHAT PAGE
    ======================================== */
@@ -1072,6 +1076,10 @@ html[data-theme="dark"] .sidebar-overlay.active {
 }
 
 :root[data-theme="dark"] .empty-state {
+    color: var(--text-secondary) !important;
+}
+
+:root[data-theme="dark"] .empty-state-text {
     color: var(--text-secondary) !important;
 }
 

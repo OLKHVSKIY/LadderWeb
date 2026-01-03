@@ -92,10 +92,10 @@ async function initNotesPage() {
         // Кнопка GPT меню
         setupAiMenu();
         
-        // Подтягиваем заметки из API (если доступен)
+        // Подтягиваем заметки из API (если доступен) - это обновит localStorage
         await syncNotesFromApi();
 
-        // Загрузка сохраненных стикеров
+        // Загрузка сохраненных стикеров (теперь из localStorage, который был обновлен из API)
         loadStickers();
         
         // Показываем пустое состояние, если стикеров нет
@@ -417,13 +417,15 @@ function setupNoteEditorHandlers(overlay, container, editor, toolbar, resizer, a
                             const totalHeight = Math.max(150, contentHeight + headerHeight + resizerHeight);
                             stickers[stickerIndex].height = totalHeight;
                             stickerElement.style.height = `${totalHeight}px`;
-                            saveStickers(stickers);
+                            localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+                            saveStickersToWorkspace(stickers);
                             updateContentHeight();
                         }, 50);
                     }
                 } else {
                     // Если элемент не найден, просто сохраняем
-                    saveStickers(stickers);
+                    localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+                    saveStickersToWorkspace(stickers);
                 }
             }
         } else {
@@ -741,15 +743,18 @@ function createSticker(content) {
     const contentRect = mainContent.getBoundingClientRect();
     const stickerWidth = window.innerWidth <= 768 ? 395 : 340; // Ширина стикера (395px на телефонах)
     const padding = 10; // Отступ от краев
+    const actualStickerWidth = Math.min(stickerWidth, contentRect.width - padding * 2); // Ограничиваем ширину контейнером
     
-    // Центрируем стикер по ширине
-    const centerX = (contentRect.width - stickerWidth) / 2;
-    const x = Math.max(padding, centerX);
+    // Центрируем стикер по ширине с ограничением
+    const centerX = (contentRect.width - actualStickerWidth) / 2;
+    const x = Math.max(padding, Math.min(centerX, contentRect.width - actualStickerWidth - padding));
     
-    // Позиционируем в текущей видимой области
+    // Позиционируем в текущей видимой области (учитываем workspace-name-bar)
     const scrollTop = mainContent.scrollTop;
-    const viewportHeight = window.innerHeight;
-    const y = scrollTop + 100; // 100px от верха видимой области
+    const contentHeight = mainContent.clientHeight; // Высота видимой области
+    const minY = 50; // Отступ от верха main-content, чтобы стикер не заходил за хедер/спейсер
+    const maxY = contentHeight - 200; // Максимальная координата (чтобы не выходить за пределы видимой области)
+    const y = Math.min(maxY, Math.max(minY, scrollTop + 100)); // Немного ниже, чтобы не прятаться за хедером
     
     const sticker = {
         id: stickerId,
@@ -806,9 +811,10 @@ function createImageSticker(imageSrc) {
         const centerX = (contentRect.width - displayWidth) / 2;
         const x = Math.max(padding, centerX);
         
-        // Позиционируем в текущей видимой области
+        // Позиционируем в текущей видимой области (учитываем workspace-name-bar)
         const scrollTop = mainContent.scrollTop;
-        const y = scrollTop + 100; // 100px от верха видимой области
+        const minY = 50; // Отступ от верха main-content, чтобы стикер не заходил за хедер/спейсер
+        const y = Math.max(minY, scrollTop + 100); // Немного ниже, чтобы не прятаться за хедером
         
         const sticker = {
             id: stickerId,
@@ -848,14 +854,6 @@ function saveSticker(sticker) {
     // Сохраняем в localStorage для обратной совместимости
     localStorage.setItem('notes_stickers', JSON.stringify(stickers));
     // Сохраняем в текущее пространство
-    saveStickersToWorkspace(stickers);
-}
-
-// Сохранение массива стикеров (для обратной совместимости)
-function saveStickers(stickers) {
-    // Сохраняем в localStorage для обратной совместимости
-    localStorage.setItem('notes_stickers', JSON.stringify(stickers));
-    // Сохраняем в текущее пространство и синхронизируем с API
     saveStickersToWorkspace(stickers);
 }
 
@@ -947,8 +945,26 @@ function renderSticker(sticker) {
     const stickerElement = document.createElement('div');
     stickerElement.className = 'note-sticker';
     stickerElement.dataset.stickerId = sticker.id;
-    stickerElement.style.left = `${sticker.position.x}px`;
-    stickerElement.style.top = `${sticker.position.y}px`;
+    
+    // Вычисляем размеры стикера до добавления в DOM
+    const contentRect = mainContent.getBoundingClientRect();
+    const padding = 10;
+    let stickerWidth = window.innerWidth <= 768 ? 395 : 340;
+    if (sticker.type === 'image' && sticker.width) {
+        stickerWidth = Math.min(sticker.width, contentRect.width - padding * 2);
+    } else {
+        stickerWidth = Math.min(stickerWidth, contentRect.width - padding * 2);
+    }
+    const stickerHeight = sticker.height || 200;
+    
+    // Ограничиваем координаты, чтобы стикер не выходил за края
+    const maxX = contentRect.width - stickerWidth - padding;
+    const maxY = Math.max(mainContent.scrollHeight, mainContent.clientHeight) - stickerHeight - padding;
+    const constrainedX = Math.max(padding, Math.min(sticker.position.x, maxX));
+    const constrainedY = Math.max(padding, Math.min(sticker.position.y, maxY));
+    
+    stickerElement.style.left = `${constrainedX}px`;
+    stickerElement.style.top = `${constrainedY}px`;
     stickerElement.style.zIndex = maxStickerZIndex++;
     
     // Применяем состояние блокировки (по умолчанию false, если не указано)
@@ -1493,8 +1509,23 @@ function setupStickerHandlers(stickerElement, sticker) {
         const deltaY = clientY - dragStartY;
         
         // Вычисляем новую позицию относительно контента
-        const newX = stickerStartX + deltaX;
-        const newY = stickerStartY + deltaY;
+        let newX = stickerStartX + deltaX;
+        let newY = stickerStartY + deltaY;
+        
+        // Ограничиваем координаты, чтобы стикер не выходил за края
+        const contentRect = mainContent.getBoundingClientRect();
+        const padding = 10;
+        const stickerWidth = stickerElement.offsetWidth || (window.innerWidth <= 768 ? 395 : 340);
+        const stickerHeight = stickerElement.offsetHeight || sticker.height || 200;
+        
+        // Ограничение по X
+        const maxX = contentRect.width - stickerWidth - padding;
+        newX = Math.max(padding, Math.min(newX, maxX));
+        
+        // Ограничение по Y - не позволяем размещать за хедером и спейсером
+        const minY = 20; // Отступ от верха main-content, чтобы стикер не заходил за хедер/спейсер
+        const maxY = Math.max(mainContent.scrollHeight, mainContent.clientHeight) - stickerHeight - padding;
+        newY = Math.max(minY, Math.min(newY, maxY));
         
         sticker.position.x = newX;
         sticker.position.y = newY;
@@ -1896,7 +1927,7 @@ function loadStickers() {
                 const x = Math.max(padding, Math.min(centerX, contentRect.width - padding - stickerWidth));
                 
                 if (!sticker.position || typeof sticker.position !== 'object') {
-                    sticker.position = { x, y: 20 + (index * 10) };
+                    sticker.position = { x, y: 10 + (index * 10) }; // Минимум 10px от верха
                 } else {
                     // Центрируем существующие стикеры по ширине
                     sticker.position.x = x;
