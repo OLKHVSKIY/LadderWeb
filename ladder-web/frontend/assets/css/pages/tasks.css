@@ -407,9 +407,9 @@ body.sidebar-open #burger-menu svg,
     animation: fadeIn 0.5s ease;
 }
 
-/* Увеличиваем отступ для main-content в Telegram Mini App */
-body.telegram-webapp .main-content {
-    margin-top: 130px; /* 60px (хедер) + 70px (спейсер) */
+/* Увеличиваем отступ для main-content (хедер всегда сдвинут на 70px) */
+.main-content {
+    margin-top: 130px !important; /* 60px (хедер) + 70px (спейсер) */
 }
 
 /* Выбранная дата */

@@ -10,9 +10,9 @@
     transition: background 0.3s ease;
 }
 
-/* Показываем спейсер только в Telegram Mini App */
-body:not(.telegram-webapp) .telegram-spacer {
-    display: none;
+/* Спейсер всегда видим (для всех устройств) */
+.telegram-spacer {
+    display: block;
 }
 
 /* Темная тема для спейсера */
@@ -22,10 +22,10 @@ html[data-theme="dark"] .telegram-spacer {
     background: #1e1e1e;
 }
 
-/* Сдвигаем хедер вниз в Telegram Mini App */
-body.telegram-webapp .main-header,
-body.telegram-webapp #main-header,
-body.telegram-webapp .subscription-header {
+/* Сдвигаем хедер вниз всегда (так как spacer всегда видим) */
+.main-header,
+#main-header,
+.subscription-header {
     top: 70px !important;
 }
 

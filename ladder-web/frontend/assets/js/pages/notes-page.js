@@ -851,6 +851,14 @@ function saveSticker(sticker) {
     saveStickersToWorkspace(stickers);
 }
 
+// Сохранение массива стикеров (для обратной совместимости)
+function saveStickers(stickers) {
+    // Сохраняем в localStorage для обратной совместимости
+    localStorage.setItem('notes_stickers', JSON.stringify(stickers));
+    // Сохраняем в текущее пространство и синхронизируем с API
+    saveStickersToWorkspace(stickers);
+}
+
 // Сохранение стикеров в текущее пространство
 function saveStickersToWorkspace(stickers, skipApiSync = false) {
     try {
